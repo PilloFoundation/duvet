@@ -3,4 +3,5 @@ test
 .github
 .vscode
 jest.config.js
+tsconfig.json
 src

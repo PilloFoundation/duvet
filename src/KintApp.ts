@@ -3,6 +3,7 @@ import { ZodSchemaDefinition } from './models/ZodSchemaDefinition';
 import { EndpointSchema } from './models/EndpointSchema';
 import { ExpressHandlerFunction as ExpressBasedHandlerFunction } from './models/ExpressHandlerFunction';
 import { RouteTreeNode } from './RouteTreeNode';
+import { Router } from 'express';
 
 export class KintApp<C> {
 	private _context: C;
@@ -45,7 +46,14 @@ export class KintApp<C> {
 		};
 	}
 
-	public async buildExpressRouterFromDirectory(directory: string) {
+	/**
+	 * Creates an express router using the endpoints defined in the given directory.
+	 * @param directory The directory of routes to search.
+	 * @returns An express router
+	 */
+	public async buildExpressRouterFromDirectory(
+		directory: string
+	): Promise<Router> {
 		const routeTree = await RouteTreeNode.fromDirectory(directory);
 
 		return routeTree.toExpressRouter(this._context);

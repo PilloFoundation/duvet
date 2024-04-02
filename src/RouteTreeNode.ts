@@ -2,9 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import { Method, Resource } from './models/Resource';
 import { Endpoint } from './models/Endpoint';
-import { z } from 'zod';
-import { ZodSchemaDefinition } from './models/ZodSchemaDefinition';
 import { RequestHandler, Router, Request, Response } from 'express';
+import { parseSchemaDefinition } from './parseSchemaDefinition';
 
 export class RouteTreeNode<Context> {
 	public subRoutes: RouteTreeNode<Context>[] = [];
@@ -121,7 +120,7 @@ export class RouteTreeNode<Context> {
 		context: C
 	): RequestHandler {
 		return async (req: Request, res: Response, next) => {
-			const parsedBody = RouteTreeNode.parseSchemaDefinition(
+			const parsedBody = parseSchemaDefinition(
 				endpoint.endpointDefinition.requestBody ?? {},
 				req.body
 			);
@@ -132,7 +131,7 @@ export class RouteTreeNode<Context> {
 			}
 			req.body = parsedBody.data;
 
-			const parsedQueryParams = RouteTreeNode.parseSchemaDefinition(
+			const parsedQueryParams = parseSchemaDefinition(
 				endpoint.endpointDefinition.queryParams ?? {},
 				req.query
 			);
@@ -142,7 +141,7 @@ export class RouteTreeNode<Context> {
 			}
 			req.query = parsedQueryParams.data;
 
-			const parsedUrlParams = RouteTreeNode.parseSchemaDefinition(
+			const parsedUrlParams = parseSchemaDefinition(
 				endpoint.endpointDefinition.urlParams ?? {},
 				req.params
 			);
@@ -157,17 +156,5 @@ export class RouteTreeNode<Context> {
 
 			return;
 		};
-	}
-
-	private static parseSchemaDefinition<T extends ZodSchemaDefinition, U>(
-		schemaDefinition: T,
-		parseObject: U
-	) {
-		if (schemaDefinition instanceof z.ZodType) {
-			return schemaDefinition.safeParse(parseObject);
-		} else {
-			const zodObject = z.object(schemaDefinition);
-			return zodObject.safeParse(parseObject);
-		}
 	}
 }
