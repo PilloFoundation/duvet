@@ -1,6 +1,6 @@
 
 test
-examples
 .github
 .vscode
 jest.config.js
+src
