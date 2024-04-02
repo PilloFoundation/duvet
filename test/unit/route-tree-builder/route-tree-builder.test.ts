@@ -4,7 +4,7 @@ import path from 'path';
 test('Builds a route tree from a route directory', async () => {
 	const pathToRoutes = path.join(__dirname, 'routes');
 
-	const routeTree = await RouteTreeNode.buildRouteTree(pathToRoutes);
+	const routeTree = await RouteTreeNode.fromDirectory(pathToRoutes);
 
 	expect(routeTree.name).toBe('root');
 
