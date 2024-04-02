@@ -6,7 +6,8 @@
 		"target": "ESNext",
 		"esModuleInterop": true,
 		"strict": true,
-		"allowSyntheticDefaultImports": true
+		"allowSyntheticDefaultImports": true,
+		"declaration": true
 	},
 	"include": ["src"]
 }

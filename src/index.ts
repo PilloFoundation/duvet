@@ -1,1 +1,3 @@
-console.log('hello world');
+import { KintApp } from './KintApp';
+
+export default { KintApp };

@@ -2,6 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import { Method, Resource } from './models/Resource';
 import { Endpoint } from './models/Endpoint';
+import { z } from 'zod';
+import { ZodSchemaDefinition } from './models/ZodSchemaDefinition';
+import { RequestHandler, Router, Request, Response } from 'express';
 
 export class RouteTreeNode<Context> {
 	public subRoutes: RouteTreeNode<Context>[] = [];
@@ -71,7 +74,7 @@ export class RouteTreeNode<Context> {
 		return route;
 	}
 
-	public static async buildRouteTree<C>(
+	public static async fromDirectory<C>(
 		directory: string
 	): Promise<RouteTreeNode<C>> {
 		const routeTree = new RouteTreeNode('root', false);
@@ -79,5 +82,92 @@ export class RouteTreeNode<Context> {
 		await routeTree.populateWithDirectoryContents(directory);
 
 		return routeTree;
+	}
+
+	public toExpressRouter(context: Context, currentPath: string = '') {
+		const expressRouter = Router({
+			mergeParams: true,
+		});
+
+		this.applyResource(expressRouter, this.resource, context);
+
+		for (const subRoute of this.subRoutes) {
+			const subRouter = subRoute.toExpressRouter(
+				context,
+				currentPath + '/' + subRoute.name
+			);
+
+			const routePath = '/' + (subRoute.isUrlParam ? ':' : '') + subRoute.name;
+
+			expressRouter.use(routePath, subRouter);
+		}
+
+		return expressRouter;
+	}
+
+	private applyResource<C>(router: Router, resource: Resource<C>, context: C) {
+		const { GET, POST, PATCH, DELETE, PUT } = resource;
+
+		GET && router.get('/', this.createHandlerFromEndpoint(GET, context));
+		PUT && router.put('/', this.createHandlerFromEndpoint(PUT, context));
+		POST && router.post('/', this.createHandlerFromEndpoint(POST, context));
+		PATCH && router.patch('/', this.createHandlerFromEndpoint(PATCH, context));
+		DELETE &&
+			router.delete('/', this.createHandlerFromEndpoint(DELETE, context));
+	}
+
+	private createHandlerFromEndpoint<C>(
+		endpoint: Endpoint<C>,
+		context: C
+	): RequestHandler {
+		return async (req: Request, res: Response, next) => {
+			const parsedBody = RouteTreeNode.parseSchemaDefinition(
+				endpoint.endpointDefinition.requestBody ?? {},
+				req.body
+			);
+
+			if (parsedBody.success === false) {
+				res.status(400).send('Bad request: ' + parsedBody.error.message);
+				return;
+			}
+			req.body = parsedBody.data;
+
+			const parsedQueryParams = RouteTreeNode.parseSchemaDefinition(
+				endpoint.endpointDefinition.queryParams ?? {},
+				req.query
+			);
+			if (parsedQueryParams.success === false) {
+				res.status(400).send('Bad request: ' + parsedQueryParams.error.message);
+				return;
+			}
+			req.query = parsedQueryParams.data;
+
+			const parsedUrlParams = RouteTreeNode.parseSchemaDefinition(
+				endpoint.endpointDefinition.urlParams ?? {},
+				req.params
+			);
+			if (parsedUrlParams.success === false) {
+				res.status(400).send('Bad request: ' + parsedUrlParams.error.message);
+				return;
+			}
+			req.params = parsedUrlParams.data;
+
+			await endpoint.handler(req, res, context);
+			next();
+
+			return;
+		};
+	}
+
+	private static parseSchemaDefinition<T extends ZodSchemaDefinition, U>(
+		schemaDefinition: T,
+		parseObject: U
+	) {
+		if (schemaDefinition instanceof z.ZodType) {
+			return schemaDefinition.safeParse(parseObject);
+		} else {
+			const zodObject = z.object(schemaDefinition);
+			return zodObject.safeParse(parseObject);
+		}
 	}
 }
