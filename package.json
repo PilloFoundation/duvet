@@ -1,7 +1,7 @@
 {
 	"name": "express-kint",
 	"type": "commonjs",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "An extensible and opinionated tool for building nodejs backend apps faster",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
