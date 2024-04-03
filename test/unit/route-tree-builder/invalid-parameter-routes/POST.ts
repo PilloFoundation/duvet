@@ -7,7 +7,7 @@ export default makeEndpoint(
 			doesNotExist: z.string(),
 		},
 	},
-	() => {
+	(req, res, ctx) => {
 		// Do nothing, should throw.
 	}
 );

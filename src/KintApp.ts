@@ -4,6 +4,7 @@ import { EndpointSchema } from './models/EndpointSchema';
 import { ExpressHandlerFunction as ExpressBasedHandlerFunction } from './models/ExpressHandlerFunction';
 import { RouteTreeNode } from './RouteTreeNode';
 import { Router } from 'express';
+import { ZodRawShapePrimitives } from './models/ZodRawShapePrimitives';
 
 export class KintApp<C> {
 	private _context: C;
@@ -24,8 +25,8 @@ export class KintApp<C> {
 	 */
 	public defineExpressEndpoint<
 		RequestBody extends ZodSchemaDefinition,
-		QueryParams extends ZodSchemaDefinition,
-		UrlParams extends ZodSchemaDefinition,
+		QueryParams extends ZodRawShapePrimitives,
+		UrlParams extends ZodRawShapePrimitives,
 		ResponseBody extends ZodSchemaDefinition,
 	>(
 		schema: EndpointSchema<RequestBody, ResponseBody, QueryParams, UrlParams>,

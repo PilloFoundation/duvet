@@ -2,13 +2,14 @@ import { EndpointSchema } from './EndpointSchema';
 import { ZodSchemaDefinition } from './ZodSchemaDefinition';
 import { InferZodSchemaDefinition } from './InferSchemaDefinition';
 import { Request, Response } from 'express';
+import { ZodRawShapePrimitives } from './ZodRawShapePrimitives';
 
 export interface Endpoint<
 	Context,
 	RequestBody extends ZodSchemaDefinition = ZodSchemaDefinition,
 	ResponseBody extends ZodSchemaDefinition = ZodSchemaDefinition,
-	QueryParams extends ZodSchemaDefinition = ZodSchemaDefinition,
-	UrlParams extends ZodSchemaDefinition = ZodSchemaDefinition,
+	QueryParams extends ZodRawShapePrimitives = ZodRawShapePrimitives,
+	UrlParams extends ZodRawShapePrimitives = ZodRawShapePrimitives,
 > {
 	endpointDefinition: EndpointSchema<
 		RequestBody,

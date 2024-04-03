@@ -17,7 +17,7 @@ describe('Route Tree Builder', () => {
 		expect(routeTree.resource.POST).toBeDefined();
 		expect(routeTree.resource.PUT).toBeDefined();
 
-		expect(routeTree.subRoutes.length).toBe(2);
+		expect(routeTree.subRoutes.length).toBe(3);
 
 		const someRoute = routeTree.subRoutes.find(
 			(route) => route.name === 'some-route'
