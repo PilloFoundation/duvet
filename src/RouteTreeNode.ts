@@ -4,6 +4,8 @@ import { Method, Resource } from './models/Resource';
 import { Endpoint } from './models/Endpoint';
 import { RequestHandler, Router, Request, Response } from 'express';
 import { parseSchemaDefinition } from './parseSchemaDefinition';
+import { toZodObject } from './toZodObject';
+import { zodKeys } from './zodKeys';
 
 export class RouteTreeNode<Context> {
 	public subRoutes: RouteTreeNode<Context>[] = [];
@@ -11,29 +13,45 @@ export class RouteTreeNode<Context> {
 	constructor(
 		public name: string,
 		public isUrlParam: boolean,
+		private parent?: RouteTreeNode<Context>,
 		public resource: Resource<Context> = {}
 	) {}
 
 	/**
 	 * Populates a route tree node with the contents from a directory.
 	 *
-	 * @param directory - The directory path.
+	 * @param rootDirectory - The path to the routes directory.
+	 * @param relativePathToRoute - The relative path from the base directory to the current route.
 	 */
-	private async populateWithDirectoryContents(directory: string) {
-		const directoryContents = fs.readdirSync(directory);
+	private async populateWithDirectoryContents(
+		rootDirectory: string,
+		relativePathToRoute: string
+	) {
+		const pathToCurrentRoute = path.join(rootDirectory, relativePathToRoute);
+
+		const directoryContents = fs.readdirSync(pathToCurrentRoute);
 
 		for (const currentFileName of directoryContents) {
-			// Get the absolute path to the current file
-			const absolutePathToCurrentFile = path.join(directory, currentFileName);
+			// Get the path to the current file from the routes base directory
+			const relativePathToCurrentFile = path.join(
+				relativePathToRoute,
+				currentFileName
+			);
+			const absolutePathToCurrentFile = path.join(
+				rootDirectory,
+				relativePathToCurrentFile
+			);
+
 			const stat = fs.statSync(absolutePathToCurrentFile);
 
 			if (stat.isDirectory()) {
 				// Current file is a directory
-				const newRouteTreeNode = RouteTreeNode.createSubRoute(currentFileName);
+				const newRouteTreeNode = this.createSubRoute(currentFileName);
 
 				// Recursively populate the new route tree node
 				await newRouteTreeNode.populateWithDirectoryContents(
-					absolutePathToCurrentFile
+					rootDirectory,
+					relativePathToCurrentFile
 				);
 
 				// Add the new route tree node to the sub routes
@@ -51,24 +69,50 @@ export class RouteTreeNode<Context> {
 					const fullPath = path.parse(absolutePathToCurrentFile);
 					const moduleName = path.join(fullPath.dir, fullPath.name);
 
-					const endpoint = require(moduleName) as {
-						default: Endpoint<Context>;
-					};
+					const endpoint = require(moduleName)?.default;
 
-					this.resource[method] = endpoint.default;
+					// Check if the endpoint is a Kint endpoint
+					if (isKintEndpoint(endpoint) !== true) {
+						throw new Error(
+							`Endpoint at route ${relativePathToCurrentFile} is not a Kint endpoint`
+						);
+					}
+
+					const endpointDefinedUrlParamsSchemaDef =
+						endpoint.endpointDefinition.urlParams;
+
+					if (endpointDefinedUrlParamsSchemaDef != null) {
+						const endpointDefinedUrlsParams = zodKeys(
+							toZodObject(endpointDefinedUrlParamsSchemaDef)
+						);
+
+						const routeDefinedUrlParams = this.getAllUrlParams();
+
+						for (const urlParam of endpointDefinedUrlsParams) {
+							const paramExistsInRoute =
+								routeDefinedUrlParams.includes(urlParam);
+							if (paramExistsInRoute === false) {
+								throw new Error(
+									`Endpoint at /${relativePathToCurrentFile} defines a URL parameter in it's schema (${urlParam}) that does not exist in the route path.`
+								);
+							}
+						}
+					}
+
+					this.resource[method] = endpoint;
 				}
 			}
 		}
 	}
 
-	private static createSubRoute<C>(directoryName: string): RouteTreeNode<C> {
+	private createSubRoute(directoryName: string): RouteTreeNode<Context> {
 		// Check if it's a url param
 		const urlParamRegExp = /^\[(\w+)\]$/;
 		const result = directoryName.match(urlParamRegExp);
 		const isUrlParam = result !== null;
 		const routeName = isUrlParam ? result[1] : directoryName;
 
-		const route = new RouteTreeNode(routeName, isUrlParam);
+		const route = new RouteTreeNode(routeName, isUrlParam, this);
 
 		return route;
 	}
@@ -78,7 +122,7 @@ export class RouteTreeNode<Context> {
 	): Promise<RouteTreeNode<C>> {
 		const routeTree = new RouteTreeNode('root', false);
 
-		await routeTree.populateWithDirectoryContents(directory);
+		await routeTree.populateWithDirectoryContents(directory, './');
 
 		return routeTree;
 	}
@@ -113,6 +157,32 @@ export class RouteTreeNode<Context> {
 		PATCH && router.patch('/', this.createHandlerFromEndpoint(PATCH, context));
 		DELETE &&
 			router.delete('/', this.createHandlerFromEndpoint(DELETE, context));
+	}
+
+	private getAllUrlParams() {
+		const urlParams: string[] = [];
+
+		let currentRoute: RouteTreeNode<Context> | undefined = this;
+
+		while (currentRoute != null) {
+			if (currentRoute.isUrlParam) {
+				urlParams.push(currentRoute.name);
+			}
+
+			currentRoute = currentRoute.parent;
+		}
+
+		return urlParams;
+	}
+
+	private getRootDirectory() {
+		let currentRoute: RouteTreeNode<Context> | undefined = this;
+
+		while (currentRoute?.parent != null) {
+			currentRoute = currentRoute.parent;
+		}
+
+		return currentRoute;
 	}
 
 	private createHandlerFromEndpoint<C>(
@@ -157,4 +227,8 @@ export class RouteTreeNode<Context> {
 			return;
 		};
 	}
+}
+
+function isKintEndpoint(test: any): test is Endpoint<any> {
+	return test.builtByKint === true;
 }
