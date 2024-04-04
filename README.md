@@ -101,9 +101,7 @@ If you start running your code, and send a GET request to `localhost:3000` and y
 
 ### Resources / Routes
 
-To add routes or nested resources, simply add folders to your routes directory. Say I have a social media with posts and I want a new posts endpoint... I can acheive this by adding folder to the routes directory called `posts` with a file called `POST.ts`. Then I follow the same process of importing the `defineExpressEndpoint` function, using it to define an endpoint and exporting the result.
-
-Of course, you can have multiple endpoints in the same folder.
+To add routes or nested resources, simply add folders to your routes directory. For example, say I have a social media app which deals with posts and I want a new posts endpoint... I can acheive this by adding a folder to the routes directory called `posts`. In this folder, I can add TypeScript files named `POST.ts`, `GET.ts`, `DELETE.ts` etc. to define my POST, GET, DELETE etc. endpoints respectively. Then I follow the same process of importing the `defineExpressEndpoint` function, using it to define an endpoint and exporting the result.
 
 A basic blog app may have a routes folder like so:
 
@@ -118,6 +116,7 @@ routes
 │       └── GET.ts
 └── posts
     ├── GET.ts
+    ├── PATCH.ts
     └── POST.ts
 ```
 
@@ -125,7 +124,7 @@ routes
 
 So far, we have only dealt with basic routes. But you may be wondering, what about url parameters? You often see routes such as `GET /posts/<some-id>`.
 
-Well Kint allows you to define URL parameters by surrounding any folder name with square brackets. This may be familiar to svelte developers. For example, you can name a folder `[id]` and the `id` field will become available on the `request.params` object. Well, *almost*. Because Kint does schema validation, you will first need to define the url parameter in the schema part of your endpoint definition. This is as simple as adding the following to the schema definition object (the first parameter of the endpoint definition): `urlParams: { id: z.string() }`. Simple as that.
+Well Kint allows you to define URL parameters by surrounding any folder name with square brackets. This may be familiar to you if you've ever used svelte. For example, you can name a folder `[id]` and the `id` field will become available on the `request.params` object. Well, *not quite*. Because Kint does schema validation, you will first need to define the url parameter in the schema part of your endpoint definition. This is as simple as adding the following to the schema definition object, which is the first parameter of the endpoint definition function: `urlParams: { id: z.string() }`. Simple as that.
 
 So our code to define a GET request on the posts looks like the following:
 
@@ -177,9 +176,11 @@ export default defineExpressEndpoint({
 
 ### Defining Schemas
 
-So far, we have only shown how to build endpoints. But part of the glory of Kint is that you can define schemas for your data which are automatically propogated to types in your express requests and responses. These are code-first and take advantage of the power of zod. Take a look at the zod documentation [here](https://zod.dev/).
+Part of the glory of Kint is that you can define schemas for your data which are automatically propogated to types in your express requests and responses. These are code-first and allows you to take advantage of the power of zod for a lot of your validation. Take a look at the zod documentation [here](https://zod.dev/) for more info.
 
-You define your schemas or the shape of your requests in the first argument of the `defineExpressEndpoint` function. It has four fields: `queryParams`, `responseBody`, `requestBody` and `urlParams`. The `requestBody` and `responseBody` can be any zod type or a raw zod shape. The `urlParams` and `queryParams` definitions must either be zod objects or zod raw shapes, and each parameter must be parseable from a string. All schema definitions are optional.
+You define your schemas or the shape of your requests in the first argument of the `defineExpressEndpoint` function. It has four fields: `queryParams`, `responseBody`, `requestBody` and `urlParams`. The `requestBody` and `responseBody` can be any zod type or zod raw shape. The `urlParams` and `queryParams` definitions must either be zod objects or zod raw shapes, and each parameter must be parseable from a string. All schema definitions are optional.
+
+After you have defined your schemas using zod, you will notice that the request and response objects will give you autocompletion.
 
 ```typescript
 
