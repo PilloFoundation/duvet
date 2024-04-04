@@ -10,19 +10,19 @@ Kint depends on [`zod`](https://zod.dev/) and [`express`](https://expressjs.com/
 
 ### Zod
 
-Zod is part of what makes kint so powerful. Zod has code-first schema definitions and a great ecosystem for converting [to other schema types](https://github.com/colinhacks/zod?tab=readme-ov-file#zod-to-x). We can leverage these pre-existing libraries to convert your endpoint definitions to OpenAPI specifications, JSON schemas and so much more. There exist many libaries which allow you to convert OpenAPI schemas to front-end code.
+Zod is part of what makes kint so powerful. Zod has code-first schema definitions, powerful validation and transformation tools, and has a great ecosystem for [converting to other schema types](https://github.com/colinhacks/zod?tab=readme-ov-file#zod-to-x). In the future, we will be able to leverage these pre-existing libraries to convert your endpoint definitions to OpenAPI specifications, JSON schemas and more. There already exist many libaries which allow you to convert OpenAPI schemas to front-end code as well. This will help NodeJS developers save a lot of redundant work.
 
 ### Express
 
-Kint is currently built on express, but we have plans to make it extensible and work with other frameworks later. In fact, the end goal is for Kint to become it's own http server and not depend on any libraries.
+Kint is currently built on express, but we have plans to make it extensible and work with other frameworks later. In fact, the end goal is for Kint to become it's own http server.
 
 ## Getting Started
 
-Everything in Kint starts with the `KintApp` class. Instantiate this class to create a kint app. This object is what provides the method required to define your endpoints and build an express router using these definitions.
+Firstly, you'll need to install Kint. You'll also want to install `zod` and `express`. Run `yarn add express-kint zod express` or `npm install express-kint zod express`.
 
 ### Setting Up
 
-To get started, create a file called `app.ts` and instatiate the a kint app. The `KintApp` constructor takes in a single argument called context. This context object will be passed to all of your endpoints. Export both the app itself and the `defineExpressEndpoint` function.
+To get started, create a file called `app.ts` and use the `KintApp` constructor to instatiate the kint app. The `KintApp` constructor takes in a single argument called context. This context object will be passed to all of your endpoints. Export both the app itself and the `defineExpressEndpoint` function.
 
 ```typescript
 
