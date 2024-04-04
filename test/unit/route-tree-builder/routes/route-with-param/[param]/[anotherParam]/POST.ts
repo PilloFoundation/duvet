@@ -5,7 +5,7 @@ export default makeEndpoint(
 	{
 		urlParams: {
 			param: z.string(),
-			deep: z.string(),
+			anotherParam: z.string(),
 		},
 	},
 	(request, response, context) => {

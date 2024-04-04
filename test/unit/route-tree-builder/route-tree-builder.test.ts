@@ -53,21 +53,21 @@ describe('Route Tree Builder', () => {
 		expect(paramRoute.resource.PUT).not.toBeDefined();
 		expect(paramRoute.resource.POST).not.toBeDefined();
 
-		const deepParamRoute = paramRoute.subRoutes.find(
-			(route) => route.name === 'deep'
+		const anotherParamRoute = paramRoute.subRoutes.find(
+			(route) => route.name === 'anotherParam'
 		);
 
-		expect(deepParamRoute).toBeDefined();
+		expect(anotherParamRoute).toBeDefined();
 
-		if (deepParamRoute == null) return;
+		if (anotherParamRoute == null) return;
 
-		expect(deepParamRoute.isUrlParam).toBe(true);
+		expect(anotherParamRoute.isUrlParam).toBe(true);
 
-		expect(deepParamRoute.resource.POST).toBeDefined();
-		expect(deepParamRoute.resource.GET).not.toBeDefined();
-		expect(deepParamRoute.resource.DELETE).not.toBeDefined();
-		expect(deepParamRoute.resource.PATCH).not.toBeDefined();
-		expect(deepParamRoute.resource.PUT).not.toBeDefined();
+		expect(anotherParamRoute.resource.POST).toBeDefined();
+		expect(anotherParamRoute.resource.GET).not.toBeDefined();
+		expect(anotherParamRoute.resource.DELETE).not.toBeDefined();
+		expect(anotherParamRoute.resource.PATCH).not.toBeDefined();
+		expect(anotherParamRoute.resource.PUT).not.toBeDefined();
 	});
 
 	test('Throws an error on an incorrectly defined endpoint', async () => {
