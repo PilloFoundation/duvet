@@ -41,7 +41,33 @@ export class KintApp<C> {
 		builtByKint: true;
 	} {
 		return {
-			endpointDefinition: schema,
+			endpointSchema: schema,
+			handler,
+			builtByKint: true,
+		};
+	}
+
+	public descrbeExpressEndpoint<
+		RequestBody extends ZodSchemaDefinition,
+		QueryParams extends ZodRawShapePrimitives,
+		UrlParams extends ZodRawShapePrimitives,
+		ResponseBody extends ZodSchemaDefinition,
+	>(
+		description: string,
+		schema: EndpointSchema<RequestBody, ResponseBody, QueryParams, UrlParams>,
+		handler: ExpressBasedHandlerFunction<
+			C,
+			RequestBody,
+			ResponseBody,
+			QueryParams,
+			UrlParams
+		>
+	): Endpoint<C, RequestBody, ResponseBody, QueryParams, UrlParams> & {
+		builtByKint: true;
+	} {
+		return {
+			description,
+			endpointSchema: schema,
 			handler,
 			builtByKint: true,
 		};

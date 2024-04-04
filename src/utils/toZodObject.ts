@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ZodSchemaDefinition } from './models/ZodSchemaDefinition';
+import { ZodSchemaDefinition } from '../models/ZodSchemaDefinition';
 
 export function toZodObject<T extends ZodSchemaDefinition>(
 	schemaDefinition: T

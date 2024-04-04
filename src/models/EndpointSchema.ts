@@ -3,10 +3,10 @@ import { ZodSchemaDefinition } from './ZodSchemaDefinition';
 import { ZodRawShapePrimitives } from './ZodRawShapePrimitives';
 
 export interface EndpointSchema<
-	RequestBody extends ZodSchemaDefinition,
-	ResponseBody extends ZodSchemaDefinition,
-	QueryParams extends ZodRawShapePrimitives,
-	UrlParams extends ZodRawShapePrimitives,
+	RequestBody extends ZodSchemaDefinition = ZodSchemaDefinition,
+	ResponseBody extends ZodSchemaDefinition = ZodSchemaDefinition,
+	QueryParams extends ZodRawShapePrimitives = ZodRawShapePrimitives,
+	UrlParams extends ZodRawShapePrimitives = ZodRawShapePrimitives,
 > {
 	requestBody?: RequestBody;
 	responseBody?: ResponseBody;

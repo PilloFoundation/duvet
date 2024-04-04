@@ -11,7 +11,8 @@ export interface Endpoint<
 	QueryParams extends ZodRawShapePrimitives = ZodRawShapePrimitives,
 	UrlParams extends ZodRawShapePrimitives = ZodRawShapePrimitives,
 > {
-	endpointDefinition: EndpointSchema<
+	description?: string;
+	endpointSchema: EndpointSchema<
 		RequestBody,
 		ResponseBody,
 		QueryParams,

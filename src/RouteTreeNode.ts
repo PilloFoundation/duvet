@@ -2,10 +2,10 @@ import fs from 'fs';
 import path from 'path';
 import { Method, Resource } from './models/Resource';
 import { Endpoint } from './models/Endpoint';
-import { RequestHandler, Router, Request, Response } from 'express';
-import { parseSchemaDefinition } from './parseSchemaDefinition';
-import { toZodObject } from './toZodObject';
-import { zodKeys } from './zodKeys';
+import { Router } from 'express';
+import { toZodObject } from './utils/toZodObject';
+import { zodKeys } from './utils/zodKeys';
+import { createHandlerFromEndpoint } from './createHandlerFromEndpoint';
 
 export class RouteTreeNode<Context> {
 	public subRoutes: RouteTreeNode<Context>[] = [];
@@ -79,7 +79,7 @@ export class RouteTreeNode<Context> {
 					}
 
 					const endpointDefinedUrlParamsSchemaDef =
-						endpoint.endpointDefinition.urlParams;
+						endpoint.endpointSchema.urlParams;
 
 					if (endpointDefinedUrlParamsSchemaDef != null) {
 						const endpointDefinedUrlsParams = zodKeys(
@@ -151,12 +151,11 @@ export class RouteTreeNode<Context> {
 	private applyResource<C>(router: Router, resource: Resource<C>, context: C) {
 		const { GET, POST, PATCH, DELETE, PUT } = resource;
 
-		GET && router.get('/', this.createHandlerFromEndpoint(GET, context));
-		PUT && router.put('/', this.createHandlerFromEndpoint(PUT, context));
-		POST && router.post('/', this.createHandlerFromEndpoint(POST, context));
-		PATCH && router.patch('/', this.createHandlerFromEndpoint(PATCH, context));
-		DELETE &&
-			router.delete('/', this.createHandlerFromEndpoint(DELETE, context));
+		GET && router.get('/', createHandlerFromEndpoint(GET, context));
+		PUT && router.put('/', createHandlerFromEndpoint(PUT, context));
+		POST && router.post('/', createHandlerFromEndpoint(POST, context));
+		PATCH && router.patch('/', createHandlerFromEndpoint(PATCH, context));
+		DELETE && router.delete('/', createHandlerFromEndpoint(DELETE, context));
 	}
 
 	private getAllUrlParams() {
@@ -173,59 +172,6 @@ export class RouteTreeNode<Context> {
 		}
 
 		return urlParams;
-	}
-
-	private getRootDirectory() {
-		let currentRoute: RouteTreeNode<Context> | undefined = this;
-
-		while (currentRoute?.parent != null) {
-			currentRoute = currentRoute.parent;
-		}
-
-		return currentRoute;
-	}
-
-	private createHandlerFromEndpoint<C>(
-		endpoint: Endpoint<C>,
-		context: C
-	): RequestHandler {
-		return async (req: Request, res: Response, next) => {
-			const parsedBody = parseSchemaDefinition(
-				endpoint.endpointDefinition.requestBody ?? {},
-				req.body
-			);
-
-			if (parsedBody.success === false) {
-				res.status(400).send('Bad request: ' + parsedBody.error.message);
-				return;
-			}
-			req.body = parsedBody.data;
-
-			const parsedQueryParams = parseSchemaDefinition(
-				endpoint.endpointDefinition.queryParams ?? {},
-				req.query
-			);
-			if (parsedQueryParams.success === false) {
-				res.status(400).send('Bad request: ' + parsedQueryParams.error.message);
-				return;
-			}
-			req.query = parsedQueryParams.data;
-
-			const parsedUrlParams = parseSchemaDefinition(
-				endpoint.endpointDefinition.urlParams ?? {},
-				req.params
-			);
-			if (parsedUrlParams.success === false) {
-				res.status(400).send('Bad request: ' + parsedUrlParams.error.message);
-				return;
-			}
-			req.params = parsedUrlParams.data;
-
-			await endpoint.handler(req, res, context);
-			next();
-
-			return;
-		};
 	}
 }
 
