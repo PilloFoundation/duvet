@@ -22,7 +22,7 @@ Firstly, you'll need to install Kint. You'll also want to install `zod` and `exp
 
 ### Setting Up
 
-To get started, create a file called `app.ts` and use the `KintApp` constructor to instatiate the kint app. The `KintApp` constructor takes in a single argument called context. This context object will be passed to all of your endpoints. Export both the app itself and the `defineExpressEndpoint` function.
+To get started, create a file called `app.ts` and instantiate a `KintApp` object. The `KintApp` constructor takes in a single argument called context. This context object will be passed to all of your endpoints. Then, export both the app itself and the `defineExpressEndpoint` function for later.
 
 ```typescript
 
@@ -70,13 +70,15 @@ server.listen(3000, () => {
 
 ### Basic Endpoints
 
-The last step is now to just add some routes.
+Now we can add an endpoint.
 
-Make a `routes` folder which will contain all your endpoints. It does not have to be named routes. You can call it whatever you want (you will need to modify the setup code) You define routes and resources using folders. The endpoints themselves are defined in files named with an HTTP method (only PUT, POST, GET, DELETE or PATCH are supported for now).
+First, make a `routes` folder which will contain all your endpoints. It does not have to be named routes. You can call it whatever you want (but, you will need to modify the setup code to use your chosen name instead of routes). Routes and resources are defined using folders while the endpoints themselves are defined in files named with an HTTP method.
 
-To create an endpoint for a GET request at base (i.e. `GET /`), you simply place a file called `GET.ts` in the routes folder. You then import the `defineExpressEndpoint` function you exported previously and export this as you will see in the code snippet below.
+> Note: Only PUT, POST, GET, DELETE and PATCH are supported for now.
 
-The `defineExpressEndpoint` accepts two parameters: A schema definition (we will leave this empty for now), and a handler function. The schema definition uses zod to define the request. The handler function is what actually runs when the endpoint is hit.
+To create an endpoint for a GET request at the index or root (i.e. `GET /`), you simply place a file called `GET.ts` in the routes folder. You then import the `defineExpressEndpoint` function that you exported previously and export this as you will see in the code snippet below.
+
+The `defineExpressEndpoint` function accepts two parameters: A schema definition (we will leave this empty for now), and a handler function. The schema definition uses zod to define the request. The handler function is what runs when the endpoint is hit.
 
 The handler function takes three arguments: An express `Request` object, an express `Response` object and a `context` object. This is the same object that is passed into the constructor of the `KintApp`.
 
