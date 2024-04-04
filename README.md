@@ -145,7 +145,7 @@ export default defineExpressEndpoint({
 });
 ```
 
-Of course, Kint allows you to add many url parameters. For example, you could have `PATCH /user/[userId]/documents/[documentId]/details`. You would then need to update your schema definition to the following:
+Of course, Kint allows you to add more than one url parameter. For example, to add the endpoint `PATCH /user/[userId]/documents/[documentId]/details`, you would need to add the following file:
 
 ```typescript
 // routes/user/[userId]/documents/[documentId]/details/PATCH.ts
@@ -159,7 +159,7 @@ export default defineExpressEndpoint({
 
 ```
 
-If you try define an item in the `urlParams` schema which is not in your folder pathway, Kint will throw an error.
+If you define a parameter in the `urlParams` schema which is not in you the url path, Kint will throw an error.
 
 ```typescript
 // routes/posts/[id]/GET.ts
@@ -204,3 +204,7 @@ export default defineExpressEndpoint({
 });
 
 ```
+
+And that's all there is to it... *for now*.
+
+Have fun!
