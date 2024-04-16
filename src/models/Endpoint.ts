@@ -1,31 +1,36 @@
 import { EndpointSchema } from './EndpointSchema';
 import { ZodSchemaDefinition } from './ZodSchemaDefinition';
 import { InferZodSchemaDefinition } from './InferSchemaDefinition';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { ZodRawShapePrimitives } from './ZodRawShapePrimitives';
 
-export interface Endpoint<
+type ZRSP = ZodRawShapePrimitives;
+type ZSD = ZodSchemaDefinition;
+type IZSD<Z extends ZSD> = InferZodSchemaDefinition<Z>;
+
+export type Endpoint<
 	Context,
-	RequestBody extends ZodSchemaDefinition = ZodSchemaDefinition,
-	ResponseBody extends ZodSchemaDefinition = ZodSchemaDefinition,
-	QueryParams extends ZodRawShapePrimitives = ZodRawShapePrimitives,
-	UrlParams extends ZodRawShapePrimitives = ZodRawShapePrimitives,
-> {
-	description?: string;
-	endpointSchema: EndpointSchema<
-		RequestBody,
-		ResponseBody,
-		QueryParams,
-		UrlParams
-	>;
+	RequestBody extends ZSD = ZSD,
+	ResponseBody extends ZSD = ZSD,
+	QueryParams extends ZRSP = ZRSP,
+	UrlParams extends ZRSP = ZRSP,
+> = {
+	information: EndpointInformation;
+	schema: EndpointSchema<RequestBody, ResponseBody, QueryParams, UrlParams>;
 	handler: (
 		request: Request<
-			InferZodSchemaDefinition<UrlParams>,
-			InferZodSchemaDefinition<ResponseBody>,
-			InferZodSchemaDefinition<RequestBody>,
-			InferZodSchemaDefinition<QueryParams>
+			IZSD<UrlParams>,
+			IZSD<ResponseBody>,
+			IZSD<RequestBody>,
+			IZSD<QueryParams>
 		>,
-		response: Response<InferZodSchemaDefinition<ResponseBody>>,
-		context: Context
+		response: Response<IZSD<ResponseBody>>,
+		context: Context,
+		next: NextFunction
 	) => Promise<void> | void;
-}
+};
+
+export type EndpointInformation = {
+	description?: string;
+	summary?: string;
+};

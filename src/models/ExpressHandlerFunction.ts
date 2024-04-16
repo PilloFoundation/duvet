@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { InferZodSchemaDefinition } from './InferSchemaDefinition';
 import { ZodSchemaDefinition } from './ZodSchemaDefinition';
 
@@ -16,5 +16,6 @@ export type ExpressHandlerFunction<
 		InferZodSchemaDefinition<QueryParams>
 	>,
 	response: Response<InferZodSchemaDefinition<ResponseBody>>,
-	context: Context
+	context: Context,
+	next: NextFunction
 ) => Promise<void> | void;

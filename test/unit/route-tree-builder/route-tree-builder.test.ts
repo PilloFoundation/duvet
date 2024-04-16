@@ -73,12 +73,12 @@ describe('Route Tree Builder', () => {
 	test('Throws an error on an incorrectly defined endpoint', async () => {
 		const pathToRoutes = path.join(__dirname, 'broken-routes');
 
-		await expect(RouteTreeNode.fromDirectory(pathToRoutes)).rejects.toThrow();
+		expect(() => RouteTreeNode.fromDirectory(pathToRoutes)).toThrow();
 	});
 
 	test('Throws an error when a parameter is defined in a schema but not in a route path', async () => {
 		const pathToRoutes = path.join(__dirname, 'invalid-parameter-routes');
 
-		await expect(RouteTreeNode.fromDirectory(pathToRoutes)).rejects.toThrow();
+		expect(() => RouteTreeNode.fromDirectory(pathToRoutes)).toThrow();
 	});
 });

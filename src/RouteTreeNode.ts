@@ -23,7 +23,7 @@ export class RouteTreeNode<Context> {
 	 * @param rootDirectory - The path to the routes directory.
 	 * @param relativePathToRoute - The relative path from the base directory to the current route.
 	 */
-	private async populateWithDirectoryContents(
+	private populateWithDirectoryContents(
 		rootDirectory: string,
 		relativePathToRoute: string
 	) {
@@ -49,7 +49,7 @@ export class RouteTreeNode<Context> {
 				const newRouteTreeNode = this.createSubRoute(currentFileName);
 
 				// Recursively populate the new route tree node
-				await newRouteTreeNode.populateWithDirectoryContents(
+				newRouteTreeNode.populateWithDirectoryContents(
 					rootDirectory,
 					relativePathToCurrentFile
 				);
@@ -78,8 +78,7 @@ export class RouteTreeNode<Context> {
 						);
 					}
 
-					const endpointDefinedUrlParamsSchemaDef =
-						endpoint.endpointSchema.urlParams;
+					const endpointDefinedUrlParamsSchemaDef = endpoint.schema.urlParams;
 
 					if (endpointDefinedUrlParamsSchemaDef != null) {
 						const endpointDefinedUrlsParams = zodKeys(
@@ -117,26 +116,24 @@ export class RouteTreeNode<Context> {
 		return route;
 	}
 
-	public static async fromDirectory<C>(
-		directory: string
-	): Promise<RouteTreeNode<C>> {
+	public static fromDirectory<C>(directory: string): RouteTreeNode<C> {
 		const routeTree = new RouteTreeNode('root', false);
 
-		await routeTree.populateWithDirectoryContents(directory, './');
+		routeTree.populateWithDirectoryContents(directory, './');
 
 		return routeTree;
 	}
 
-	public toExpressRouter(context: Context, currentPath: string = '') {
+	public toExpressRouter(getContext: () => Context, currentPath: string = '') {
 		const expressRouter = Router({
 			mergeParams: true,
 		});
 
-		this.applyResource(expressRouter, this.resource, context);
+		this.applyResource(expressRouter, this.resource, getContext);
 
 		for (const subRoute of this.subRoutes) {
 			const subRouter = subRoute.toExpressRouter(
-				context,
+				getContext,
 				currentPath + '/' + subRoute.name
 			);
 
@@ -148,14 +145,18 @@ export class RouteTreeNode<Context> {
 		return expressRouter;
 	}
 
-	private applyResource<C>(router: Router, resource: Resource<C>, context: C) {
+	private applyResource<C>(
+		router: Router,
+		resource: Resource<C>,
+		getContext: () => C
+	) {
 		const { GET, POST, PATCH, DELETE, PUT } = resource;
 
-		GET && router.get('/', createHandlerFromEndpoint(GET, context));
-		PUT && router.put('/', createHandlerFromEndpoint(PUT, context));
-		POST && router.post('/', createHandlerFromEndpoint(POST, context));
-		PATCH && router.patch('/', createHandlerFromEndpoint(PATCH, context));
-		DELETE && router.delete('/', createHandlerFromEndpoint(DELETE, context));
+		GET && router.get('/', createHandlerFromEndpoint(GET, getContext));
+		PUT && router.put('/', createHandlerFromEndpoint(PUT, getContext));
+		POST && router.post('/', createHandlerFromEndpoint(POST, getContext));
+		PATCH && router.patch('/', createHandlerFromEndpoint(PATCH, getContext));
+		DELETE && router.delete('/', createHandlerFromEndpoint(DELETE, getContext));
 	}
 
 	private getAllUrlParams() {

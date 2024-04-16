@@ -4,42 +4,50 @@ import { parseSchemaDefinition } from './parseSchemaDefinition';
 
 export function createHandlerFromEndpoint<C>(
 	endpoint: Endpoint<C>,
-	context: C
+	getContext: () => C
 ): RequestHandler {
 	return async (req: Request, res: Response, next) => {
 		const parsedBody = parseSchemaDefinition(
-			endpoint.endpointSchema.requestBody ?? {},
+			endpoint.schema.requestBody ?? {},
 			req.body
 		);
 
 		if (parsedBody.success === false) {
 			res.status(400).send('Bad request: ' + parsedBody.error.message);
+			next();
 			return;
 		}
 		req.body = parsedBody.data;
 
 		const parsedQueryParams = parseSchemaDefinition(
-			endpoint.endpointSchema.queryParams ?? {},
+			endpoint.schema.queryParams ?? {},
 			req.query
 		);
 		if (parsedQueryParams.success === false) {
 			res.status(400).send('Bad request: ' + parsedQueryParams.error.message);
+			next();
 			return;
 		}
 		req.query = parsedQueryParams.data;
 
 		const parsedUrlParams = parseSchemaDefinition(
-			endpoint.endpointSchema.urlParams ?? {},
+			endpoint.schema.urlParams ?? {},
 			req.params
 		);
 		if (parsedUrlParams.success === false) {
 			res.status(400).send('Bad request: ' + parsedUrlParams.error.message);
+			next();
 			return;
 		}
 		req.params = parsedUrlParams.data;
 
-		await endpoint.handler(req, res, context);
-		next();
+		const handle = endpoint.handler(req, res, getContext(), next);
+
+		if (handle instanceof Promise) {
+			handle.then(next);
+		} else {
+			next();
+		}
 
 		return;
 	};
