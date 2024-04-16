@@ -41,6 +41,8 @@ export default app.defineExpressEndpoint; // Use this to define endpoints.
 
 ```
 
+Also note that you can access and update the context later with `app.context`.
+
 Next, we will need to write a little bit more code which takes our routes and builds them into an express router as shown below.
 
 ```typescript
@@ -49,16 +51,15 @@ Next, we will need to write a little bit more code which takes our routes and bu
 
 import { app } from './app';
 import express from 'express';
-import bodyParser from 'body-parser';
 
 import path from 'path';
 
 const server = express(); // Create an express app
 
-server.use(bodyParser.json()); // Parse the body as json
+server.use(express.json()); // Parse the body as json
 
 const routePath = path.join(__dirname, 'routes'); // Get routes directory
-const router = await app.buildExpressRouterFromDirectory(routePath); // Build the router
+const router = app.buildExpressRouterFromDirectory(routePath); // Build the router
 
 server.use('/', router);
 
