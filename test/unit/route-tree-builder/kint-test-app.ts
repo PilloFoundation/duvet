@@ -1,5 +1,6 @@
-import { KintApp } from '../../../src/KintApp';
+import kint from '../../../src/index';
 
-const testApp = new KintApp('Context');
+const { buildExpressRouter, makeExpressEndpoint } = kint<'context'>();
 
-export default testApp.defineExpressEndpoint;
+export const buildRouter = buildExpressRouter;
+export default makeExpressEndpoint;

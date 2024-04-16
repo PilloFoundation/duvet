@@ -1,6 +1,5 @@
-export { KintApp } from './KintApp';
+export { kint } from './kint';
 export { k } from './schemaHelpers';
 
-import { KintApp } from './KintApp';
-
-export default KintApp;
+import { kint } from './kint';
+export default kint;
