@@ -1,5 +1,5 @@
-import makeEndpoint from '../../kint-test-app';
+import { defineExpressEndpoint } from '../../kint';
 
-export default makeEndpoint({}, (request, response, context) => {
+export default defineExpressEndpoint({}, (request, response, context) => {
 	// Stub endpoint.
 });

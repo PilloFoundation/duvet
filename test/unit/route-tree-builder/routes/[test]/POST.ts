@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import makeEndpoint from '../../kint-test-app';
+import { defineExpressEndpoint } from '../../kint';
 
-export default makeEndpoint(
+export default defineExpressEndpoint(
 	{
 		urlParams: {
 			test: z.string(),

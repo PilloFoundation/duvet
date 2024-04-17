@@ -22,44 +22,41 @@ Firstly, you'll need to install Kint. You'll also want to install `zod` and `exp
 
 ### Setting Up
 
-To get started, create a file called `app.ts` and instantiate a `KintApp` object. The `KintApp` constructor takes in a single argument called context. This context object will be passed to all of your endpoints. Then, export both the app itself and the `defineExpressEndpoint` function for later.
+To get started, create a file called `kint.ts`. Import `kint` from `express-kint` and run this to get two objects called `makeExpressEndpoint` and `buildExpressRouter`. The `kint` function takes no arguments but one type argument for a context object.
 
 ```typescript
 
-// app.ts
+// kint.ts
 
-import { KintApp } from 'express-kint';
+import kint from 'express-kint';
 
-const context = {
+export interface Context {
   // DB connection,
   // Other services...
-};
+}
 
-export const app = new KintApp(context); // To start the app in express
+export const { buildExpressRouter, defineExpressEndpoint } = kint<Context>();
 
-export default app.defineExpressEndpoint; // Use this to define endpoints.
 
 ```
 
-Also note that you can access and update the context later with `app.context`.
-
-Next, we will need to write a little bit more code which takes our routes and builds them into an express router as shown below.
+Next, we will need to write a some code which takes our routes and builds them into an express router as shown below.
 
 ```typescript
 
 // main.ts
 
-import { app } from './app';
 import express from 'express';
-
 import path from 'path';
+
+import { buildExpressRouter } from './kint';
 
 const server = express(); // Create an express app
 
 server.use(express.json()); // Parse the body as json
 
 const routePath = path.join(__dirname, 'routes'); // Get routes directory
-const router = app.buildExpressRouterFromDirectory(routePath); // Build the router
+const router = buildExpressRouter(routePath); // Build the router
 
 server.use('/', router);
 

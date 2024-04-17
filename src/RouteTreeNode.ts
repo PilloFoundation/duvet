@@ -69,7 +69,15 @@ export class RouteTreeNode<Context> {
 					const fullPath = path.parse(absolutePathToCurrentFile);
 					const moduleName = path.join(fullPath.dir, fullPath.name);
 
-					const endpoint = require(moduleName)?.default;
+					const module = tryFn(() => require(moduleName));
+
+					if (module instanceof Error) {
+						throw new Error(
+							`Error while loading module at ${moduleName}: ${module.message}`
+						);
+					}
+
+					const endpoint = module?.default;
 
 					// Check if the endpoint is a Kint endpoint
 					if (isKintEndpoint(endpoint) !== true) {
@@ -177,5 +185,17 @@ export class RouteTreeNode<Context> {
 }
 
 function isKintEndpoint(test: any): test is Endpoint<any> {
-	return test.builtByKint === true;
+	return test?.builtByKint === true;
+}
+
+function tryFn<T>(run: () => T): T | Error {
+	try {
+		return run();
+	} catch (e) {
+		if (e instanceof Error) {
+			return e;
+		} else {
+			return new Error('An unknown error occured :/');
+		}
+	}
 }

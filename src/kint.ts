@@ -21,7 +21,7 @@ export interface KintBuilder<Context> {
 	 * @param handler The handler for the endpoint.
 	 * @returns And Endpoint object which can be built into a route.
 	 */
-	makeExpressEndpoint<
+	defineExpressEndpoint<
 		RequestBody extends ZodSchemaDefinition,
 		QueryParams extends ZodRawShapePrimitives,
 		UrlParams extends ZodRawShapePrimitives,
@@ -46,7 +46,7 @@ export function kint<Context>(): KintBuilder<Context> {
 
 			return routeTree.toExpressRouter(() => context);
 		},
-		makeExpressEndpoint<
+		defineExpressEndpoint<
 			RequestBody extends ZodSchemaDefinition,
 			QueryParams extends ZodRawShapePrimitives,
 			UrlParams extends ZodRawShapePrimitives,

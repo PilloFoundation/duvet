@@ -7,6 +7,17 @@ export function createHandlerFromEndpoint<C>(
 	getContext: () => C
 ): RequestHandler {
 	return async (req: Request, res: Response, next) => {
+		// Check if the request has a body, if not throw an error saying the body was not parsed and the user needs parsing middleware
+		if (!req.body) {
+			res
+				.status(500)
+				.send(
+					'Request body does not exist. Please use body-parser or similar middleware to parse the request body.'
+				);
+			next();
+			return;
+		}
+
 		const parsedBody = parseSchemaDefinition(
 			endpoint.schema.requestBody ?? {},
 			req.body
