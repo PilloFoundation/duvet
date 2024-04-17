@@ -40,7 +40,7 @@ export const { buildExpressRouter, defineExpressEndpoint } = kint<Context>();
 
 ```
 
-Next, we will need to write a some code which takes our routes and builds them into an express router as shown below.
+Next, we will need to write a some code which takes our routes and builds them into an express router as shown below. The `buildExpressRouter` function is used to build an express routes. It takes in two parameters: a path to the routes folder, and a context object to be passed to all the handlers.
 
 ```typescript
 
@@ -49,14 +49,18 @@ Next, we will need to write a some code which takes our routes and builds them i
 import express from 'express';
 import path from 'path';
 
-import { buildExpressRouter } from './kint';
+import { buildExpressRouter, Context } from './kint';
 
 const server = express(); // Create an express app
 
 server.use(express.json()); // Parse the body as json
 
+const context: Context = {
+  // ...
+}
+
 const routePath = path.join(__dirname, 'routes'); // Get routes directory
-const router = buildExpressRouter(routePath); // Build the router
+const router = buildExpressRouter(routePath, context); // Build the router
 
 server.use('/', router);
 
@@ -78,14 +82,14 @@ To create an endpoint for a GET request at the index or root (i.e. `GET /`), you
 
 The `defineExpressEndpoint` function accepts two parameters: A schema definition (we will leave this empty for now), and a handler function. The schema definition uses zod to define the request. The handler function is what runs when the endpoint is hit.
 
-The handler function takes three arguments: An express `Request` object, an express `Response` object and a `context` object. This is the same object that is passed into the constructor of the `KintApp`.
+The handler function takes three arguments: An express `Request` object, an express `Response` object and a `context` object. This is the same object that is passed into the `buildExpressRouter` object.
 
 See below for an example.
 
 ```typescript
 // in routes/GET.ts
 
-import defineExpressEndpoint from '../app';
+import { defineExpressEndpoint } from '../kint';
 
 export default defineExpressEndpoint({}, (req, res, ctx) => {
   res.status(200).send("Hello world");
@@ -130,7 +134,7 @@ So our code to define a GET request on the posts looks like the following:
 
 // routes/posts/[id]/GET.ts
 
-import defineExpressEndpoint from '../app';
+import { defineExpressEndpoint } from '../kint';
 
 export default defineExpressEndpoint({
   urlParams: {
@@ -184,7 +188,7 @@ After you have defined your schemas using zod, you will notice that the request 
 
 // routes/GET.ts
 
-import defineExpressEndpoint from '../app';
+import { defineExpressEndpoint } from '../kint';
 import { z } from 'zod';
 
 export default defineExpressEndpoint({
