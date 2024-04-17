@@ -70,8 +70,14 @@ describe('Route Tree Builder', () => {
 		expect(anotherParamRoute.resource.PUT).not.toBeDefined();
 	});
 
-	test('Throws an error on an incorrectly defined endpoint', async () => {
-		const pathToRoutes = path.join(__dirname, 'broken-routes');
+	test('Throws an error on incorrect export', async () => {
+		const pathToRoutes = path.join(__dirname, 'incorrect-export');
+
+		expect(() => RouteTreeNode.fromDirectory(pathToRoutes)).toThrow();
+	});
+
+	test('Throws an error on no export', async () => {
+		const pathToRoutes = path.join(__dirname, 'no-export');
 
 		expect(() => RouteTreeNode.fromDirectory(pathToRoutes)).toThrow();
 	});
