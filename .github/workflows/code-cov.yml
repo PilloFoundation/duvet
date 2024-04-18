@@ -1,16 +1,20 @@
 name: Codecov
 on: [push, pull_request]
 jobs:
-  build:
+  run:
     runs-on: ubuntu-latest
-    name: Test kint
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v3
         with:
           node-version: '20'
-      - run: yarn install --frozen-lockfile
-      - run: yarn build
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Generate coverage report
+        run: yarn test
+      - name: Upload coverage to Codecov
       - uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

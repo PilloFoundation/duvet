@@ -5,15 +5,18 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    name: Publish to NPM
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v3
         with:
           node-version: '20'
-      - run: yarn install --frozen-lockfile
-      - run: yarn build
-      - run: yarn test
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Build and test
+        run: yarn build
+        run: yarn test
       - uses: JS-DevTools/npm-publish@v3
         with:
           token: ${{ secrets.NPM_TOKEN }}
