@@ -2,10 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import { Method, Resource } from './models/Resource';
 import { Endpoint } from './models/Endpoint';
-import { Router } from 'express';
 import { toZodObject } from './utils/toZodObject';
 import { zodKeys } from './utils/zodKeys';
-import { createHandlerFromEndpoint } from './createHandlerFromEndpoint';
 
 export class RouteTreeNode<Context> {
 	public subRoutes: RouteTreeNode<Context>[] = [];
@@ -130,41 +128,6 @@ export class RouteTreeNode<Context> {
 		routeTree.populateWithDirectoryContents(directory, './');
 
 		return routeTree;
-	}
-
-	public toExpressRouter(getContext: () => Context, currentPath: string = '') {
-		const expressRouter = Router({
-			mergeParams: true,
-		});
-
-		this.applyResource(expressRouter, this.resource, getContext);
-
-		for (const subRoute of this.subRoutes) {
-			const subRouter = subRoute.toExpressRouter(
-				getContext,
-				currentPath + '/' + subRoute.name
-			);
-
-			const routePath = '/' + (subRoute.isUrlParam ? ':' : '') + subRoute.name;
-
-			expressRouter.use(routePath, subRouter);
-		}
-
-		return expressRouter;
-	}
-
-	private applyResource<C>(
-		router: Router,
-		resource: Resource<C>,
-		getContext: () => C
-	) {
-		const { GET, POST, PATCH, DELETE, PUT } = resource;
-
-		GET && router.get('/', createHandlerFromEndpoint(GET, getContext));
-		PUT && router.put('/', createHandlerFromEndpoint(PUT, getContext));
-		POST && router.post('/', createHandlerFromEndpoint(POST, getContext));
-		PATCH && router.patch('/', createHandlerFromEndpoint(PATCH, getContext));
-		DELETE && router.delete('/', createHandlerFromEndpoint(DELETE, getContext));
 	}
 
 	private getAllUrlParams() {
