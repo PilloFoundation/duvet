@@ -4,22 +4,22 @@ import { EndpointInformation, Endpoint } from "./models/Endpoint";
 import { EndpointSchema } from "./models/EndpointSchema";
 import { ZodRawShapePrimitives } from "./models/ZodRawShapePrimitives";
 import { ExpressHandlerFunction } from "./models/ExpressHandlerFunction";
-import { GenericRouterBuilder } from "./models/GenericRouterBuilder";
-import { expressRouterBuilder } from "./defaultRouterBuilders/expressRouterBuilder";
+import { AppBuilder } from "./models/AppBuilder";
+import { RouterFromAppBuilder } from "./models/RouterFromAppBuilder";
 
 export interface KintBuilder<Context> {
 	/**
 	 * Creates an express router using the endpoints defined in the given directory.
 	 * @param directory The directory of routes to search.
 	 * @param context A context object to pass to each handler.
-	 * @param routerBuilder A builder for the router to use. Defaults to the default express router builder.
+	 * @param appBuilder A builder for the router to use. Defaults to the default express router builder.
 	 * @returns An express router
 	 */
-	buildRouter<Router>(
+	buildRouter<CustomAppBuilder extends AppBuilder<Context, any>>(
 		directory: string,
 		context: Context,
-		routerBuilder?: GenericRouterBuilder<Context, Router>,
-	): Router;
+		appBuilder: CustomAppBuilder,
+	): RouterFromAppBuilder<CustomAppBuilder>;
 
 	/**
 	 * Creates an endpoint with the given schema and handler.
@@ -47,14 +47,14 @@ export interface KintBuilder<Context> {
 
 export function kint<Context>(): KintBuilder<Context> {
 	return {
-		buildRouter: <Router>(
+		buildRouter: <CustomAppBuilder extends AppBuilder<Context, any>>(
 			directory: string,
 			context: Context,
-			routerBuilder: GenericRouterBuilder<Context, Router>,
-		): Router => {
+			appBuilder: CustomAppBuilder,
+		) => {
 			const routeTree = RouteTreeNode.fromDirectory(directory);
 
-			return routerBuilder.build(routeTree, context);
+			return appBuilder.build(routeTree, context);
 		},
 		defineExpressEndpoint<
 			RequestBody extends ZodSchemaDefinition,

@@ -1,5 +1,5 @@
 import { RouteTreeNode } from "../RouteTreeNode";
-import { GenericRouterBuilder } from "../models/GenericRouterBuilder";
+import { AppBuilder } from "../models/AppBuilder";
 import express, { Router, type Express } from "express";
 import { Resource } from "../models/Resource";
 import { createHandlerFromEndpoint } from "../createHandlerFromEndpoint";
@@ -44,7 +44,7 @@ function toExpressRouter<Context>(
 	return expressRouter;
 }
 
-export function expressRouterBuilder<Context>(): GenericRouterBuilder<
+export function expressRouterBuilder<Context>(): AppBuilder<
 	Context,
 	Express
 > {
@@ -56,10 +56,10 @@ export function expressRouterBuilder<Context>(): GenericRouterBuilder<
 		): Express => {
 			const expressApp = app || express();
 
-			toExpressRouter(rootNode, () => context);
+			const expressRouter = toExpressRouter(rootNode, () => context);
 
 			expressApp.use(express.json());
-			expressApp.use("/");
+			expressApp.use("/", expressRouter);
 
 			return expressApp;
 		},
