@@ -1,19 +1,25 @@
-import { Router } from 'express';
-import { RouteTreeNode } from './RouteTreeNode';
-import { ZodSchemaDefinition } from './models/ZodSchemaDefinition';
-import { EndpointInformation, Endpoint } from './models/Endpoint';
-import { EndpointSchema } from './models/EndpointSchema';
-import { ZodRawShapePrimitives } from './models/ZodRawShapePrimitives';
-import { ExpressHandlerFunction } from './models/ExpressHandlerFunction';
+import { RouteTreeNode } from "./RouteTreeNode";
+import { ZodSchemaDefinition } from "./models/ZodSchemaDefinition";
+import { EndpointInformation, Endpoint } from "./models/Endpoint";
+import { EndpointSchema } from "./models/EndpointSchema";
+import { ZodRawShapePrimitives } from "./models/ZodRawShapePrimitives";
+import { ExpressHandlerFunction } from "./models/ExpressHandlerFunction";
+import { GenericRouterBuilder } from "./models/GenericRouterBuilder";
+import { expressRouterBuilder } from "./defaultRouterBuilders/expressRouterBuilder";
 
 export interface KintBuilder<Context> {
 	/**
 	 * Creates an express router using the endpoints defined in the given directory.
 	 * @param directory The directory of routes to search.
 	 * @param context A context object to pass to each handler.
+	 * @param routerBuilder A builder for the router to use. Defaults to the default express router builder.
 	 * @returns An express router
 	 */
-	buildExpressRouter: (direcotry: string, context: Context) => Router;
+	buildRouter<Router>(
+		directory: string,
+		context: Context,
+		routerBuilder?: GenericRouterBuilder<Context, Router>,
+	): Router;
 
 	/**
 	 * Creates an endpoint with the given schema and handler.
@@ -35,16 +41,20 @@ export interface KintBuilder<Context> {
 			ResponseBody,
 			QueryParams,
 			UrlParams
-		>
+		>,
 	): Endpoint<Context, RequestBody, ResponseBody, QueryParams, UrlParams>;
 }
 
 export function kint<Context>(): KintBuilder<Context> {
 	return {
-		buildExpressRouter: (directory: string, context: Context): Router => {
+		buildRouter: <Router>(
+			directory: string,
+			context: Context,
+			routerBuilder: GenericRouterBuilder<Context, Router>,
+		): Router => {
 			const routeTree = RouteTreeNode.fromDirectory(directory);
 
-			return routeTree.toExpressRouter(() => context);
+			return routerBuilder.build(routeTree, context);
 		},
 		defineExpressEndpoint<
 			RequestBody extends ZodSchemaDefinition,
@@ -60,7 +70,7 @@ export function kint<Context>(): KintBuilder<Context> {
 				ResponseBody,
 				QueryParams,
 				UrlParams
-			>
+			>,
 		): Endpoint<Context, RequestBody, ResponseBody, QueryParams, UrlParams> & {
 			builtByKint: true;
 		} {

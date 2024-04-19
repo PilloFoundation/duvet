@@ -3,5 +3,10 @@ import { RouteTreeNode } from "../RouteTreeNode";
 import { type Express } from "express";
 
 export interface GenericRouterBuilder<Context, Router> {
-  build: (rootNode: RouteTreeNode<Context>, context: Context, app: Router) => Router;
+  build(rootNode: RouteTreeNode<Context>, context: Context): Router;
+  build(
+    rootNode: RouteTreeNode<Context>,
+    context: Context,
+    app: Router
+  ): Router;
 }
