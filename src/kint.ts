@@ -6,6 +6,7 @@ import { ZodRawShapePrimitives } from "./models/ZodRawShapePrimitives";
 import { ExpressHandlerFunction } from "./models/ExpressHandlerFunction";
 import { AppBuilder } from "./models/AppBuilder";
 import { RouterFromAppBuilder } from "./models/RouterFromAppBuilder";
+import { expressAppBuilder } from "./defaultRouterBuilders/expressAppBuilder";
 
 export interface KintBuilder<Context> {
 	/**
@@ -15,6 +16,10 @@ export interface KintBuilder<Context> {
 	 * @param appBuilder A builder for the router to use. Defaults to the default express router builder.
 	 * @returns An express router
 	 */
+	buildRouter(
+		directory: string,
+		context: Context,
+	): RouterFromAppBuilder<ReturnType<typeof expressAppBuilder>>;
 	buildRouter<CustomAppBuilder extends AppBuilder<Context, any>>(
 		directory: string,
 		context: Context,
@@ -50,8 +55,9 @@ export function kint<Context>(): KintBuilder<Context> {
 		buildRouter: <CustomAppBuilder extends AppBuilder<Context, any>>(
 			directory: string,
 			context: Context,
-			appBuilder: CustomAppBuilder,
+			appBuilderIn?: CustomAppBuilder,
 		) => {
+			const appBuilder = appBuilderIn || expressAppBuilder();
 			const routeTree = RouteTreeNode.fromDirectory(directory);
 
 			return appBuilder.build(routeTree, context);

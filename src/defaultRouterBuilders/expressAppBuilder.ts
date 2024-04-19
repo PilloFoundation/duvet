@@ -44,7 +44,7 @@ function toExpressRouter<Context>(
 	return expressRouter;
 }
 
-export function expressRouterBuilder<Context>(): AppBuilder<
+export function expressAppBuilder<Context>(): AppBuilder<
 	Context,
 	Express
 > {
