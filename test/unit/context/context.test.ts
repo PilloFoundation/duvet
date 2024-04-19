@@ -1,6 +1,5 @@
 import path from "path";
 import request from "supertest";
-import express, { type Express } from "express";
 import { buildRouter } from "./kint";
 import { expressAppBuilder } from "../../../src/defaultRouterBuilders/expressAppBuilder";
 
@@ -11,6 +10,8 @@ describe("Kint user flow", () => {
 		const context = { a: "initialA", b: 0 };
 
 		const router = buildRouter(routes, context);
+
+		// TODO: Add a test to validate the type of the router
 
 		const test = await request(router).get("/").expect(200);
 
@@ -23,6 +24,8 @@ describe("Kint user flow", () => {
 		const context = { a: "initialA", b: 0 };
 
 		const router = buildRouter(routes, context, expressAppBuilder());
+
+		// TODO: Add a test to validate the type of the router
 
 		const test = await request(router).get("/").expect(200);
 
