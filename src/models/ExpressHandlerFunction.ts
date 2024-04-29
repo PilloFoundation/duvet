@@ -1,21 +1,22 @@
 import { NextFunction, Request, Response } from 'express';
-import { InferZodSchemaDefinition } from './InferSchemaDefinition';
-import { ZodSchemaDefinition } from './ZodSchemaDefinition';
+import { IZSDI, IZSDO } from './InferSchemaDefinition';
+import { ZSD } from './ZodSchemaDefinition';
+import { ZRSP } from './ZodRawShapePrimitives';
 
 export type ExpressHandlerFunction<
 	Context,
-	RequestBody extends ZodSchemaDefinition = ZodSchemaDefinition,
-	ResponseBody extends ZodSchemaDefinition = ZodSchemaDefinition,
-	QueryParams extends ZodSchemaDefinition = ZodSchemaDefinition,
-	UrlParams extends ZodSchemaDefinition = ZodSchemaDefinition,
+	RequestBody extends ZSD = ZSD,
+	ResponseBody extends ZSD = ZSD,
+	QueryParams extends ZRSP = ZRSP,
+	UrlParams extends ZRSP = ZRSP,
 > = (
 	request: Request<
-		InferZodSchemaDefinition<UrlParams>,
-		InferZodSchemaDefinition<ResponseBody>,
-		InferZodSchemaDefinition<RequestBody>,
-		InferZodSchemaDefinition<QueryParams>
+		IZSDO<UrlParams>,
+		IZSDI<ResponseBody>,
+		IZSDO<RequestBody>,
+		IZSDO<QueryParams>
 	>,
-	response: Response<InferZodSchemaDefinition<ResponseBody>>,
+	response: Response<IZSDI<ResponseBody>>,
 	context: Context,
 	next: NextFunction
 ) => Promise<void> | void;

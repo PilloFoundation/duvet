@@ -1,12 +1,8 @@
 import { EndpointSchema } from './EndpointSchema';
-import { ZodSchemaDefinition } from './ZodSchemaDefinition';
-import { InferZodSchemaDefinition } from './InferSchemaDefinition';
+import { ZSD } from './ZodSchemaDefinition';
+import { IZSDI, IZSDO } from './InferSchemaDefinition';
 import { NextFunction, Request, Response } from 'express';
-import { ZodRawShapePrimitives } from './ZodRawShapePrimitives';
-
-type ZRSP = ZodRawShapePrimitives;
-type ZSD = ZodSchemaDefinition;
-type IZSD<Z extends ZSD> = InferZodSchemaDefinition<Z>;
+import { ZRSP } from './ZodRawShapePrimitives';
 
 export type Endpoint<
 	Context,
@@ -19,12 +15,12 @@ export type Endpoint<
 	schema: EndpointSchema<RequestBody, ResponseBody, QueryParams, UrlParams>;
 	handler: (
 		request: Request<
-			IZSD<UrlParams>,
-			IZSD<ResponseBody>,
-			IZSD<RequestBody>,
-			IZSD<QueryParams>
+			IZSDO<UrlParams>,
+			IZSDI<ResponseBody>,
+			IZSDO<RequestBody>,
+			IZSDO<QueryParams>
 		>,
-		response: Response<IZSD<ResponseBody>>,
+		response: Response<IZSDI<ResponseBody>>,
 		context: Context,
 		next: NextFunction
 	) => Promise<void> | void;
