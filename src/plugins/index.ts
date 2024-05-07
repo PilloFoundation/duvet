@@ -1,5 +1,7 @@
+import { RouteTreeNode } from "../RouteTreeNode";
 import { KintBuilder } from "../kint";
 
 export type Plugin<T> = {
-	extend: (builder: KintBuilder<T>) => void;
+	preBuild?: (routeTree: RouteTreeNode<unknown>) => void;
+    extend?: (builder: KintBuilder<T>) => void;
 };

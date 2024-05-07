@@ -50,10 +50,14 @@ type KintParams<Context> = {
 	plugins?: Plugin<Context>[];
 };
 
-export function kint<Context>(params : KintParams<Context>): KintBuilder<Context> {
+export function kint<Context>(
+	params: KintParams<Context>,
+): KintBuilder<Context> {
 	const kint = {
 		buildExpressRouter: (directory: string, context: Context): Router => {
 			const routeTree = RouteTreeNode.fromDirectory(directory);
+
+			params.plugins?.forEach((plugin) => plugin.preBuild?.(routeTree));
 
 			return routeTree.toExpressRouter(() => context);
 		},
@@ -85,7 +89,7 @@ export function kint<Context>(params : KintParams<Context>): KintBuilder<Context
 		z,
 	};
 
-	params.plugins?.forEach((plugin) => plugin.extend(kint));
+	params.plugins?.forEach((plugin) => plugin.extend?.(kint));
 
 	return kint;
 }
