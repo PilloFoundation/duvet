@@ -5,4 +5,4 @@ export interface Context {
 	b: number;
 }
 
-export const { buildExpressRouter, defineExpressEndpoint } = kint<Context>();
+export const { buildExpressRouter, defineExpressEndpoint } = kint<Context>({});

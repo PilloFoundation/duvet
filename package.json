@@ -30,6 +30,7 @@
 		"typescript": "^5.4.3"
 	},
 	"dependencies": {
+		"@asteasolutions/zod-to-openapi": "^7.0.0",
 		"@types/supertest": "^6.0.2",
 		"express": "^4.19.2",
 		"zod": "^3.22.4"

@@ -1,10 +1,12 @@
-import { Router } from 'express';
-import { RouteTreeNode } from './RouteTreeNode';
-import { ZodSchemaDefinition } from './models/ZodSchemaDefinition';
-import { EndpointInformation, Endpoint } from './models/Endpoint';
-import { EndpointSchema } from './models/EndpointSchema';
-import { ZodRawShapePrimitives } from './models/ZodRawShapePrimitives';
-import { ExpressHandlerFunction } from './models/ExpressHandlerFunction';
+import { Router } from "express";
+import { RouteTreeNode } from "./RouteTreeNode";
+import { ZodSchemaDefinition } from "./models/ZodSchemaDefinition";
+import { EndpointInformation, Endpoint } from "./models/Endpoint";
+import { EndpointSchema } from "./models/EndpointSchema";
+import { ZodRawShapePrimitives } from "./models/ZodRawShapePrimitives";
+import { ExpressHandlerFunction } from "./models/ExpressHandlerFunction";
+import { z } from "zod";
+import { Plugin } from "./plugins";
 
 export interface KintBuilder<Context> {
 	/**
@@ -35,12 +37,21 @@ export interface KintBuilder<Context> {
 			ResponseBody,
 			QueryParams,
 			UrlParams
-		>
+		>,
 	): Endpoint<Context, RequestBody, ResponseBody, QueryParams, UrlParams>;
+
+	/**
+	 * The zod object to use for defining schemas.
+	 */
+	z: typeof z;
 }
 
-export function kint<Context>(): KintBuilder<Context> {
-	return {
+type KintParams<Context> = {
+	plugins?: Plugin<Context>[];
+};
+
+export function kint<Context>(params : KintParams<Context>): KintBuilder<Context> {
+	const kint = {
 		buildExpressRouter: (directory: string, context: Context): Router => {
 			const routeTree = RouteTreeNode.fromDirectory(directory);
 
@@ -60,7 +71,7 @@ export function kint<Context>(): KintBuilder<Context> {
 				ResponseBody,
 				QueryParams,
 				UrlParams
-			>
+			>,
 		): Endpoint<Context, RequestBody, ResponseBody, QueryParams, UrlParams> & {
 			builtByKint: true;
 		} {
@@ -71,5 +82,10 @@ export function kint<Context>(): KintBuilder<Context> {
 				builtByKint: true,
 			};
 		},
+		z,
 	};
+
+	params.plugins?.forEach((plugin) => plugin.extend(kint));
+
+	return kint;
 }

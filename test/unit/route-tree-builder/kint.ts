@@ -1,3 +1,3 @@
 import kint from '../../../src/index';
 
-export const { buildExpressRouter, defineExpressEndpoint } = kint<'context'>();
+export const { buildExpressRouter, defineExpressEndpoint } = kint<'context'>({});
