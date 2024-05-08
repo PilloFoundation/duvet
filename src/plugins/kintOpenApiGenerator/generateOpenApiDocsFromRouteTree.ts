@@ -2,13 +2,12 @@ import { RouteTreeNode } from "../../RouteTreeNode";
 import {
 	OpenAPIRegistry,
 	OpenApiGeneratorV3,
-	ZodRequestBody,
-	RouteConfig,
 } from "@asteasolutions/zod-to-openapi";
 import { Resource } from "../../models/Resource";
 import { Endpoint } from "../../models/Endpoint";
 import fs from "fs";
 import { AnyZodObject, ZodEffects } from "zod";
+import { z } from ".";
 
 export function registerPathFromEndpoint(
 	registry: OpenAPIRegistry,
@@ -22,13 +21,24 @@ export function registerPathFromEndpoint(
 		description: endpoint.information.description,
 		summary: endpoint.information.summary,
 		request: {
-			body: endpoint.schema.requestBody as unknown as ZodRequestBody, // TODO: Fix. Just for testing
-			params: endpoint.schema.urlParams as unknown as
-				| AnyZodObject
-				| ZodEffects<AnyZodObject, unknown, unknown>
-				| undefined, // TODO: Fix. Just for testing
+			body: {
+				content: {
+					"application/json": {
+						schema: endpoint.schema.requestBody ?? z.object({}),
+					},
+				}, // TODO: Fix. Just for testing
+			},
 		},
-		responses: endpoint.schema.responseBody as RouteConfig["responses"],
+		responses: {
+			"200": {
+				description: "Success",
+				content: {
+					"application/json": {
+						schema: endpoint.schema.responseBody ?? z.object({}),
+					}, // TODO: Fix. Just for testing
+				},
+			},
+		},
 	});
 }
 
@@ -72,5 +82,8 @@ export const generateOpenApiDocsFromRouteTreeWithPath = (
 			description: "This is the API",
 		},
 	});
-	fs.writeFileSync("/artifacts/openapi-schema", JSON.stringify(openapiObject));
+	fs.mkdirSync("artifacts", { recursive: true });
+	fs.writeFileSync("artifacts/openapi-schema", JSON.stringify(openapiObject), {
+		flag: "w+",
+	});
 };

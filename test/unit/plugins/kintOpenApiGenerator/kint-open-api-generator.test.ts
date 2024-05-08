@@ -1,6 +1,5 @@
 import path from "path";
 import { buildExpressRouter } from "./kint";
-import { shouldBeFalse, shouldBeTrue } from "../../../../src/schemaHelpers";
 import express from "express";
 
 describe("Should generate a build file", () => {
