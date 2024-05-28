@@ -1,4 +1,4 @@
-import { Kint } from './models/Kint';
+import { Kint } from './models/Kint/Kint';
 import { PostProcessingMiddlewareTuple } from './middleware/models/PostProcessingMiddlewareTuple';
 import { PostProcessorCatchTypes } from './middleware/utils/PostProcessorCatchTypes';
 import { Endpoint } from './models/Endpoint';

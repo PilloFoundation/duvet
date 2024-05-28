@@ -1,28 +1,35 @@
 import { AppendTuple } from '../utils/types/AppendTuple';
-import { Kint } from '../models/Kint';
+import { Kint } from '../models/Kint/Kint';
+import { ExtractPostProcessors } from '../models/Kint/ExtractPostProcessors';
+import { ExtractHandlerInput } from '../models/Kint/ExtractHandlerInput';
+import { ExtractConfig } from '../models/Kint/ExtractConfig';
+import { ExtractContext } from '../models/Kint/ExtractContext';
 import { PostProcessingMiddlewareTuple } from './models/PostProcessingMiddlewareTuple';
 import { PostProcessingMiddleware } from './models/PostProcessingMiddleware';
 import { mergeConfigs } from '../utils/mergeConfigs';
 
 export function extendWithPostprocessingMiddleware<
-	Context,
-	ExistingConfig,
 	MWConfig,
-	InputType,
-	PostProcessors extends PostProcessingMiddlewareTuple,
-	NewCatch
+	NewCatch,
+	OldKint extends Kint<any, any, any, any>
 >(
-	kint: Kint<Context, ExistingConfig, InputType, PostProcessors>,
+	kint: OldKint,
 	middleware: PostProcessingMiddleware<MWConfig, NewCatch>
 ): Kint<
-	Context,
-	ExistingConfig & MWConfig,
-	InputType,
-	AppendTuple<PostProcessors, PostProcessingMiddleware<MWConfig, NewCatch>>
+	ExtractContext<OldKint>,
+	ExtractConfig<OldKint> & MWConfig,
+	ExtractHandlerInput<OldKint>,
+	AppendTuple<
+		ExtractPostProcessors<OldKint>,
+		PostProcessingMiddleware<MWConfig, NewCatch>
+	>
 > {
 	return {
 		userConfig: mergeConfigs(kint.userConfig, middleware.defaultConfig),
 		preProcessor: kint.preProcessor,
-		postProcessors: [...kint.postProcessors, middleware],
+		postProcessors: [
+			...(kint.postProcessors as ExtractPostProcessors<OldKint>),
+			middleware,
+		],
 	};
 }

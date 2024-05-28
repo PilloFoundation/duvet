@@ -1,4 +1,4 @@
-import { Kint } from './Kint';
+import { Kint } from './Kint/Kint';
 import { PostProcessingMiddlewareTuple } from '../middleware/models/PostProcessingMiddlewareTuple';
 import { PostProcessorCatchTypes } from '../middleware/utils/PostProcessorCatchTypes';
 import { RawKintRequest } from './RawKintRequest';
