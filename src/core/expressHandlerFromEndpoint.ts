@@ -22,15 +22,14 @@ export function expressHandlerFromEndpointDefinition<
 			// Catches any errors thrown by the pre processors, endpoint handler or post processors
 
 			try {
-				// Catches errors just by pre processors or endpoint handler
-
-				let inputObject = { request };
+				// Catches errors solely from pre processors or endpoint handler
+				let inputObject = { underlyingExpressRequest: request };
 
 				// Iterate through pre processors and apply them to the input object
 				for (const preProcessor of endpoint.preProcessors) {
 					// Run preprocessor
 					const result = await preProcessor.preProcess(
-						{ request },
+						{ underlyingExpressRequest: request },
 						endpoint.config
 					);
 
@@ -50,13 +49,17 @@ export function expressHandlerFromEndpointDefinition<
 					endpoint.config
 				);
 
+				// Throws the result to be caught by some handler. returns and throws are indistinguishable in kint.
 				throw result;
 			} catch (obj) {
+				// Iterate through post processors
 				for (const postProcessor of endpoint.postProcessors) {
+					// Test if the thrown object should be caught by the post processor
 					if (postProcessor.matcher(obj)) {
+						// Rethrow the result of the post processor to be caught by kint.
 						throw await postProcessor.handler(
 							obj,
-							{ request },
+							{ underlyingExpressRequest: request },
 							endpoint.config
 						);
 					}
