@@ -1,75 +1,159 @@
-import { Router } from 'express';
-import { RouteTreeNode } from './RouteTreeNode';
-import { ZodSchemaDefinition } from './models/ZodSchemaDefinition';
-import { EndpointInformation, Endpoint } from './models/Endpoint';
-import { EndpointSchema } from './models/EndpointSchema';
-import { ZodRawShapePrimitives } from './models/ZodRawShapePrimitives';
-import { ExpressHandlerFunction } from './models/ExpressHandlerFunction';
+type Handler<Request, Response, Context, Config> = {};
 
-export interface KintBuilder<Context> {
-	/**
-	 * Creates an express router using the endpoints defined in the given directory.
-	 * @param directory The directory of routes to search.
-	 * @param context A context object to pass to each handler.
-	 * @returns An express router
-	 */
-	buildExpressRouter: (direcotry: string, context: Context) => Router;
+export type RawKintRequest = {};
+export type RawKintResponse = {};
 
-	/**
-	 * Creates an endpoint with the given schema and handler.
-	 * @param meta The schema for the endpoint, as well as additional information about the endpoint.
-	 * @param handler The handler for the endpoint.
-	 * @returns And Endpoint object which can be built into a route.
-	 */
-	defineExpressEndpoint<
-		RequestBody extends ZodSchemaDefinition,
-		QueryParams extends ZodRawShapePrimitives,
-		UrlParams extends ZodRawShapePrimitives,
-		ResponseBody extends ZodSchemaDefinition,
-	>(
-		meta: EndpointSchema<RequestBody, ResponseBody, QueryParams, UrlParams> &
-			EndpointInformation,
-		handler: ExpressHandlerFunction<
-			Context,
-			RequestBody,
-			ResponseBody,
-			QueryParams,
-			UrlParams
-		>
-	): Endpoint<Context, RequestBody, ResponseBody, QueryParams, UrlParams>;
+export type PreprocessingMiddleware<
+	Config,
+	OutputRequest,
+	InputRequest = RawKintRequest
+> = {
+	preProcess: (request: InputRequest, config: Config) => OutputRequest;
+};
+
+export type StrictPreprocessingMiddleware<
+	Config,
+	OutputRequest extends RawKintRequest,
+	InputRequest = RawKintRequest
+> = PreprocessingMiddleware<Config, OutputRequest, InputRequest>;
+
+export type PostProcessingMiddleware<Config, CatchType> = {
+	matcher: (thrown: any) => thrown is CatchType;
+	catcher: (
+		thrown: CatchType,
+		request: RawKintRequest,
+		config: Config
+	) => RawKintResponse;
+};
+
+export type PostProcessingMiddlewareTuple = PostProcessingMiddleware<
+	any,
+	any
+>[];
+
+export type Kint<
+	Context,
+	Config,
+	HandlerInput,
+	PostProcessors extends PostProcessingMiddlewareTuple
+> = {
+	defaultConfig: Config;
+	preProcessor: PreprocessingMiddleware<Config, HandlerInput>;
+	postProcessors: PostProcessors;
+};
+
+function extendWithPreprocessingMiddleware<
+	Context,
+	ExistingConfig,
+	MWConfig,
+	OldInput,
+	NewInput,
+	PostProcessors extends PostProcessingMiddlewareTuple
+>(
+	kint: Kint<Context, ExistingConfig & MWConfig, OldInput, PostProcessors>,
+	middleware: PreprocessingMiddleware<MWConfig, NewInput, OldInput>
+) {
+	return {
+		...kint,
+		preProcess: (
+			request: RawKintRequest,
+			config: ExistingConfig & MWConfig
+		) => {
+			const processedRequest = kint.preProcessor.preProcess(request, config);
+			return middleware.preProcess(processedRequest, config);
+		},
+	};
 }
 
-export function kint<Context>(): KintBuilder<Context> {
-	return {
-		buildExpressRouter: (directory: string, context: Context): Router => {
-			const routeTree = RouteTreeNode.fromDirectory(directory);
+type PostProcessorCatchTypes<
+	ConcretePostProcessingMiddlewareTuple extends PostProcessingMiddlewareTuple
+> =
+	ConcretePostProcessingMiddlewareTuple[number] extends PostProcessingMiddleware<
+		any,
+		infer CatchType
+	>
+		? CatchType
+		: never;
 
-			return routeTree.toExpressRouter(() => context);
-		},
-		defineExpressEndpoint<
-			RequestBody extends ZodSchemaDefinition,
-			QueryParams extends ZodRawShapePrimitives,
-			UrlParams extends ZodRawShapePrimitives,
-			ResponseBody extends ZodSchemaDefinition,
-		>(
-			meta: EndpointSchema<RequestBody, ResponseBody, QueryParams, UrlParams> &
-				EndpointInformation,
-			handler: ExpressHandlerFunction<
-				Context,
-				RequestBody,
-				ResponseBody,
-				QueryParams,
-				UrlParams
-			>
-		): Endpoint<Context, RequestBody, ResponseBody, QueryParams, UrlParams> & {
-			builtByKint: true;
-		} {
-			return {
-				information: meta,
-				schema: meta,
-				handler,
-				builtByKint: true,
-			};
-		},
+type AppendTuple<T extends any[], E> = [...T, E];
+
+function extendWithPostprocessingMiddleware<
+	Context,
+	ExistingConfig,
+	MWConfig,
+	InputType,
+	PostProcessors extends PostProcessingMiddlewareTuple,
+	NewCatch
+>(
+	kint: Kint<Context, ExistingConfig & MWConfig, InputType, PostProcessors>,
+	middleware: PostProcessingMiddleware<MWConfig, NewCatch>
+): Kint<
+	Context,
+	ExistingConfig & MWConfig,
+	InputType,
+	AppendTuple<PostProcessors, PostProcessingMiddleware<MWConfig, NewCatch>>
+> {
+	const newKint: Kint<
+		Context,
+		ExistingConfig & MWConfig,
+		InputType,
+		AppendTuple<PostProcessors, PostProcessingMiddleware<MWConfig, NewCatch>>
+	> = {
+		defaultConfig: kint.defaultConfig,
+		preProcessor: kint.preProcessor,
+		postProcessors: [...kint.postProcessors, middleware],
+	};
+
+	return newKint;
+}
+
+function mergeConfigs<Config>(
+	defaultConfig: Config,
+	userConfig: Partial<Config>
+): Config {
+	// TODO: MERGE CONFIGS
+	return defaultConfig;
+}
+
+function processOutput<
+	PostProcessors extends PostProcessingMiddlewareTuple,
+	Config
+>(
+	postProcessors: PostProcessors,
+	rawKintRequest: RawKintRequest,
+	config: Config,
+	response: any
+): RawKintResponse {
+	for (const postProcessor of postProcessors) {
+		if (postProcessor.matcher(response)) {
+			return postProcessor.catcher(response, rawKintRequest, config);
+		}
+	}
+	return {};
+}
+
+function defineEndpoint<
+	Context,
+	Config,
+	HandlerInput,
+	PostProcessors extends PostProcessingMiddlewareTuple
+>(
+	kint: Kint<Context, Config, HandlerInput, PostProcessors>,
+	userConfig: Config,
+	handler: (
+		handlerInput: HandlerInput,
+		context: Context,
+		userConfig: Config
+	) => PostProcessorCatchTypes<PostProcessors>
+) {
+	return (rawKintRequest: RawKintRequest, context: Context) => {
+		const config = mergeConfigs(kint.defaultConfig, userConfig);
+		const handlerInput = kint.preProcessor.preProcess(rawKintRequest, config);
+
+		try {
+			throw handler(handlerInput, context, config);
+		} catch (thrown) {
+			return processOutput(kint.postProcessors, rawKintRequest, config, thrown);
+		}
 	};
 }
