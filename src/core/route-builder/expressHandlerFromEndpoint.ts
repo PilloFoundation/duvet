@@ -4,8 +4,6 @@ import { PreprocessingMiddlewareTuple } from "../models/middleware/Preprocessing
 import { PostProcessingMiddlewareTuple } from "../models/middleware/PostProcessingMiddlewareTuple";
 import { KintResponse } from "../models/KintResponse";
 import { KintRequest } from "../models/KintRequest";
-import { TupleToIntersection } from "../../utils/types/TupleToIntersection";
-import { ExtensionTypes } from "../models/middleware/utils/ExtensionTypes";
 import { PreProcessorsExtensionType } from "../models/middleware/utils/PreProcessorMutationType";
 
 export function expressHandlerFromEndpointDefinition<

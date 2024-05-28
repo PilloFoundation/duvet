@@ -70,6 +70,8 @@ export function zodPreprocessor<
         throw new Error("Bad request: " + parsedUrlParams.error.message);
       }
       parsed.urlParams = parsedUrlParams.data;
+
+      return parsed as Parsed<Body, UrlParams, QueryParams>;
     },
   };
 }
