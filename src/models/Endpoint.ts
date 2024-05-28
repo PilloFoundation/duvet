@@ -1,6 +1,8 @@
 import { Kint } from './Kint';
 import { PostProcessingMiddlewareTuple } from '../middleware/models/PostProcessingMiddlewareTuple';
 import { PostProcessorCatchTypes } from '../middleware/utils/PostProcessorCatchTypes';
+import { RawKintRequest } from './RawKintRequest';
+import { MaybePromise } from '../utils/types/MaybePromise';
 
 export type Endpoint<
 	Context,
@@ -12,8 +14,7 @@ export type Endpoint<
 	config: Config;
 	handler: (
 		request: HandlerInput,
-		context: Context
-	) =>
-		| Promise<PostProcessorCatchTypes<PostProcessors>>
-		| PostProcessorCatchTypes<PostProcessors>;
+		context: Context,
+		config: Config
+	) => MaybePromise<PostProcessorCatchTypes<PostProcessors>>;
 };

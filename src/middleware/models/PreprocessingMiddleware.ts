@@ -6,4 +6,5 @@ export type PreprocessingMiddleware<
 	InputRequest = RawKintRequest
 > = {
 	preProcess: (request: InputRequest, config: Config) => OutputRequest;
+	defaultConfig: Config;
 };

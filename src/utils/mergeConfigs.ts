@@ -1,7 +1,10 @@
-export function mergeConfigs<Config>(
-	defaultConfig: Config,
-	userConfig: Partial<Config>
-): Config {
-	// TODO: MERGE CONFIGS
-	return defaultConfig;
+export function mergeConfigs<LeftConfig, RightConfig>(
+	leftConfig: LeftConfig,
+	rightConfig: RightConfig
+): LeftConfig & RightConfig {
+	// TODO: Deep merge
+	return {
+		...leftConfig,
+		...rightConfig,
+	};
 }

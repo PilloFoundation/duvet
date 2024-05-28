@@ -7,7 +7,10 @@ export type Kint<
 	HandlerInput,
 	PostProcessors extends PostProcessingMiddlewareTuple
 > = {
-	defaultConfig: Config;
-	preProcessor: PreprocessingMiddleware<Config, HandlerInput>;
+	userConfig: Config;
+	preProcessor: Pick<
+		PreprocessingMiddleware<Config, HandlerInput>,
+		'preProcess'
+	>;
 	postProcessors: PostProcessors;
 };

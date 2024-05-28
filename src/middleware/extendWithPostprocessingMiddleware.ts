@@ -1,7 +1,8 @@
-import { AppendTuple } from '../utils/AppendTuple';
+import { AppendTuple } from '../utils/types/AppendTuple';
 import { Kint } from '../models/Kint';
 import { PostProcessingMiddlewareTuple } from './models/PostProcessingMiddlewareTuple';
 import { PostProcessingMiddleware } from './models/PostProcessingMiddleware';
+import { mergeConfigs } from '../utils/mergeConfigs';
 
 function extendWithPostprocessingMiddleware<
 	Context,
@@ -11,7 +12,7 @@ function extendWithPostprocessingMiddleware<
 	PostProcessors extends PostProcessingMiddlewareTuple,
 	NewCatch
 >(
-	kint: Kint<Context, ExistingConfig & MWConfig, InputType, PostProcessors>,
+	kint: Kint<Context, ExistingConfig, InputType, PostProcessors>,
 	middleware: PostProcessingMiddleware<MWConfig, NewCatch>
 ): Kint<
 	Context,
@@ -19,16 +20,9 @@ function extendWithPostprocessingMiddleware<
 	InputType,
 	AppendTuple<PostProcessors, PostProcessingMiddleware<MWConfig, NewCatch>>
 > {
-	const newKint: Kint<
-		Context,
-		ExistingConfig & MWConfig,
-		InputType,
-		AppendTuple<PostProcessors, PostProcessingMiddleware<MWConfig, NewCatch>>
-	> = {
-		defaultConfig: kint.defaultConfig,
+	return {
+		userConfig: mergeConfigs(kint.userConfig, middleware.defaultConfig),
 		preProcessor: kint.preProcessor,
 		postProcessors: [...kint.postProcessors, middleware],
 	};
-
-	return newKint;
 }
