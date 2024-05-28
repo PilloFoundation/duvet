@@ -1,32 +1,19 @@
-import { EndpointSchema } from './EndpointSchema';
-import { ZSD } from './ZodSchemaDefinition';
-import { IZSDI, IZSDO } from './InferSchemaDefinition';
-import { NextFunction, Request, Response } from 'express';
-import { ZRSP } from './ZodRawShapePrimitives';
+import { Kint } from './Kint';
+import { PostProcessingMiddlewareTuple } from '../middleware/models/PostProcessingMiddlewareTuple';
+import { PostProcessorCatchTypes } from '../middleware/utils/PostProcessorCatchTypes';
 
 export type Endpoint<
 	Context,
-	RequestBody extends ZSD = ZSD,
-	ResponseBody extends ZSD = ZSD,
-	QueryParams extends ZRSP = ZRSP,
-	UrlParams extends ZRSP = ZRSP,
+	Config,
+	HandlerInput,
+	PostProcessors extends PostProcessingMiddlewareTuple
 > = {
-	information: EndpointInformation;
-	schema: EndpointSchema<RequestBody, ResponseBody, QueryParams, UrlParams>;
+	kint: Kint<Context, Config, HandlerInput, PostProcessors>;
+	config: Config;
 	handler: (
-		request: Request<
-			IZSDO<UrlParams>,
-			IZSDI<ResponseBody>,
-			IZSDO<RequestBody>,
-			IZSDO<QueryParams>
-		>,
-		response: Response<IZSDI<ResponseBody>>,
-		context: Context,
-		next: NextFunction
-	) => Promise<void> | void;
-};
-
-export type EndpointInformation = {
-	description?: string;
-	summary?: string;
+		request: HandlerInput,
+		context: Context
+	) =>
+		| Promise<PostProcessorCatchTypes<PostProcessors>>
+		| PostProcessorCatchTypes<PostProcessors>;
 };

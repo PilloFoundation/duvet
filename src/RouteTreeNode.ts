@@ -3,8 +3,8 @@ import path from 'path';
 import { Method, Resource } from './models/Resource';
 import { Endpoint } from './models/Endpoint';
 import { Router } from 'express';
-import { toZodObject } from './utils/toZodObject';
-import { zodKeys } from './utils/zodKeys';
+import { toZodObject } from './zod-ext/utils/toZodObject';
+import { zodKeys } from './zod-ext/utils/zodKeys';
 import { createHandlerFromEndpoint } from './createHandlerFromEndpoint';
 
 export class RouteTreeNode<Context> {
