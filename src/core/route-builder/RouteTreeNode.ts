@@ -1,11 +1,11 @@
 import fs from 'fs';
 import path from 'path';
-import { Method, Resource } from './core/models/Resource';
-import { Endpoint } from './core/models/Endpoint';
+import { Endpoint } from '../models/Endpoint';
 import { Router } from 'express';
-import { toZodObject } from './zod-ext/utils/toZodObject';
-import { zodKeys } from './zod-ext/utils/zodKeys';
-import { createHandlerFromEndpoint } from './createHandlerFromEndpoint';
+import { toZodObject } from '../../zod-ext/utils/toZodObject';
+import { zodKeys } from '../../zod-ext/utils/zodKeys';
+import { Method, Resource } from '../models/Resource';
+import { expressHandlerFromEndpointDefinition } from './expressHandlerFromEndpoint';
 
 export class RouteTreeNode<Context> {
 	public subRoutes: RouteTreeNode<Context>[] = [];
@@ -86,7 +86,7 @@ export class RouteTreeNode<Context> {
 						);
 					}
 
-					const endpointDefinedUrlParamsSchemaDef = endpoint.schema.urlParams;
+					const endpointDefinedUrlParamsSchemaDef = endpoint.config.urlParams;
 
 					if (endpointDefinedUrlParamsSchemaDef != null) {
 						const endpointDefinedUrlsParams = zodKeys(
@@ -160,11 +160,22 @@ export class RouteTreeNode<Context> {
 	) {
 		const { GET, POST, PATCH, DELETE, PUT } = resource;
 
-		GET && router.get('/', createHandlerFromEndpoint(GET, getContext));
-		PUT && router.put('/', createHandlerFromEndpoint(PUT, getContext));
-		POST && router.post('/', createHandlerFromEndpoint(POST, getContext));
-		PATCH && router.patch('/', createHandlerFromEndpoint(PATCH, getContext));
-		DELETE && router.delete('/', createHandlerFromEndpoint(DELETE, getContext));
+		GET &&
+			router.get('/', expressHandlerFromEndpointDefinition(GET, getContext));
+		PUT &&
+			router.put('/', expressHandlerFromEndpointDefinition(PUT, getContext));
+		POST &&
+			router.post('/', expressHandlerFromEndpointDefinition(POST, getContext));
+		PATCH &&
+			router.patch(
+				'/',
+				expressHandlerFromEndpointDefinition(PATCH, getContext)
+			);
+		DELETE &&
+			router.delete(
+				'/',
+				expressHandlerFromEndpointDefinition(DELETE, getContext)
+			);
 	}
 
 	private getAllUrlParams() {
@@ -184,7 +195,7 @@ export class RouteTreeNode<Context> {
 	}
 }
 
-function isKintEndpoint(test: any): test is Endpoint<any> {
+function isKintEndpoint(test: any): test is Endpoint<any, any, any, any> {
 	return test?.builtByKint === true;
 }
 

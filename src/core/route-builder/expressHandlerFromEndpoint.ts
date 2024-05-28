@@ -1,23 +1,22 @@
 import { Request, Response } from 'express';
-import { Endpoint } from './models/Endpoint';
-import { PreprocessingMiddlewareTuple } from './models/middleware/PreprocessingMiddlewareTuple';
-import { PostProcessingMiddlewareTuple } from './models/middleware/PostProcessingMiddlewareTuple';
-import { KintResponse } from './models/KintResponse';
-import { KintRequest } from './models/KintRequest';
-import { TupleToIntersection } from '../utils/types/TupleToIntersection';
-import { ExtensionTypes } from './models/middleware/utils/ExtensionTypes';
+import { Endpoint } from '../models/Endpoint';
+import { PreprocessingMiddlewareTuple } from '../models/middleware/PreprocessingMiddlewareTuple';
+import { PostProcessingMiddlewareTuple } from '../models/middleware/PostProcessingMiddlewareTuple';
+import { KintResponse } from '../models/KintResponse';
+import { KintRequest } from '../models/KintRequest';
+import { TupleToIntersection } from '../../utils/types/TupleToIntersection';
+import { ExtensionTypes } from '../models/middleware/utils/ExtensionTypes';
 
 export function expressHandlerFromEndpointDefinition<
 	Context,
 	Config,
 	PreProcessors extends PreprocessingMiddlewareTuple,
 	PostProcessors extends PostProcessingMiddlewareTuple
->(endpoint: Endpoint<Context, Config, PreProcessors, PostProcessors>) {
-	return async function handler(
-		request: Request,
-		response: Response,
-		context: Context
-	) {
+>(
+	endpoint: Endpoint<Context, Config, PreProcessors, PostProcessors>,
+	context: () => Context
+) {
+	return async function handler(request: Request, response: Response) {
 		try {
 			// Catches any errors thrown by the pre processors, endpoint handler or post processors
 
@@ -45,7 +44,7 @@ export function expressHandlerFromEndpointDefinition<
 				const result = await endpoint.handler(
 					inputObject as KintRequest &
 						TupleToIntersection<ExtensionTypes<PreProcessors>>,
-					context,
+					context(),
 					endpoint.config
 				);
 

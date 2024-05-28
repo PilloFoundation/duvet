@@ -1,3 +1,11 @@
+/**
+ * Credit to https://github.com/navtoj
+ *
+ * This code was written by Navtoj Chahal as a response to a zod issue. The original code can be found here:
+ *
+ * https://github.com/colinhacks/zod/discussions/2134#discussioncomment-5194111
+ */
+
 import { z } from 'zod';
 
 // get zod object keys recursively
