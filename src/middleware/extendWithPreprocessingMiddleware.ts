@@ -4,10 +4,10 @@ import { RawKintRequest } from '../models/RawKintRequest';
 import { PreprocessingMiddleware } from './models/PreprocessingMiddleware';
 import { mergeConfigs } from '../utils/mergeConfigs';
 
-function extendWithPreprocessingMiddleware<
+export function extendWithPreprocessingMiddleware<
+	MWConfig,
 	Context,
 	ExistingConfig,
-	MWConfig,
 	OldInput,
 	NewInput,
 	PostProcessors extends PostProcessingMiddlewareTuple

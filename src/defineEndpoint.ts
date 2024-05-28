@@ -4,7 +4,7 @@ import { PostProcessorCatchTypes } from './middleware/utils/PostProcessorCatchTy
 import { Endpoint } from './models/Endpoint';
 import { MaybePromise } from './utils/types/MaybePromise';
 
-function defineEndpoint<
+export function defineEndpoint<
 	Context,
 	Config,
 	HandlerInput,

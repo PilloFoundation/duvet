@@ -1,3 +1,4 @@
+import { extendWithPreprocessingMiddleware } from '../middleware/extendWithPreprocessingMiddleware';
 import { PostProcessingMiddlewareTuple } from '../middleware/models/PostProcessingMiddlewareTuple';
 import { PreprocessingMiddleware } from '../middleware/models/PreprocessingMiddleware';
 

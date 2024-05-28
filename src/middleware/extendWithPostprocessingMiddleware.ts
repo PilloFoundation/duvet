@@ -4,7 +4,7 @@ import { PostProcessingMiddlewareTuple } from './models/PostProcessingMiddleware
 import { PostProcessingMiddleware } from './models/PostProcessingMiddleware';
 import { mergeConfigs } from '../utils/mergeConfigs';
 
-function extendWithPostprocessingMiddleware<
+export function extendWithPostprocessingMiddleware<
 	Context,
 	ExistingConfig,
 	MWConfig,

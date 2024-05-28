@@ -1,6 +1,6 @@
-import { PostProcessingMiddlewareTuple } from './middleware/models/PostProcessingMiddlewareTuple';
-import { RawKintRequest } from './models/RawKintRequest';
-import { RawKintResponse } from './models/RawKintResponse';
+import { PostProcessingMiddlewareTuple } from '../middleware/models/PostProcessingMiddlewareTuple';
+import { RawKintRequest } from '../models/RawKintRequest';
+import { RawKintResponse } from '../models/RawKintResponse';
 
 export function processOutput<
 	PostProcessors extends PostProcessingMiddlewareTuple,
