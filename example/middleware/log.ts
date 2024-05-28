@@ -1,3 +1,4 @@
+import { json } from "stream/consumers";
 import { PreprocessingMiddleware } from "../../src/core/models/middleware/PreprocessingMiddleware";
 
 export function log(): PreprocessingMiddleware<{ moduleName?: string }> {
@@ -6,7 +7,11 @@ export function log(): PreprocessingMiddleware<{ moduleName?: string }> {
       moduleName: "Unknown Module",
     },
     preProcess: (request, config) => {
-      console.log(config.moduleName);
+      console.log(
+        `${request.underlyingExpressRequest.method} request from ${
+          config.moduleName
+        }. Body: ${JSON.stringify(request)}`
+      );
     },
   };
 }
