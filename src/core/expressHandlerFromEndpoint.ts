@@ -6,7 +6,6 @@ import { KintResponse } from '../models/KintResponse';
 import { KintRequest } from '../models/KintRequest';
 import { TupleToIntersection } from '../utils/types/TupleToIntersection';
 import { ExtensionTypes } from '../middleware/utils/ExtensionTypes';
-import { mergeConfigs } from '../utils/mergeConfigs';
 
 export function expressHandlerFromEndpointDefinition<
 	Context,

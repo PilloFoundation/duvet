@@ -12,6 +12,13 @@ import { Endpoint } from './Endpoint';
 import { KintRequest } from './KintRequest';
 import { KintResponse } from './KintResponse';
 
+export type HandlerInput<PreProcessors extends PreprocessingMiddlewareTuple> =
+	PreProcessorsMutationType<PreProcessors> & KintRequest;
+
+export type HandlerOutput<
+	PostProcessors extends PostProcessingMiddlewareTuple
+> = MaybePromise<PostProcessorCatchTypes<PostProcessors> | KintResponse>;
+
 export class Kint<
 	Context,
 	Config,
@@ -125,10 +132,10 @@ export class Kint<
 	defineEndpoint(
 		config: Partial<Config>,
 		handler: (
-			request: PreProcessorsMutationType<PreProcessors> & KintRequest,
+			handlerInput: HandlerInput<PreProcessors>,
 			context: Context,
 			config: Config
-		) => MaybePromise<PostProcessorCatchTypes<PostProcessors> | KintResponse>
+		) => HandlerOutput<PostProcessors>
 	): Endpoint<Context, Config, PreProcessors, PostProcessors> {
 		return {
 			preProcessors: this.preProcessors,
@@ -137,4 +144,15 @@ export class Kint<
 			handler,
 		};
 	}
+
+	// ============================= ZOD EXTENSION =============================
+
+	defineZodEndpoint(
+		config: Partial<Config>,
+		handler: (
+			request: HandlerInput<PreProcessors>,
+			context: Context,
+			config: Config
+		) => HandlerOutput<PostProcessors>
+	) {}
 }
