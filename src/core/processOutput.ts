@@ -13,7 +13,7 @@ export function processOutput<
 ): RawKintResponse {
 	for (const postProcessor of postProcessors) {
 		if (postProcessor.matcher(response)) {
-			return postProcessor.catcher(response, rawKintRequest, config);
+			return postProcessor.handler(response, rawKintRequest, config);
 		}
 	}
 	return {};
