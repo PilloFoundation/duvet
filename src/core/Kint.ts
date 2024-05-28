@@ -6,7 +6,7 @@ import { PostProcessingMiddlewareTuple } from "./models/middleware/PostProcessin
 import { PreprocessingMiddleware } from "./models/middleware/PreprocessingMiddleware";
 import { PreprocessingMiddlewareTuple } from "./models/middleware/PreprocessingMiddlewareTuple";
 import { PostProcessorCatchTypes } from "./models/middleware/utils/PostProcessorCatchTypes";
-import { PreProcessorsMutationType } from "./models/middleware/utils/PreProcessorMutationType";
+import { PreProcessorsExtensionType } from "./models/middleware/utils/PreProcessorMutationType";
 import { mergeConfigs } from "../utils/mergeConfigs";
 import { AppendTuple } from "../utils/types/AppendTuple";
 import { MaybePromise } from "../utils/types/MaybePromise";
@@ -15,9 +15,11 @@ import { ZodRawShapePrimitives } from "../zod-ext/models/ZodRawShapePrimitives";
 import { ZodSchemaDefinition } from "../zod-ext/models/ZodSchemaDefinition";
 import { zodPreprocessor } from "../zod-ext/zodPreprocessor";
 import { Endpoint } from "./models/Endpoint";
+import { Router } from "express";
+import { RouteTreeNode } from "./route-builder/RouteTreeNode";
 
 export type HandlerInput<PreProcessors extends PreprocessingMiddlewareTuple> =
-  PreProcessorsMutationType<PreProcessors> & KintRequest;
+  PreProcessorsExtensionType<PreProcessors> & KintRequest;
 
 export type HandlerOutput<
   PostProcessors extends PostProcessingMiddlewareTuple
@@ -41,6 +43,12 @@ export class Kint<
     this.defaultConfig = userConfig;
     this.preProcessors = preProcessors;
     this.postProcessors = postProcessors;
+  }
+
+  buildExpressRouter(directory: string, context: Context): Router {
+    const routeTree = RouteTreeNode.fromDirectory(directory);
+
+    return routeTree.toExpressRouter(() => context);
   }
 
   middleware<
@@ -158,6 +166,7 @@ export class Kint<
     ) => HandlerOutput<PostProcessors>
   ): Endpoint<Context, Config, PreProcessors, PostProcessors> {
     return {
+      builtByKint: true,
       preProcessors: this.preProcessors,
       postProcessors: this.postProcessors,
       config: mergeConfigs(this.defaultConfig, config),

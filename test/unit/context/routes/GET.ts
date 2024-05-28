@@ -1,12 +1,13 @@
 import { assert } from "console";
-import { defineExpressEndpoint } from "../kint";
+import { kint } from "../kint";
+import { KintResponse } from "../../../../src/core/models/KintResponse";
 
-export default defineExpressEndpoint({}, (req, res, ctx) => {
+export default kint.defineZodEndpoint({}, (req, ctx, cnf) => {
   assert(ctx.a === "initialA", "ctx.a should be 'initialA'");
   assert(ctx.b === 0, "ctx.b should be 0");
 
   ctx.a = "setA";
   ctx.b = 25;
 
-  res.status(200).send("Success");
+  return new KintResponse("Does nothing", 200);
 });

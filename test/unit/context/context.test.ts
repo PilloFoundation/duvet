@@ -1,7 +1,7 @@
 import path from "path";
 import request from "supertest";
 import express from "express";
-import { buildExpressRouter } from "./kint";
+import { kint } from "./kint";
 
 describe("Kint user flow", () => {
   test("Builder works correctly", async () => {
@@ -9,7 +9,7 @@ describe("Kint user flow", () => {
 
     const context = { a: "initialA", b: 0 };
 
-    const router = buildExpressRouter(routes, context);
+    const router = kint.buildExpressRouter(routes, context);
 
     const app = express();
 

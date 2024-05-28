@@ -6,6 +6,7 @@ import { KintResponse } from "../models/KintResponse";
 import { KintRequest } from "../models/KintRequest";
 import { TupleToIntersection } from "../../utils/types/TupleToIntersection";
 import { ExtensionTypes } from "../models/middleware/utils/ExtensionTypes";
+import { PreProcessorsExtensionType } from "../models/middleware/utils/PreProcessorMutationType";
 
 export function expressHandlerFromEndpointDefinition<
   Context,
@@ -14,15 +15,17 @@ export function expressHandlerFromEndpointDefinition<
   PostProcessors extends PostProcessingMiddlewareTuple
 >(
   endpoint: Endpoint<Context, Config, PreProcessors, PostProcessors>,
-  context: () => Context
+  getContext: () => Context
 ) {
   return async function handler(request: Request, response: Response) {
+    const kintRequest: KintRequest = { underlyingExpressRequest: request };
+
     try {
       // Catches any errors thrown by the pre processors, endpoint handler or post processors
 
       try {
         // Catches errors solely from pre processors or endpoint handler
-        let inputObject = { underlyingExpressRequest: request };
+        let inputObject = kintRequest;
 
         // Iterate through pre processors and apply them to the input object
         for (const preProcessor of endpoint.preProcessors) {
@@ -43,26 +46,30 @@ export function expressHandlerFromEndpointDefinition<
         // Run the endpoint handler
         const result = await endpoint.handler(
           inputObject as KintRequest &
-            TupleToIntersection<ExtensionTypes<PreProcessors>>,
-          context(),
+            PreProcessorsExtensionType<PreProcessors>,
+          getContext(),
           endpoint.config
         );
 
-        // Throws the result to be caught by some handler. returns and throws are indistinguishable in kint.
+        // Throws the result to be caught by some handler returns and throws are indistinguishable in kint.
+        // TODO: If the result is a KintResponse just handle it and return
         throw result;
       } catch (obj) {
         // Iterate through post processors
         for (const postProcessor of endpoint.postProcessors) {
-          // Test if the thrown object should be caught by the post processor
+          // Test if the thrown object should be handled by the post processor
           if (postProcessor.matcher(obj)) {
             // Rethrow the result of the post processor to be caught by kint.
             throw await postProcessor.handler(
               obj,
-              { underlyingExpressRequest: request },
+              kintRequest,
               endpoint.config
             );
           }
         }
+
+        // Not handled by any post processors, rethrow
+        throw obj;
       }
     } catch (obj) {
       if (obj instanceof KintResponse) {

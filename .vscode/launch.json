@@ -7,7 +7,7 @@
       "request": "launch",
       "runtimeArgs": [
         "--inspect-brk",
-        "${worksalceRoot}/node_modules/.bin/jest",
+        "${workspaceRoot}/node_modules/.bin/jest",
         "--runInBand"
       ],
       "console": "integratedTerminal",

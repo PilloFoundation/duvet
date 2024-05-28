@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { defineExpressEndpoint } from "../kint";
+import { kint } from "../kint";
 
-export default defineExpressEndpoint(
+export default kint.defineZodEndpoint(
   {
     urlParams: {
       doesNotExist: z.string(),

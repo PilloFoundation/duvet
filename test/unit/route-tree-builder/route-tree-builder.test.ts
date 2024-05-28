@@ -1,5 +1,5 @@
-import { RouteTreeNode } from "../../../src/RouteTreeNode";
 import path from "path";
+import { RouteTreeNode } from "../../../src/core/route-builder/RouteTreeNode";
 
 describe("Route Tree Builder", () => {
   test("Builds a route tree correctly from a correctly defined directory", async () => {
