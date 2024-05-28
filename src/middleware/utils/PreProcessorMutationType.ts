@@ -2,6 +2,6 @@ import { PreprocessingMiddlewareTuple } from '../models/PreprocessingMiddlewareT
 import { TupleToIntersection } from '../../utils/types/TupleToIntersection';
 import { ExtensionTypes } from './ExtensionTypes';
 
-export type PreProcessorMutationType<
+export type PreProcessorsMutationType<
 	ConcretePreProcessingMiddlewareTuple extends PreprocessingMiddlewareTuple
 > = TupleToIntersection<ExtensionTypes<ConcretePreProcessingMiddlewareTuple>>;

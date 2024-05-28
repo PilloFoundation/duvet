@@ -2,7 +2,7 @@ import { KintRequest } from '../../models/KintRequest';
 import { KintResponse } from '../../models/KintResponse';
 import { MaybePromise } from '../../utils/types/MaybePromise';
 
-export type PostProcessingMiddleware<Config, CatchType> = {
+export type PostProcessingMiddleware<Config, CatchType extends object> = {
 	/**
 	 * Default configuration for this middleware.
 	 */

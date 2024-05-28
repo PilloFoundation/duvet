@@ -1,7 +1,10 @@
 import { KintRequest } from '../../models/KintRequest';
 import { KintResponse } from '../../models/KintResponse';
 
-export type PreprocessingMiddleware<Config, RequestExtension = void> = {
+export type PreprocessingMiddleware<
+	Config,
+	RequestExtension extends object = {}
+> = {
 	/**
 	 *
 	 * This function is called before the request is processed by the core Kint logic. It can be used to modify the request object
@@ -19,6 +22,6 @@ export type PreprocessingMiddleware<Config, RequestExtension = void> = {
 	preProcess: (
 		request: KintRequest,
 		config: Config
-	) => RequestExtension | KintResponse;
+	) => RequestExtension | KintResponse | void;
 	defaultConfig: Config;
 };

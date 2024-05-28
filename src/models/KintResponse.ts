@@ -1,3 +1,9 @@
 export class KintResponse {
-	doStuff?: string;
+	body: any;
+	status: number;
+
+	constructor(responseBody: any, status: number) {
+		this.body = responseBody;
+		this.status = status;
+	}
 }

@@ -1,10 +1,11 @@
-import { Kint } from './Kint/Kint';
+import { Kint } from './Kint';
 import { PostProcessingMiddlewareTuple } from '../middleware/models/PostProcessingMiddlewareTuple';
 import { PostProcessorCatchTypes } from '../middleware/utils/PostProcessorCatchTypes';
-import { PreProcessorMutationType } from '../middleware/utils/PreProcessorMutationType';
+import { PreProcessorsMutationType } from '../middleware/utils/PreProcessorMutationType';
 import { KintRequest } from './KintRequest';
 import { MaybePromise } from '../utils/types/MaybePromise';
 import { PreprocessingMiddlewareTuple } from '../middleware/models/PreprocessingMiddlewareTuple';
+import { KintResponse } from './KintResponse';
 
 export type Endpoint<
 	Context,
@@ -12,11 +13,12 @@ export type Endpoint<
 	PreProcessors extends PreprocessingMiddlewareTuple,
 	PostProcessors extends PostProcessingMiddlewareTuple
 > = {
-	kint: Kint<Context, Config, PreProcessors, PostProcessors>;
+	preProcessors: PreProcessors;
+	postProcessors: PostProcessors;
 	config: Config;
 	handler: (
-		request: PreProcessorMutationType<PreProcessors> & KintRequest,
+		request: PreProcessorsMutationType<PreProcessors> & KintRequest,
 		context: Context,
 		config: Config
-	) => MaybePromise<PostProcessorCatchTypes<PostProcessors>>;
+	) => MaybePromise<PostProcessorCatchTypes<PostProcessors> | KintResponse>;
 };
