@@ -1,13 +1,10 @@
-import { RawKintRequest } from '../../models/RawKintRequest';
+import { KintRequest } from '../../models/KintRequest';
+import { KintResponse } from '../../models/KintResponse';
 
-export type PreprocessingMiddleware<
-	Config,
-	RequestExtension = {},
-	PreviousHandlerInput extends RawKintRequest = any
-> = {
+export type PreprocessingMiddleware<Config, RequestExtension = {}> = {
 	preProcess: (
-		request: PreviousHandlerInput,
+		request: KintRequest,
 		config: Config
-	) => PreviousHandlerInput & RequestExtension;
+	) => RequestExtension | KintResponse;
 	defaultConfig: Config;
 };

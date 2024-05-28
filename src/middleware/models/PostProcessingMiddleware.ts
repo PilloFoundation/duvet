@@ -1,4 +1,4 @@
-import { RawKintRequest } from '../../models/RawKintRequest';
+import { KintRequest } from '../../models/KintRequest';
 import { RawKintResponse } from '../../models/RawKintResponse';
 
 export type PostProcessingMiddleware<Config, CatchType> = {
@@ -6,7 +6,7 @@ export type PostProcessingMiddleware<Config, CatchType> = {
 	matcher: (thrown: any) => thrown is CatchType;
 	catcher: (
 		thrown: CatchType,
-		request: RawKintRequest,
+		request: KintRequest,
 		config: Config
 	) => RawKintResponse;
 };

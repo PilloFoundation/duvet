@@ -1,12 +1,6 @@
-import { RawKintRequest } from '../models/RawKintRequest';
+import { KintRequest } from '../models/KintRequest';
 import { Kint } from '../models/Kint/Kint';
 
-export function createKint<Context>(): Kint<Context, {}, RawKintRequest, []> {
-	return {
-		userConfig: {},
-		preProcessor: {
-			preProcess: (request, config) => request,
-		},
-		postProcessors: [],
-	};
+export function createKint<Context>(): Kint<Context, {}, [], []> {
+	return new Kint<Context, {}, [], []>({}, [], []);
 }

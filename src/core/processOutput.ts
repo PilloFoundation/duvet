@@ -1,5 +1,5 @@
 import { PostProcessingMiddlewareTuple } from '../middleware/models/PostProcessingMiddlewareTuple';
-import { RawKintRequest } from '../models/RawKintRequest';
+import { KintRequest } from '../models/KintRequest';
 import { RawKintResponse } from '../models/RawKintResponse';
 
 export function processOutput<
@@ -7,7 +7,7 @@ export function processOutput<
 	Config
 >(
 	postProcessors: PostProcessors,
-	rawKintRequest: RawKintRequest,
+	rawKintRequest: KintRequest,
 	config: Config,
 	response: any
 ): RawKintResponse {

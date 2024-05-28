@@ -1,36 +1,32 @@
 import { PostProcessingMiddleware } from '../../middleware/models/PostProcessingMiddleware';
 import { PostProcessingMiddlewareTuple } from '../../middleware/models/PostProcessingMiddlewareTuple';
 import { PreprocessingMiddleware } from '../../middleware/models/PreprocessingMiddleware';
+import { PreprocessingMiddlewareTuple } from '../../middleware/models/PreprocessingMiddlewareTuple';
 import { PostProcessorCatchTypes } from '../../middleware/utils/PostProcessorCatchTypes';
+import { PreProcessorMutationType } from '../../middleware/utils/PreProcessorMutationType';
 import { mergeConfigs } from '../../utils/mergeConfigs';
 import { AppendTuple } from '../../utils/types/AppendTuple';
 import { MaybePromise } from '../../utils/types/MaybePromise';
 import { Endpoint } from '../Endpoint';
-import { RawKintRequest } from '../RawKintRequest';
+import { KintRequest } from '../KintRequest';
 
 export class Kint<
 	Context,
 	Config,
-	HandlerInput extends RawKintRequest,
+	PreProcessors extends PreprocessingMiddlewareTuple,
 	PostProcessors extends PostProcessingMiddlewareTuple
 > {
 	userConfig: Config;
-	preProcessor: Pick<
-		PreprocessingMiddleware<Config, HandlerInput>,
-		'preProcess'
-	>;
+	preProcessors: PreProcessors;
 	postProcessors: PostProcessors;
 
 	constructor(
 		userConfig: Config,
-		preProcessor: Pick<
-			PreprocessingMiddleware<Config, HandlerInput>,
-			'preProcess'
-		>,
+		preProcessors: PreProcessors,
 		postProcessors: PostProcessors
 	) {
 		this.userConfig = userConfig;
-		this.preProcessor = preProcessor;
+		this.preProcessors = preProcessors;
 		this.postProcessors = postProcessors;
 	}
 
@@ -39,52 +35,43 @@ export class Kint<
 	): Kint<
 		Context,
 		Config & MWConfig,
-		HandlerInput,
+		PreProcessors,
 		AppendTuple<PostProcessors, PostProcessingMiddleware<MWConfig, NewCatch>>
 	> {
 		return new Kint<
 			Context,
 			Config & MWConfig,
-			HandlerInput,
+			PreProcessors,
 			AppendTuple<PostProcessors, PostProcessingMiddleware<MWConfig, NewCatch>>
 		>(
 			mergeConfigs(this.userConfig, middleware.defaultConfig),
-			this.preProcessor,
+			this.preProcessors,
 			[...this.postProcessors, middleware]
 		);
 	}
 
 	preprocessingMiddleware<MWConfig, HandlerInputExtension>(
-		middleware: PreprocessingMiddleware<
-			MWConfig,
-			HandlerInputExtension,
-			HandlerInput
-		>
+		middleware: PreprocessingMiddleware<MWConfig, HandlerInputExtension>
 	): Kint<
 		Context,
 		Config & MWConfig,
-		HandlerInputExtension & HandlerInput,
+		AppendTuple<
+			PreProcessors,
+			PreprocessingMiddleware<MWConfig, HandlerInputExtension>
+		>,
 		PostProcessors
 	> {
 		return new Kint<
 			Context,
 			Config & MWConfig,
-			HandlerInputExtension & HandlerInput,
+			AppendTuple<
+				PreProcessors,
+				PreprocessingMiddleware<MWConfig, HandlerInputExtension>
+			>,
 			PostProcessors
 		>(
 			mergeConfigs(this.userConfig, middleware.defaultConfig),
-			{
-				preProcess: (
-					request: HandlerInput,
-					config: MWConfig & Config
-				): HandlerInputExtension & HandlerInput => {
-					const processedRequest = this.preProcessor.preProcess(
-						request,
-						config
-					);
-					return middleware.preProcess(processedRequest, config);
-				},
-			},
+			[...this.preProcessors, middleware],
 			this.postProcessors
 		);
 	}
@@ -92,11 +79,11 @@ export class Kint<
 	defineEndpoint(
 		config: Config,
 		handler: (
-			request: HandlerInput,
+			request: PreProcessorMutationType<PreProcessors> & KintRequest,
 			context: Context,
 			config: Config
 		) => MaybePromise<PostProcessorCatchTypes<PostProcessors>>
-	): Endpoint<Context, Config, HandlerInput, PostProcessors> {
+	): Endpoint<Context, Config, PreProcessors, PostProcessors> {
 		return {
 			kint: this,
 			config,
