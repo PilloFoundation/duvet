@@ -1,3 +1,3 @@
-import { ZodRawShape, ZodTypeAny } from 'zod';
+import { ZodRawShape, ZodTypeAny } from "zod";
 
 export type ZodSchemaDefinition = ZodRawShape | ZodTypeAny;

@@ -1,5 +1,5 @@
-import { ZodTypeAny } from 'zod';
+import { ZodTypeAny } from "zod";
 
 export interface ZodRawShapePrimitives {
-	[k: string]: ZodTypeAny;
+  [k: string]: ZodTypeAny;
 }

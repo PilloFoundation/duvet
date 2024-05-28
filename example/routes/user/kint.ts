@@ -1,3 +1,3 @@
-import { kintRoot } from '../../kint';
+import { kintRoot } from "../../kint";
 
-export const kintUser = kintRoot.extendConfig({ auth: { allowRoles: '*' } });
+export const kintUser = kintRoot.extendConfig({ auth: { allowRoles: "*" } });

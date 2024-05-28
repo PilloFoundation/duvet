@@ -1,6 +1,6 @@
-import { PostProcessingMiddleware } from './PostProcessingMiddleware';
+import { PostProcessingMiddleware } from "./PostProcessingMiddleware";
 
 export type PostProcessingMiddlewareTuple = PostProcessingMiddleware<
-	any,
-	any
+  any,
+  any
 >[];

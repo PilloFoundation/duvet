@@ -1,8 +1,8 @@
-import { PreprocessingMiddleware } from '../PreprocessingMiddleware';
+import { PreprocessingMiddleware } from "../PreprocessingMiddleware";
 
 export type ExtractRequestExtension<T> = T extends PreprocessingMiddleware<
-	any,
-	infer RequestExtension
+  any,
+  infer RequestExtension
 >
-	? RequestExtension
-	: never;
+  ? RequestExtension
+  : never;

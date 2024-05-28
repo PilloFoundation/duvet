@@ -1,3 +1,3 @@
-import { PreprocessingMiddleware } from './PreprocessingMiddleware';
+import { PreprocessingMiddleware } from "./PreprocessingMiddleware";
 
 export type PreprocessingMiddlewareTuple = PreprocessingMiddleware<any, any>[];
