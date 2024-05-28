@@ -1,3 +1,3 @@
 import { Request } from 'express';
 
-export type KintRequest = { request: Request };
+export type KintRequest = { underlyingExpressRequest: Request };

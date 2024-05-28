@@ -1,4 +1,4 @@
-import { ZodSchemaDefinition } from './ZodSchemaDefinition';
+import { ZodSchemaDefinition } from './models/ZodSchemaDefinition';
 import { toZodObject } from './utils/toZodObject';
 
 export function parseSchemaDefinition<T extends ZodSchemaDefinition, U>(

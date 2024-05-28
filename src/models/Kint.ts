@@ -8,6 +8,10 @@ import { PreProcessorsMutationType } from '../middleware/utils/PreProcessorMutat
 import { mergeConfigs } from '../utils/mergeConfigs';
 import { AppendTuple } from '../utils/types/AppendTuple';
 import { MaybePromise } from '../utils/types/MaybePromise';
+import { ZodEndpointConfig } from '../zod-ext/models/ZodEndpointConfig';
+import { ZodRawShapePrimitives } from '../zod-ext/models/ZodRawShapePrimitives';
+import { ZodSchemaDefinition } from '../zod-ext/models/ZodSchemaDefinition';
+import { zodPreprocessor } from '../zod-ext/zodPreprocessor';
 import { Endpoint } from './Endpoint';
 import { KintRequest } from './KintRequest';
 import { KintResponse } from './KintResponse';
@@ -147,12 +151,27 @@ export class Kint<
 
 	// ============================= ZOD EXTENSION =============================
 
-	defineZodEndpoint(
-		config: Partial<Config>,
+	defineZodEndpoint<
+		Body extends ZodSchemaDefinition,
+		UrlParams extends ZodRawShapePrimitives,
+		QueryParams extends ZodRawShapePrimitives
+	>(
+		config: Partial<Config & ZodEndpointConfig<Body, UrlParams, QueryParams>>,
 		handler: (
-			request: HandlerInput<PreProcessors>,
+			request: HandlerInput<
+				AppendTuple<
+					PreProcessors,
+					ReturnType<typeof zodPreprocessor<Body, UrlParams, QueryParams>>
+				>
+			>,
 			context: Context,
 			config: Config
 		) => HandlerOutput<PostProcessors>
-	) {}
+	) {
+		const newKint = this.preprocessingMiddleware(
+			zodPreprocessor<Body, UrlParams, QueryParams>()
+		);
+
+		return newKint.defineEndpoint(config, handler);
+	}
 }
