@@ -9,5 +9,6 @@
 		"allowSyntheticDefaultImports": true,
 		"declaration": true
 	},
-	"include": ["src"]
+	"include": ["src"],
+	"exclude": ["example/**"]
 }

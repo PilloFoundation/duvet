@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { Endpoint } from '../models/Endpoint';
-import { PreprocessingMiddlewareTuple } from '../middleware/models/PreprocessingMiddlewareTuple';
-import { PostProcessingMiddlewareTuple } from '../middleware/models/PostProcessingMiddlewareTuple';
-import { KintResponse } from '../models/KintResponse';
-import { KintRequest } from '../models/KintRequest';
+import { Endpoint } from './models/Endpoint';
+import { PreprocessingMiddlewareTuple } from './models/middleware/PreprocessingMiddlewareTuple';
+import { PostProcessingMiddlewareTuple } from './models/middleware/PostProcessingMiddlewareTuple';
+import { KintResponse } from './models/KintResponse';
+import { KintRequest } from './models/KintRequest';
 import { TupleToIntersection } from '../utils/types/TupleToIntersection';
-import { ExtensionTypes } from '../middleware/utils/ExtensionTypes';
+import { ExtensionTypes } from './models/middleware/utils/ExtensionTypes';
 
 export function expressHandlerFromEndpointDefinition<
 	Context,

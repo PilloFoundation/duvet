@@ -7,7 +7,7 @@ export type ZodEndpointConfig<
 	UrlParams extends ZodRawShapePrimitives,
 	QueryParams extends ZodRawShapePrimitives
 > = {
-	requestBody: Body;
-	urlParams: UrlParams;
-	queryParams: QueryParams;
+	requestBody?: Body;
+	urlParams?: UrlParams;
+	queryParams?: QueryParams;
 };

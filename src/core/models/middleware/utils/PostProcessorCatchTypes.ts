@@ -1,5 +1,5 @@
-import { PostProcessingMiddlewareTuple } from '../models/PostProcessingMiddlewareTuple';
-import { PostProcessingMiddleware } from '../models/PostProcessingMiddleware';
+import { PostProcessingMiddlewareTuple } from '../PostProcessingMiddlewareTuple';
+import { PostProcessingMiddleware } from '../PostProcessingMiddleware';
 
 export type PostProcessorCatchTypes<
 	ConcretePostProcessingMiddlewareTuple extends PostProcessingMiddlewareTuple

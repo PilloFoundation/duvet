@@ -1,11 +1,10 @@
-import { Kint } from './Kint';
-import { PostProcessingMiddlewareTuple } from '../middleware/models/PostProcessingMiddlewareTuple';
-import { PostProcessorCatchTypes } from '../middleware/utils/PostProcessorCatchTypes';
-import { PreProcessorsMutationType } from '../middleware/utils/PreProcessorMutationType';
 import { KintRequest } from './KintRequest';
-import { MaybePromise } from '../utils/types/MaybePromise';
-import { PreprocessingMiddlewareTuple } from '../middleware/models/PreprocessingMiddlewareTuple';
 import { KintResponse } from './KintResponse';
+import { PostProcessingMiddlewareTuple } from './middleware/PostProcessingMiddlewareTuple';
+import { PreprocessingMiddlewareTuple } from './middleware/PreprocessingMiddlewareTuple';
+import { PostProcessorCatchTypes } from './middleware/utils/PostProcessorCatchTypes';
+import { PreProcessorsMutationType } from './middleware/utils/PreProcessorMutationType';
+import { MaybePromise } from '../../utils/types/MaybePromise';
 
 export type Endpoint<
 	Context,

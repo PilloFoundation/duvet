@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { Method, Resource } from './models/Resource';
-import { Endpoint } from './models/Endpoint';
+import { Method, Resource } from './core/models/Resource';
+import { Endpoint } from './core/models/Endpoint';
 import { Router } from 'express';
 import { toZodObject } from './zod-ext/utils/toZodObject';
 import { zodKeys } from './zod-ext/utils/zodKeys';

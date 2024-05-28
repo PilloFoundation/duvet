@@ -1,37 +1,55 @@
+import { PreprocessingMiddleware } from '../src/core/models/middleware/PreprocessingMiddleware';
+import { KintResponse } from '../src/core/models/KintResponse';
+import { PostProcessingMiddleware } from '../src/core/models/middleware/PostProcessingMiddleware';
 import { createKint } from '../src/core/createKint';
-import { RawKintRequest } from '../src/models/RawKintRequest';
-import { PreprocessingMiddleware } from '../src/middleware/models/PreprocessingMiddleware';
+import { z } from 'zod';
+import { auth } from './middleware/auth';
+import { log } from './middleware/log';
 
 type Context = {
-	a: string;
-	b: number;
+	dbConnection: {
+		connect(): void;
+	};
 };
 
-const kint = createKint<Context>();
+const rootKint = createKint<Context>();
 
-type Role = 'admin' | 'user';
+class MySpecialError {
+	poop: string;
+}
 
-function auth(): PreprocessingMiddleware<
-	{ auth: Role[] },
-	RawKintRequest & { permissions: string[] }
+function HandleErrors(): PostProcessingMiddleware<
+	{ doStuff: boolean },
+	MySpecialError
 > {
 	return {
 		defaultConfig: {
-			auth: ['admin'],
+			doStuff: true,
 		},
-		preProcess: (request, config) => {
-			return { ...request, permissions: ['insert'] };
+		matcher: (thrown): thrown is MySpecialError =>
+			thrown instanceof MySpecialError,
+		handler: (thrown, request, config) => {
+			return new KintResponse('An error occurred', 202);
 		},
 	};
 }
 
-const newKint = kint.preprocessingMiddleware(auth());
+const kintWithMiddleware = rootKint
+	.preprocessingMiddleware(auth())
+	.preprocessingMiddleware(log());
 
-newKint.defineEndpoint(
+kintWithMiddleware.defineZodEndpoint(
 	{
-		auth: ['admin'],
+		moduleName: 'Test Module',
+		requestBody: z.string(),
+		urlParams: {
+			id: z.number(),
+		},
 	},
-	(request, context, config) => {
-		request.permissions;
+	(input, context, config) => {
+		input.underlyingExpressRequest;
+		input.urlParams.id;
+
+		return new KintResponse('Hello world!', 200);
 	}
 );

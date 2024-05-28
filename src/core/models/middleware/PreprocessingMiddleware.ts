@@ -1,5 +1,5 @@
-import { KintRequest } from '../../models/KintRequest';
-import { KintResponse } from '../../models/KintResponse';
+import { KintRequest } from '../KintRequest';
+import { KintResponse } from '../KintResponse';
 
 export type PreprocessingMiddleware<
 	Config,

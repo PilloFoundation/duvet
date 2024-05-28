@@ -1,10 +1,12 @@
-import { Middleware } from '../middleware/models/Middleware';
-import { PostProcessingMiddleware } from '../middleware/models/PostProcessingMiddleware';
-import { PostProcessingMiddlewareTuple } from '../middleware/models/PostProcessingMiddlewareTuple';
-import { PreprocessingMiddleware } from '../middleware/models/PreprocessingMiddleware';
-import { PreprocessingMiddlewareTuple } from '../middleware/models/PreprocessingMiddlewareTuple';
-import { PostProcessorCatchTypes } from '../middleware/utils/PostProcessorCatchTypes';
-import { PreProcessorsMutationType } from '../middleware/utils/PreProcessorMutationType';
+import { KintRequest } from './models/KintRequest';
+import { KintResponse } from './models/KintResponse';
+import { Middleware } from './models/middleware/Middleware';
+import { PostProcessingMiddleware } from './models/middleware/PostProcessingMiddleware';
+import { PostProcessingMiddlewareTuple } from './models/middleware/PostProcessingMiddlewareTuple';
+import { PreprocessingMiddleware } from './models/middleware/PreprocessingMiddleware';
+import { PreprocessingMiddlewareTuple } from './models/middleware/PreprocessingMiddlewareTuple';
+import { PostProcessorCatchTypes } from './models/middleware/utils/PostProcessorCatchTypes';
+import { PreProcessorsMutationType } from './models/middleware/utils/PreProcessorMutationType';
 import { mergeConfigs } from '../utils/mergeConfigs';
 import { AppendTuple } from '../utils/types/AppendTuple';
 import { MaybePromise } from '../utils/types/MaybePromise';
@@ -12,9 +14,7 @@ import { ZodEndpointConfig } from '../zod-ext/models/ZodEndpointConfig';
 import { ZodRawShapePrimitives } from '../zod-ext/models/ZodRawShapePrimitives';
 import { ZodSchemaDefinition } from '../zod-ext/models/ZodSchemaDefinition';
 import { zodPreprocessor } from '../zod-ext/zodPreprocessor';
-import { Endpoint } from './Endpoint';
-import { KintRequest } from './KintRequest';
-import { KintResponse } from './KintResponse';
+import { Endpoint } from './models/Endpoint';
 
 export type HandlerInput<PreProcessors extends PreprocessingMiddlewareTuple> =
 	PreProcessorsMutationType<PreProcessors> & KintRequest;
@@ -25,7 +25,7 @@ export type HandlerOutput<
 
 export class Kint<
 	Context,
-	Config,
+	Config extends object,
 	PreProcessors extends PreprocessingMiddlewareTuple,
 	PostProcessors extends PostProcessingMiddlewareTuple
 > {
@@ -127,6 +127,22 @@ export class Kint<
 		);
 	}
 
+	setConfig(newConfig: ((config: Config) => Config) | Config) {
+		if (typeof newConfig === 'function') {
+			return new Kint<Context, Config, PreProcessors, PostProcessors>(
+				newConfig(this.defaultConfig),
+				this.preProcessors,
+				this.postProcessors
+			);
+		} else {
+			return new Kint<Context, Config, PreProcessors, PostProcessors>(
+				newConfig,
+				this.preProcessors,
+				this.postProcessors
+			);
+		}
+	}
+
 	/**
 	 * This function is used to define a new endpoint in the Kint instance.
 	 * @param config
@@ -134,7 +150,7 @@ export class Kint<
 	 * @returns
 	 */
 	defineEndpoint(
-		config: Partial<Config>,
+		config: Config,
 		handler: (
 			handlerInput: HandlerInput<PreProcessors>,
 			context: Context,
@@ -156,7 +172,7 @@ export class Kint<
 		UrlParams extends ZodRawShapePrimitives,
 		QueryParams extends ZodRawShapePrimitives
 	>(
-		config: Partial<Config & ZodEndpointConfig<Body, UrlParams, QueryParams>>,
+		config: Config & ZodEndpointConfig<Body, UrlParams, QueryParams>,
 		handler: (
 			request: HandlerInput<
 				AppendTuple<

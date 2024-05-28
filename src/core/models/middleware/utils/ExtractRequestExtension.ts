@@ -1,5 +1,4 @@
-import { KintResponse } from '../../models/KintResponse';
-import { PreprocessingMiddleware } from '../models/PreprocessingMiddleware';
+import { PreprocessingMiddleware } from '../PreprocessingMiddleware';
 
 export type ExtractRequestExtension<T> = T extends PreprocessingMiddleware<
 	any,

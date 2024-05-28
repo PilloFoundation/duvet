@@ -1,6 +1,6 @@
-import { KintRequest } from '../../models/KintRequest';
-import { KintResponse } from '../../models/KintResponse';
-import { MaybePromise } from '../../utils/types/MaybePromise';
+import { KintRequest } from '../KintRequest';
+import { KintResponse } from '../KintResponse';
+import { MaybePromise } from '../../../utils/types/MaybePromise';
 
 export type PostProcessingMiddleware<Config, CatchType extends object> = {
 	/**

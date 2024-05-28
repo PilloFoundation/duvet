@@ -1,5 +1,5 @@
-import { PreprocessingMiddlewareTuple } from '../models/PreprocessingMiddlewareTuple';
-import { TupleToIntersection } from '../../utils/types/TupleToIntersection';
+import { PreprocessingMiddlewareTuple } from '../PreprocessingMiddlewareTuple';
+import { TupleToIntersection } from '../../../../utils/types/TupleToIntersection';
 import { ExtensionTypes } from './ExtensionTypes';
 
 export type PreProcessorsMutationType<
