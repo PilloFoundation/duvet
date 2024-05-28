@@ -2,9 +2,12 @@ import { RawKintRequest } from '../../models/RawKintRequest';
 
 export type PreprocessingMiddleware<
 	Config,
-	OutputRequest,
-	InputRequest = RawKintRequest
+	RequestExtension = {},
+	PreviousHandlerInput extends RawKintRequest = any
 > = {
-	preProcess: (request: InputRequest, config: Config) => OutputRequest;
+	preProcess: (
+		request: PreviousHandlerInput,
+		config: Config
+	) => PreviousHandlerInput & RequestExtension;
 	defaultConfig: Config;
 };

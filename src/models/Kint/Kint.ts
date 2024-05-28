@@ -54,18 +54,30 @@ export class Kint<
 		);
 	}
 
-	preprocessingMiddleware<MWConfig, NewHandlerInput extends RawKintRequest>(
-		middleware: PreprocessingMiddleware<MWConfig, NewHandlerInput, HandlerInput>
-	): Kint<Context, Config & MWConfig, NewHandlerInput, PostProcessors> {
+	preprocessingMiddleware<MWConfig, HandlerInputExtension>(
+		middleware: PreprocessingMiddleware<
+			MWConfig,
+			HandlerInputExtension,
+			HandlerInput
+		>
+	): Kint<
+		Context,
+		Config & MWConfig,
+		HandlerInputExtension & HandlerInput,
+		PostProcessors
+	> {
 		return new Kint<
 			Context,
 			Config & MWConfig,
-			NewHandlerInput,
+			HandlerInputExtension & HandlerInput,
 			PostProcessors
 		>(
 			mergeConfigs(this.userConfig, middleware.defaultConfig),
 			{
-				preProcess: (request: RawKintRequest, config: MWConfig & Config) => {
+				preProcess: (
+					request: HandlerInput,
+					config: MWConfig & Config
+				): HandlerInputExtension & HandlerInput => {
 					const processedRequest = this.preProcessor.preProcess(
 						request,
 						config
