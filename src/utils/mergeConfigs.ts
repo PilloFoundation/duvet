@@ -1,10 +1,14 @@
-export function mergeConfigs<LeftConfig, RightConfig>(
-  leftConfig: LeftConfig,
-  rightConfig: RightConfig
-): LeftConfig & RightConfig {
-  // TODO: Deep merge
+import { RequireMissingOnDefault } from "./requireFromDefault";
+
+export function mergeDefaultWithMissingItems<
+  Config,
+  Default extends Partial<Config>
+>(
+  incomplete: Default,
+  remaining: RequireMissingOnDefault<Config, Default>
+): Config {
   return {
-    ...leftConfig,
-    ...rightConfig,
-  };
+    ...incomplete,
+    ...remaining,
+  } as Config;
 }

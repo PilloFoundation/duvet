@@ -2,7 +2,7 @@ import { KintRequest } from "../KintRequest";
 import { KintResponse } from "../KintResponse";
 
 export type PreprocessingMiddleware<
-  Config,
+  Config extends object,
   RequestExtension extends object = {}
 > = {
   /**
@@ -23,5 +23,4 @@ export type PreprocessingMiddleware<
     request: KintRequest,
     config: Config
   ) => RequestExtension | KintResponse | void;
-  defaultConfig: Config;
 };

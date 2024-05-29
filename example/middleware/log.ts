@@ -1,17 +1,13 @@
-import { json } from "stream/consumers";
-import { PreprocessingMiddleware } from "../../src/core/models/middleware/PreprocessingMiddleware";
+import { buildPreprocessingMiddleware } from "../../src";
 
-export function log(): PreprocessingMiddleware<{ moduleName?: string }> {
-  return {
-    defaultConfig: {
-      moduleName: "Unknown Module",
-    },
-    preProcess: (request, config) => {
+export function log() {
+  return buildPreprocessingMiddleware<{ log: boolean; moduleName: string }>(
+    (request, config) => {
       console.log(
         `${request.underlyingExpressRequest.method} request from ${
           config.moduleName
         }. Body: ${JSON.stringify(request)}`
       );
-    },
-  };
+    }
+  );
 }

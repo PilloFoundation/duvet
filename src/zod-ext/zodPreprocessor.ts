@@ -25,11 +25,6 @@ export function zodPreprocessor<
   Parsed<Body, UrlParams, QueryParams>
 > {
   return {
-    defaultConfig: {
-      queryParams: undefined,
-      requestBody: undefined,
-      urlParams: undefined,
-    },
     preProcess(request, config) {
       const req = request.underlyingExpressRequest;
 

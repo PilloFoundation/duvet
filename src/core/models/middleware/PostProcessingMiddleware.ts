@@ -4,10 +4,6 @@ import { MaybePromise } from "../../../utils/types/MaybePromise";
 
 export type PostProcessingMiddleware<Config, CatchType extends object> = {
   /**
-   * Default configuration for this middleware.
-   */
-  defaultConfig: Config;
-  /**
    * The matcher function is used to determine whether or not this middleware should catch the error thrown by either another middleware
    * or the endpoint handler.
    *

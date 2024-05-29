@@ -1,5 +1,10 @@
 import { kint } from "../kint";
+import { log } from "../middleware/log";
+import { auth } from "../middleware/auth";
 
-export default kint.setConfig({
-  moduleName: "Routes",
-});
+export const routesKint = kint
+  .preprocessingMiddleware(log())
+  .extendConfig({
+    log: true,
+  })
+  .preprocessingMiddleware(auth());

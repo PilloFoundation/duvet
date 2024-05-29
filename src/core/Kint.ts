@@ -1,13 +1,13 @@
 import { KintRequest } from "./models/KintRequest";
 import { KintResponse } from "./models/KintResponse";
-import { Middleware } from "./models/middleware/Middleware";
 import { PostProcessingMiddleware } from "./models/middleware/PostProcessingMiddleware";
 import { PostProcessingMiddlewareTuple } from "./models/middleware/PostProcessingMiddlewareTuple";
 import { PreprocessingMiddleware } from "./models/middleware/PreprocessingMiddleware";
 import { PreprocessingMiddlewareTuple } from "./models/middleware/PreprocessingMiddlewareTuple";
 import { PostProcessorCatchTypes } from "./models/middleware/utils/PostProcessorCatchTypes";
 import { PreProcessorsExtensionType } from "./models/middleware/utils/PreProcessorMutationType";
-import { mergeConfigs } from "../utils/mergeConfigs";
+import { mergeDefaultWithMissingItems } from "../utils/mergeConfigs";
+import { extendObject } from "../utils/extendConfig";
 import { AppendTuple } from "../utils/types/AppendTuple";
 import { MaybePromise } from "../utils/types/MaybePromise";
 import { ZodEndpointConfig } from "../zod-ext/models/ZodEndpointConfig";
@@ -15,8 +15,7 @@ import { ZodRawShapePrimitives } from "../zod-ext/models/ZodRawShapePrimitives";
 import { ZodSchemaDefinition } from "../zod-ext/models/ZodSchemaDefinition";
 import { zodPreprocessor } from "../zod-ext/zodPreprocessor";
 import { Endpoint } from "./models/Endpoint";
-import { Router } from "express";
-import { RouteTreeNode } from "./route-builder/RouteTreeNode";
+import { RequireMissingOnDefault } from "../utils/requireFromDefault";
 
 export type HandlerInput<PreProcessors extends PreprocessingMiddlewareTuple> =
   PreProcessorsExtensionType<PreProcessors> & KintRequest;
@@ -28,57 +27,22 @@ export type HandlerOutput<
 export class Kint<
   Context,
   Config extends object,
+  DefaultConfig extends Partial<Config>,
   PreProcessors extends PreprocessingMiddlewareTuple,
   PostProcessors extends PostProcessingMiddlewareTuple
 > {
-  private defaultConfig: Config;
+  private defaultConfig: DefaultConfig;
   private preProcessors: PreProcessors;
   private postProcessors: PostProcessors;
 
   constructor(
-    userConfig: Config,
+    defaultConfig: DefaultConfig,
     preProcessors: PreProcessors,
     postProcessors: PostProcessors
   ) {
-    this.defaultConfig = userConfig;
+    this.defaultConfig = defaultConfig;
     this.preProcessors = preProcessors;
     this.postProcessors = postProcessors;
-  }
-
-  buildExpressRouter(directory: string, context: Context): Router {
-    const routeTree = RouteTreeNode.fromDirectory(directory);
-
-    return routeTree.toExpressRouter(() => context);
-  }
-
-  middleware<
-    MWConfig,
-    NewCatch extends object,
-    HandlerInputExtension extends object
-  >(
-    middleware: Middleware<MWConfig, HandlerInputExtension, NewCatch>
-  ): Kint<
-    Context,
-    Config & MWConfig,
-    AppendTuple<
-      PreProcessors,
-      PreprocessingMiddleware<MWConfig, HandlerInputExtension>
-    >,
-    AppendTuple<PostProcessors, PostProcessingMiddleware<MWConfig, NewCatch>>
-  > {
-    return new Kint<
-      Context,
-      Config & MWConfig,
-      AppendTuple<
-        PreProcessors,
-        PreprocessingMiddleware<MWConfig, HandlerInputExtension>
-      >,
-      AppendTuple<PostProcessors, PostProcessingMiddleware<MWConfig, NewCatch>>
-    >(
-      mergeConfigs(this.defaultConfig, middleware.defaultConfig),
-      [...this.preProcessors, middleware],
-      [...this.postProcessors, middleware]
-    );
   }
 
   postprocessingMiddleware<MWConfig, NewCatch extends object>(
@@ -86,26 +50,31 @@ export class Kint<
   ): Kint<
     Context,
     Config & MWConfig,
+    DefaultConfig & {},
     PreProcessors,
     AppendTuple<PostProcessors, PostProcessingMiddleware<MWConfig, NewCatch>>
   > {
     return new Kint<
       Context,
       Config & MWConfig,
+      DefaultConfig & {},
       PreProcessors,
       AppendTuple<PostProcessors, PostProcessingMiddleware<MWConfig, NewCatch>>
-    >(
-      mergeConfigs(this.defaultConfig, middleware.defaultConfig),
-      this.preProcessors,
-      [...this.postProcessors, middleware]
-    );
+    >(this.defaultConfig, this.preProcessors, [
+      ...this.postProcessors,
+      middleware,
+    ]);
   }
 
-  preprocessingMiddleware<MWConfig, HandlerInputExtension extends object>(
+  preprocessingMiddleware<
+    MWConfig extends object,
+    HandlerInputExtension extends object
+  >(
     middleware: PreprocessingMiddleware<MWConfig, HandlerInputExtension>
   ): Kint<
     Context,
     Config & MWConfig,
+    DefaultConfig & {},
     AppendTuple<
       PreProcessors,
       PreprocessingMiddleware<MWConfig, HandlerInputExtension>
@@ -115,39 +84,54 @@ export class Kint<
     return new Kint<
       Context,
       Config & MWConfig,
+      DefaultConfig & {},
       AppendTuple<
         PreProcessors,
         PreprocessingMiddleware<MWConfig, HandlerInputExtension>
       >,
       PostProcessors
     >(
-      mergeConfigs(this.defaultConfig, middleware.defaultConfig),
+      this.defaultConfig,
       [...this.preProcessors, middleware],
       this.postProcessors
     );
   }
 
-  extendConfig(config: Partial<Config>) {
-    return new Kint<Context, Config, PreProcessors, PostProcessors>(
-      mergeConfigs(this.defaultConfig, config),
+  extendConfig<DefaultConfigExtension extends Partial<Config>>(
+    extension: DefaultConfigExtension
+  ) {
+    return new Kint<
+      Context,
+      Config,
+      DefaultConfig & DefaultConfigExtension,
+      PreProcessors,
+      PostProcessors
+    >(
+      extendObject(this.defaultConfig, extension),
       this.preProcessors,
       this.postProcessors
     );
   }
 
-  setConfig(newConfig: ((config: Config) => Config) | Config) {
+  setConfig<NewDefaultConfig extends Partial<Config>>(
+    newConfig: ((config: DefaultConfig) => NewDefaultConfig) | NewDefaultConfig
+  ) {
     if (typeof newConfig === "function") {
-      return new Kint<Context, Config, PreProcessors, PostProcessors>(
-        newConfig(this.defaultConfig),
-        this.preProcessors,
-        this.postProcessors
-      );
+      return new Kint<
+        Context,
+        Config,
+        NewDefaultConfig,
+        PreProcessors,
+        PostProcessors
+      >(newConfig(this.defaultConfig), this.preProcessors, this.postProcessors);
     } else {
-      return new Kint<Context, Config, PreProcessors, PostProcessors>(
-        newConfig,
-        this.preProcessors,
-        this.postProcessors
-      );
+      return new Kint<
+        Context,
+        Config,
+        NewDefaultConfig,
+        PreProcessors,
+        PostProcessors
+      >(newConfig, this.preProcessors, this.postProcessors);
     }
   }
 
@@ -158,7 +142,7 @@ export class Kint<
    * @returns
    */
   defineEndpoint(
-    config: Config,
+    config: RequireMissingOnDefault<Config, DefaultConfig>,
     handler: (
       handlerInput: HandlerInput<PreProcessors>,
       context: Context,
@@ -169,7 +153,7 @@ export class Kint<
       builtByKint: true,
       preProcessors: this.preProcessors,
       postProcessors: this.postProcessors,
-      config: mergeConfigs(this.defaultConfig, config),
+      config: mergeDefaultWithMissingItems(this.defaultConfig, config),
       handler,
     };
   }
@@ -181,7 +165,10 @@ export class Kint<
     UrlParams extends ZodRawShapePrimitives,
     QueryParams extends ZodRawShapePrimitives
   >(
-    config: Config & ZodEndpointConfig<Body, UrlParams, QueryParams>,
+    config: RequireMissingOnDefault<
+      Config & ZodEndpointConfig<Body, UrlParams, QueryParams>,
+      DefaultConfig & {}
+    >,
     handler: (
       request: HandlerInput<
         AppendTuple<
@@ -190,7 +177,7 @@ export class Kint<
         >
       >,
       context: Context,
-      config: Config
+      config: Config & ZodEndpointConfig<Body, UrlParams, QueryParams>
     ) => HandlerOutput<PostProcessors>
   ) {
     const newKint = this.preprocessingMiddleware(

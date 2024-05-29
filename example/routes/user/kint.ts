@@ -1,3 +1,9 @@
-import kint from "../kint";
+import { routesKint } from "../kint";
 
-export default kint.extendConfig({ moduleName: "User" });
+export const userKint = routesKint.extendConfig({
+  required: true,
+  credentials: {
+    username: "Jeff",
+    password: "password",
+  },
+});

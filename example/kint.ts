@@ -1,8 +1,4 @@
-import { KintResponse } from "../src/core/models/KintResponse";
-import { createKint } from "../src/core/createKint";
-import { z } from "zod";
-import { auth } from "./middleware/auth";
-import { log } from "./middleware/log";
+import { createExpressKint } from "../src";
 
 type Context = {
   dbConnection: {
@@ -10,4 +6,4 @@ type Context = {
   };
 };
 
-export const kint = createKint<Context>().preprocessingMiddleware(log());
+export const { build, kint } = createExpressKint<Context>();

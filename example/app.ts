@@ -1,12 +1,13 @@
 import path from "path";
-import { kint } from "./kint";
 import express from "express";
+
+import { build } from "./kint";
 
 const routes = path.join(__dirname, "routes");
 
 const context = { dbConnection: { connect: () => {} } };
 
-const router = kint.buildExpressRouter(routes, context);
+const router = build(routes, context);
 
 const app = express();
 

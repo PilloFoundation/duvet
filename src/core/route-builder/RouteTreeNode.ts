@@ -1,12 +1,14 @@
 import fs from "fs";
 import path from "path";
-import { Endpoint } from "../models/Endpoint";
 import { Router } from "express";
 import { toZodObject } from "../../zod-ext/utils/toZodObject";
 import { zodKeys } from "../../zod-ext/utils/zodKeys";
 import { Method, Resource } from "../models/Resource";
 import { expressHandlerFromEndpointDefinition } from "./expressHandlerFromEndpoint";
+import { isKintEndpoint } from "./isKintEndpoint";
+import { tryFn } from "../../utils/tryFn";
 
+// TODO: Refactor to not depend on express
 export class RouteTreeNode<Context> {
   public subRoutes: RouteTreeNode<Context>[] = [];
 
@@ -192,21 +194,5 @@ export class RouteTreeNode<Context> {
     }
 
     return urlParams;
-  }
-}
-
-function isKintEndpoint(test: any): test is Endpoint<any, any, any, any> {
-  return test?.builtByKint === true;
-}
-
-function tryFn<T>(run: () => T): T | Error {
-  try {
-    return run();
-  } catch (e) {
-    if (e instanceof Error) {
-      return e;
-    } else {
-      return new Error("An unknown error occured :/");
-    }
   }
 }

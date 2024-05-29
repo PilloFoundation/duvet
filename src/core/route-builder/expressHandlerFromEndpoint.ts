@@ -6,6 +6,7 @@ import { KintResponse } from "../models/KintResponse";
 import { KintRequest } from "../models/KintRequest";
 import { PreProcessorsExtensionType } from "../models/middleware/utils/PreProcessorMutationType";
 
+// TODO: Refactor to use express adapters
 export function expressHandlerFromEndpointDefinition<
   Context,
   Config,
@@ -32,6 +33,8 @@ export function expressHandlerFromEndpointDefinition<
             { underlyingExpressRequest: request },
             endpoint.config
           );
+
+          // TODO: Instead of merging results, just let the preprocessor modify the existing object and hold a contract that the output type will be the input type + the new merge type
 
           // If the result is a KintResponse, throw it
           if (result instanceof KintResponse) {
@@ -72,6 +75,9 @@ export function expressHandlerFromEndpointDefinition<
     } catch (obj) {
       if (obj instanceof KintResponse) {
         response.status(obj.status).send(obj.body);
+        return;
+      } else if (obj instanceof Error) {
+        response.status(500).send(obj.message);
         return;
       } else {
         response.status(500).send("Internal server error");
