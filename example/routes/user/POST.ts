@@ -1,15 +1,17 @@
+import { z } from "zod";
 import { KintResponse } from "../../../src/core/models/KintResponse";
 import { userKint } from "./kint";
 
 export default userKint.defineZodEndpoint(
   {
     moduleName: "User",
+    requestBody: {
+      username: z.string(),
+    },
   },
-  (input, context) => {
-    input.body.username;
+  (kint, context) => {
+    kint.body.username;
 
-    console.log("Running...");
-
-    return new KintResponse("Name: " + input.body.username, 200);
+    return kint.response.send(200, `Hello ${kint.body.username}!`);
   }
 );

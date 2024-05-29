@@ -22,7 +22,9 @@ export type HandlerInput<PreProcessors extends PreProcessingMiddlewareTuple> =
 
 export type HandlerOutput<
   PostProcessors extends PostProcessingMiddlewareTuple
-> = MaybePromise<PostProcessorCatchTypes<PostProcessors> | KintResponse>;
+> = MaybePromise<
+  PostProcessorCatchTypes<PostProcessors> | KintResponse | never
+>;
 
 export class Kint<
   Context,

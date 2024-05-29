@@ -26,7 +26,7 @@ export function zodPreprocessor<
 > {
   return {
     preProcess(request, config) {
-      const req = request.underlyingExpressRequest;
+      const req = request.underlying;
 
       const parsed: Partial<Parsed<Body, UrlParams, QueryParams>> = {};
 

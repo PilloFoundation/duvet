@@ -4,7 +4,4 @@ import { auth } from "../middleware/auth";
 
 export const routesKint = kint
   .preprocessingMiddleware(log())
-  .extendConfig({
-    log: true,
-  })
   .preprocessingMiddleware(auth());

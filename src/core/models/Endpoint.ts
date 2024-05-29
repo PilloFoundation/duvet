@@ -5,6 +5,7 @@ import { PreProcessingMiddlewareTuple } from "./middleware/PreProcessingMiddlewa
 import { PostProcessorCatchTypes } from "./middleware/utils/PostProcessorCatchTypes";
 import { PreProcessorsExtensionType } from "./middleware/utils/PreProcessorMutationType";
 import { MaybePromise } from "../../utils/types/MaybePromise";
+import { HandlerOutput } from "../Kint";
 
 export type Endpoint<
   Context,
@@ -20,5 +21,5 @@ export type Endpoint<
     request: PreProcessorsExtensionType<PreProcessors> & KintRequest,
     context: Context,
     config: Config
-  ) => MaybePromise<PostProcessorCatchTypes<PostProcessors> | KintResponse>;
+  ) => HandlerOutput<PostProcessors>;
 };

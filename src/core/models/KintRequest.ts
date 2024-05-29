@@ -1,3 +1,8 @@
 import { Request } from "express";
 
-export type KintRequest = { underlyingExpressRequest: Request };
+export type KintRequest = {
+  underlying: Request;
+  response: {
+    send(status: number, body: any): never;
+  };
+};

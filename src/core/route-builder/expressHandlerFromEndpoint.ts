@@ -17,7 +17,14 @@ export function expressHandlerFromEndpointDefinition<
   getContext: () => Context
 ) {
   return async function handler(request: Request, response: Response) {
-    const kintRequest: KintRequest = { underlyingExpressRequest: request };
+    const kintRequest: KintRequest = {
+      underlying: request,
+      response: {
+        send(status: number, body: any) {
+          throw new KintResponse(body, status);
+        },
+      },
+    };
 
     try {
       // Catches any errors thrown by the pre processors, endpoint handler or post processors
@@ -30,7 +37,7 @@ export function expressHandlerFromEndpointDefinition<
         for (const preProcessor of endpoint.preProcessors) {
           // Run preprocessor
           const result = await preProcessor.preProcess(
-            { underlyingExpressRequest: request },
+            kintRequest,
             endpoint.config
           );
 
@@ -79,6 +86,8 @@ export function expressHandlerFromEndpointDefinition<
       } else if (obj instanceof Error) {
         response.status(500).send(obj.message);
         return;
+      } else if (obj == null) {
+        response.status(500).send("Endpoint did not send a response");
       } else {
         response.status(500).send("Internal server error");
         return;
