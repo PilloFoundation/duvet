@@ -1,4 +1,4 @@
-import { PreprocessingMiddleware } from "../core/models/middleware/PreprocessingMiddleware";
+import { PreProcessingMiddleware } from "../core/models/middleware/PreProcessingMiddleware";
 import { KintRequest } from "../core/models/KintRequest";
 import { InferZodSchemaDefinitionInput } from "./utils/InferSchemaDefinition";
 import { ZodEndpointConfig } from "./models/ZodEndpointConfig";
@@ -20,7 +20,7 @@ export function zodPreprocessor<
   Body extends ZodSchemaDefinition,
   UrlParams extends ZodRawShapePrimitives,
   QueryParams extends ZodRawShapePrimitives
->(): PreprocessingMiddleware<
+>(): PreProcessingMiddleware<
   ZodEndpointConfig<Body, UrlParams, QueryParams>,
   Parsed<Body, UrlParams, QueryParams>
 > {

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Endpoint } from "../models/Endpoint";
-import { PreprocessingMiddlewareTuple } from "../models/middleware/PreprocessingMiddlewareTuple";
+import { PreProcessingMiddlewareTuple } from "../models/middleware/PreProcessingMiddlewareTuple";
 import { PostProcessingMiddlewareTuple } from "../models/middleware/PostProcessingMiddlewareTuple";
 import { KintResponse } from "../models/KintResponse";
 import { KintRequest } from "../models/KintRequest";
@@ -10,7 +10,7 @@ import { PreProcessorsExtensionType } from "../models/middleware/utils/PreProces
 export function expressHandlerFromEndpointDefinition<
   Context,
   Config,
-  PreProcessors extends PreprocessingMiddlewareTuple,
+  PreProcessors extends PreProcessingMiddlewareTuple,
   PostProcessors extends PostProcessingMiddlewareTuple
 >(
   endpoint: Endpoint<Context, Config, PreProcessors, PostProcessors>,

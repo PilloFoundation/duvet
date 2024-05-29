@@ -3,9 +3,9 @@ export { createExpressKint } from "./core/createKint";
 
 export { Middleware } from "./core/models/middleware/Middleware";
 export { PostProcessingMiddleware } from "./core/models/middleware/PostProcessingMiddleware";
-export { PreprocessingMiddleware } from "./core/models/middleware/PreprocessingMiddleware";
+export { PreProcessingMiddleware } from "./core/models/middleware/PreProcessingMiddleware";
 
 export { KintRequest } from "./core/models/KintRequest";
 export { KintResponse } from "./core/models/KintResponse";
 
-export { buildPreprocessingMiddleware } from "./core/buildMiddleware";
+export { buildPreProcessingMiddleware } from "./core/buildMiddleware";

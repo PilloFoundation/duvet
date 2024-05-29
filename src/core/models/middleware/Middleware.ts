@@ -1,11 +1,11 @@
 import { object } from "zod";
 import { KintRequest } from "../KintRequest";
 import { PostProcessingMiddleware } from "./PostProcessingMiddleware";
-import { PreprocessingMiddleware } from "./PreprocessingMiddleware";
+import { PreProcessingMiddleware } from "./PreProcessingMiddleware";
 
 export type Middleware<
-  Config,
+  Config extends object,
   RequestExtension extends object,
   CatchType extends object
 > = PostProcessingMiddleware<Config, CatchType> &
-  PreprocessingMiddleware<Config, RequestExtension>;
+  PreProcessingMiddleware<Config, RequestExtension>;

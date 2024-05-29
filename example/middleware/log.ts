@@ -1,7 +1,7 @@
-import { buildPreprocessingMiddleware } from "../../src";
+import { buildPreProcessingMiddleware } from "../../src";
 
 export function log() {
-  return buildPreprocessingMiddleware<{ log: boolean; moduleName: string }>(
+  return buildPreProcessingMiddleware<{ log: boolean; moduleName: string }>(
     (request, config) => {
       console.log(
         `${request.underlyingExpressRequest.method} request from ${

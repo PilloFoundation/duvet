@@ -1,9 +1,9 @@
 import { KintResponse } from "../../src";
-import { PreprocessingMiddleware } from "../../src/core/models/middleware/PreprocessingMiddleware";
+import { PreProcessingMiddleware } from "../../src/core/models/middleware/PreProcessingMiddleware";
 
 export type Role = "admin" | "user";
 
-export function auth(): PreprocessingMiddleware<{
+export function auth(): PreProcessingMiddleware<{
   required: boolean;
   credentials: {
     username: string;

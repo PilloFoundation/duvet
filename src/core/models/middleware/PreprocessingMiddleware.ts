@@ -1,7 +1,7 @@
 import { KintRequest } from "../KintRequest";
 import { KintResponse } from "../KintResponse";
 
-export type PreprocessingMiddleware<
+export type PreProcessingMiddleware<
   Config extends object,
   RequestExtension extends object = {}
 > = {

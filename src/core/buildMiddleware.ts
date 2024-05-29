@@ -1,9 +1,9 @@
 import { KintRequest } from "./models/KintRequest";
 import { KintResponse } from "./models/KintResponse";
 import { PostProcessingMiddleware } from "./models/middleware/PostProcessingMiddleware";
-import { PreprocessingMiddleware } from "./models/middleware/PreprocessingMiddleware";
+import { PreProcessingMiddleware } from "./models/middleware/PreProcessingMiddleware";
 
-export function buildPreprocessingMiddleware<
+export function buildPreProcessingMiddleware<
   Config extends object,
   RequestExtension extends object = {}
 >(
@@ -11,7 +11,7 @@ export function buildPreprocessingMiddleware<
     request: KintRequest,
     config: Config
   ) => RequestExtension | KintResponse | void
-): PreprocessingMiddleware<Config, RequestExtension> {
+): PreProcessingMiddleware<Config, RequestExtension> {
   return {
     preProcess,
   };
