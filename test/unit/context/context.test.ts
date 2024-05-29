@@ -1,22 +1,23 @@
 import path from "path";
 import request from "supertest";
 import express from "express";
-import { kint } from "./kint";
+import { Context } from "./Context";
+import { build } from "./kint";
 
-describe("Kint user flow", () => {
-  test("Builder works correctly", async () => {
+describe("Context", () => {
+  test("Handler passes context through when being run", async () => {
     const routes = path.join(__dirname, "routes");
 
-    const context = { a: "initialA", b: 0 };
+    const context: Context = { a: "initialA", b: 0 };
 
-    const router = kint.buildExpressRouter(routes, context);
+    const router = build(routes, context);
 
     const app = express();
 
     app.use(express.json());
     app.use("/", router);
 
-    const test = await request(app).get("/").expect(200);
+    await request(app).get("/").expect(200);
 
     expect(context.a).toBe("setA");
     expect(context.b).toBe(25);

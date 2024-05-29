@@ -1,6 +1,6 @@
-import { routesKint } from "../kint";
+import { rootKint } from "../rootKint";
 
-export const adminKint = routesKint.extendConfig({
+export const adminKint = rootKint.extendConfig({
   requiredCredentials: {
     password: "admin",
     username: "admin",

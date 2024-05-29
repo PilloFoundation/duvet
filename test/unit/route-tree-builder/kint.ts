@@ -1,3 +1,3 @@
-import { createKint } from "../../../src/core/createKint";
+import { createExpressKint } from "../../../src";
 
-export const kint = createKint<"context">();
+export const { kint } = createExpressKint();

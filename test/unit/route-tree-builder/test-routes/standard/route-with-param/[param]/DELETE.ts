@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { kint } from "../../../kint";
-import { KintResponse } from "../../../../../../src/core/models/KintResponse";
+import { kint } from "../../../../kint";
+import { KintResponse } from "../../../../../../../src";
 
 export default kint.defineZodEndpoint(
   {

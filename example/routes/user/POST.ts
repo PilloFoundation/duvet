@@ -1,10 +1,13 @@
 import { z } from "zod";
-import { KintResponse } from "../../../src/core/models/KintResponse";
-import { userKint } from "./kint";
+import { userKint } from "./userKint";
+import { adminKint } from "../admin/adminKint";
 
-export default userKint.defineZodEndpoint(
+export default adminKint.defineZodEndpoint(
   {
-    moduleName: "User",
+    requiredCredentials: {
+      username: "Jeff",
+      password: "bezosIsCool",
+    },
     requestBody: {
       username: z.string(),
     },

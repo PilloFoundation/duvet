@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { kint } from "../kint";
+import { kint } from "../../kint";
 
 export default kint.defineZodEndpoint(
   {

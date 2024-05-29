@@ -1,5 +1,5 @@
-import { adminKint } from "./kint";
+import { adminKint } from "./adminKint";
 
-export default adminKint.defineZodEndpoint({}, (kint) => {
+export default adminKint.defineEndpoint({}, (kint) => {
   return kint.response.send(200, "Welcome, admin");
 });

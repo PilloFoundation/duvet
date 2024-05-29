@@ -3,7 +3,7 @@ import { RouteTreeNode } from "../../../src/core/route-builder/RouteTreeNode";
 
 describe("Route Tree Builder", () => {
   test("Builds a route tree correctly from a correctly defined directory", async () => {
-    const pathToRoutes = path.join(__dirname, "routes");
+    const pathToRoutes = path.join(__dirname, "test-routes/standard");
 
     const routeTree = await RouteTreeNode.fromDirectory(pathToRoutes);
 
@@ -71,19 +71,22 @@ describe("Route Tree Builder", () => {
   });
 
   test("Throws an error on incorrect export", async () => {
-    const pathToRoutes = path.join(__dirname, "incorrect-export");
+    const pathToRoutes = path.join(__dirname, "test-routes/incorrect-export");
 
     expect(() => RouteTreeNode.fromDirectory(pathToRoutes)).toThrow();
   });
 
   test("Throws an error on no export", async () => {
-    const pathToRoutes = path.join(__dirname, "no-export");
+    const pathToRoutes = path.join(__dirname, "test-routes/no-export");
 
     expect(() => RouteTreeNode.fromDirectory(pathToRoutes)).toThrow();
   });
 
   test("Throws an error when a parameter is defined in a schema but not in a route path", async () => {
-    const pathToRoutes = path.join(__dirname, "invalid-parameter-routes");
+    const pathToRoutes = path.join(
+      __dirname,
+      "test-routes/invalid-parameter-routes"
+    );
 
     expect(() => RouteTreeNode.fromDirectory(pathToRoutes)).toThrow();
   });
