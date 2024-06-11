@@ -1,6 +1,5 @@
 import { KintRequest } from "./models/KintRequest";
 import { KintResponse } from "./models/KintResponse";
-import { PostProcessingMiddleware } from "./models/middleware/PostProcessingMiddleware";
 import { PreProcessingMiddleware } from "./models/middleware/PreProcessingMiddleware";
 
 export function buildPreProcessingMiddleware<

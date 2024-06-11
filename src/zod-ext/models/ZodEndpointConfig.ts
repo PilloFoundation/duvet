@@ -1,4 +1,3 @@
-import { ZodRawShape } from "zod";
 import { ZodRawShapePrimitives } from "./ZodRawShapePrimitives";
 import { ZodSchemaDefinition } from "./ZodSchemaDefinition";
 

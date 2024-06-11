@@ -1,5 +1,4 @@
 import { PreProcessingMiddleware } from "../core/models/middleware/PreProcessingMiddleware";
-import { KintRequest } from "../core/models/KintRequest";
 import { InferZodSchemaDefinitionInput } from "./utils/InferSchemaDefinition";
 import { ZodEndpointConfig } from "./models/ZodEndpointConfig";
 import { ZodRawShapePrimitives } from "./models/ZodRawShapePrimitives";
