@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Handler } from "../Kint";
+import { Handler } from "./Handler";
 
 export type KintEndpointMeta = {
   data: "KintEndpointMeta";

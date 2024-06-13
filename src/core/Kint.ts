@@ -1,5 +1,4 @@
 import { KintRequest } from "./models/KintRequest";
-import { KintResponse } from "./models/KintResponse";
 import { mergeDefaultWithMissingItems } from "../utils/mergeConfigs";
 import { extendObject } from "../utils/extendConfig";
 import { KintExport } from "./models/KintExport";
@@ -7,25 +6,13 @@ import { RequireMissingOnDefault } from "../utils/requireFromDefault";
 import { Middleware } from "./models/Middleware";
 import { getFromFnOrValue } from "../utils/getFromFnOrValue";
 import { KintEndpointMeta } from "./models/KintEndpointMeta";
-
-export type Extend<Base, Ext, Field extends string> = Base & Record<Field, Ext>;
-
-export type NotKeyOf<T, U> = T extends keyof U ? never : T;
-
-export type Handler<Context, Config> = (
-  request: KintRequest,
-  context: Context,
-  config: Config
-) => KintResponse;
-
-export type HandlerBuilder<Context, Config> = {
-  buildHandler: <FullContext extends Context, FullConfig extends Config>(
-    /**
-     * The handler that this builder will wrap with middleware.
-     */
-    innerHandler: Handler<Context, Config>
-  ) => Handler<FullContext, FullConfig>;
-};
+import { HandlerBuilder } from "./models/HandlerBuilder";
+import { Handler } from "./models/Handler";
+import { Extend } from "../utils/types/Extend";
+import { NotKeyOf } from "../utils/types/NotKeyOf";
+import { extractHandler } from "./extractHandler";
+import { WithValid } from "./models/WithValid";
+import { Validator } from "./models/Validator";
 
 /**
  * The main class that is used to define endpoints and build a router
@@ -181,9 +168,10 @@ export class Kint<
    * @param handler A handler function that will be called when this endpoint is hit.
    * @returns And endpoint definition which can be used by Kint to build a router.
    */
-  defineEndpoint(
+  defineEndpoint<Body, Params>(
     config: RequireMissingOnDefault<Config, DefaultConfig>,
-    handler: Handler<Context, Config>
+    validator: Validator<Body, Params>,
+    handler: Handler<WithValid<Context, Body, Params>, Config>
   ): KintExport<KintEndpointMeta> {
     // Merges the config from the user with the default config.
     const mergedConfig = mergeDefaultWithMissingItems(
@@ -191,8 +179,9 @@ export class Kint<
       config
     );
 
-    // Builds the handler with the handler builder
-    const handlerWithMiddleware = this.handlerBuilder.buildHandler(handler);
+    const handlerWithMiddleware = this.handlerBuilder.buildHandler(
+      extractHandler([validator, handler])
+    );
 
     return {
       builtByKint: true,

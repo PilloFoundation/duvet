@@ -1,18 +1,23 @@
 import { rootKint } from "../rootKint";
+import { zodValidator } from "../../../src/core/zodValidator";
+import { z } from "zod";
 
 export default rootKint.defineEndpoint(
   {
     middlewareC: "Test",
     catch: { source: "Testing endpoint" },
   },
-  (request, context) => {
+  zodValidator(
+    z.object({
+      test: z.string(),
+    }),
+    z.object({})
+  ),
+  (req, k) => {
     console.log("running endpoint!");
+    console.log("context: ", k);
 
-    console.log("context: ", context);
-
-    throw new Error("Test error");
-
-    context.global.dbConnection;
+    k.global.dbConnection;
 
     return {
       body: "Hello world!",
