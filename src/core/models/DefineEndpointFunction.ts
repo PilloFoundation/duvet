@@ -1,5 +1,5 @@
 import { KintExport } from "./KintExport";
-import { RequireMissingOnDefault } from "../../utils/requireFromDefault";
+import { RequireMissingOnDefault } from "../../utils/types/RequireMissingOnDefault";
 import { KintEndpointMeta } from "./KintEndpointMeta";
 import { Handler } from "./Handler";
 import { ValidatedData, ValidatorArray } from "./Validator";

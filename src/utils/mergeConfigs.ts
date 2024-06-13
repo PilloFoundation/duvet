@@ -1,4 +1,4 @@
-import { RequireMissingOnDefault } from "./requireFromDefault";
+import { RequireMissingOnDefault } from "./types/RequireMissingOnDefault";
 
 export function mergeDefaultWithMissingItems<Config, Default>(
   incomplete: Default,
