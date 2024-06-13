@@ -1,7 +1,7 @@
-import { KintExport } from "./KintExport";
+import { KintEndpointMeta } from "./KintEndpointMeta";
 
 export type Method = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
-export type Resource<C> = {
-  [method in Method]?: KintExport<C, any, any, any>;
+export type Resource = {
+  [method in Method]?: KintEndpointMeta;
 };

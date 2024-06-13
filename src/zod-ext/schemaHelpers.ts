@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const parseDate = z.string().pipe(z.coerce.date());
 const parseNumber = z.string().transform<number>((v, ctx) => {
-  let n = Number(v);
+  const n = Number(v);
   if (isNaN(n) || v.length === 0) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,

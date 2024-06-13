@@ -1,6 +1,4 @@
 import { rootKint } from "../rootKint";
-import { zodValidator } from "../../../src/core/zodValidator";
-import { z } from "zod";
 
 export default rootKint.defineEndpoint(
   {
@@ -11,17 +9,10 @@ export default rootKint.defineEndpoint(
       method: "bearer",
     },
   },
-  zodValidator(
-    z.object({
-      name: z.string(),
-    }),
-    z.object({})
-  ),
-  (_req, { auth, valid }) => {
+  (_req, k) => {
     console.log("running endpoint!");
 
-    console.log("Got token: " + auth.token);
-    console.log("Got name: " + valid.body.name);
+    console.log("Got token: " + k.auth.token);
 
     return {
       body: "Hello world!",

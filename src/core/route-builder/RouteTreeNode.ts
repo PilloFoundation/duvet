@@ -16,7 +16,7 @@ export class RouteTreeNode<Context> {
     public name: string,
     public isUrlParam: boolean,
     private parent?: RouteTreeNode<Context>,
-    public resource: Resource<Context> = {}
+    public resource: Resource = {}
   ) {}
 
   /**
@@ -145,7 +145,7 @@ export class RouteTreeNode<Context> {
 
   private applyResource<C>(
     router: Router,
-    resource: Resource<C>,
+    resource: Resource,
     getContext: () => C
   ) {
     const { GET, POST, PATCH, DELETE, PUT } = resource;

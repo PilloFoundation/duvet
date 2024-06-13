@@ -1,13 +1,13 @@
 import { z } from "zod";
 import { kint } from "../../kint";
 
-export default kint.defineZodEndpoint(
+export default kint.defineEndpoint(
   {
     urlParams: {
       doesNotExist: z.string(),
     },
   },
-  (req, res, ctx) => {
+  () => {
     // Do nothing, should throw.
   }
 );

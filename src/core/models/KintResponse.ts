@@ -1,8 +1,8 @@
 export class KintResponse {
-  body: any;
+  body: unknown;
   status: number;
 
-  constructor(responseBody: any, status: number) {
+  constructor(responseBody: unknown, status: number) {
     this.body = responseBody;
     this.status = status;
   }

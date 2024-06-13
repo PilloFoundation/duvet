@@ -1,4 +1,4 @@
-import { Kint } from "./Kint";
+import { Kint } from "../Kint";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type KintBuilder<GlobalContext, AppType> = {

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { Kint } from "./Kint";
 import { RouteTreeNode } from "./route-builder/RouteTreeNode";
-import { KintBuilder } from "./KintBundle";
+import { KintBuilder } from "./models/KintBundle";
 
 export function createExpressKint<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

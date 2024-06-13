@@ -2,7 +2,6 @@ import { KintRequest } from "./models/KintRequest";
 import { mergeDefaultWithMissingItems } from "../utils/mergeConfigs";
 import { extendObject } from "../utils/extendConfig";
 import { KintExport } from "./models/KintExport";
-import { RequireMissingOnDefault } from "../utils/requireFromDefault";
 import { MaybeFunction, Middleware } from "./models/Middleware";
 import { getFromFnOrValue } from "../utils/getFromFnOrValue";
 import { KintEndpointMeta } from "./models/KintEndpointMeta";
@@ -11,8 +10,7 @@ import { Handler } from "./models/Handler";
 import { Extend } from "../utils/types/Extend";
 import { NotKeyOf } from "../utils/types/NotKeyOf";
 import { extractHandler } from "./extractHandler";
-import { WithValid } from "./models/WithValid";
-import { Validator } from "./models/Validator";
+import { DefineEndpointFunction } from "./models/DefineEndpointFunction";
 
 export type StringKeysOnly<T> = {
   [K in keyof T]: K extends string ? K : never;
@@ -172,11 +170,10 @@ export class Kint<
    * @param handler A handler function that will be called when this endpoint is hit.
    * @returns And endpoint definition which can be used by Kint to build a router.
    */
-  defineEndpoint<Body, Params>(
-    config: RequireMissingOnDefault<Config, DefaultConfig>,
-    validator: Validator<Body, Params>,
-    handler: Handler<WithValid<Context, Body, Params>, Config>
-  ): KintExport<KintEndpointMeta> {
+  defineEndpoint: DefineEndpointFunction<Context, Config, DefaultConfig> = (
+    config,
+    ...rest
+  ): KintExport<KintEndpointMeta> => {
     // Merges the config from the user with the default config.
     const mergedConfig = mergeDefaultWithMissingItems(
       this.defaultConfig,
@@ -184,7 +181,7 @@ export class Kint<
     );
 
     const handlerWithMiddleware = this.handlerBuilder.buildHandler(
-      extractHandler([validator, handler])
+      extractHandler(rest)
     );
 
     return {
@@ -195,5 +192,5 @@ export class Kint<
         data: "KintEndpointMeta",
       },
     };
-  }
+  };
 }
