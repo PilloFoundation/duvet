@@ -9,8 +9,13 @@ import { HandlerBuilder } from "./models/HandlerBuilder";
 import { Handler } from "./models/Handler";
 import { Extend } from "../utils/types/Extend";
 import { NotKeyOf } from "../utils/types/NotKeyOf";
-import { extractHandler } from "./extractHandler";
-import { DefineEndpointFunction } from "./models/DefineEndpointFunction";
+import {
+  DefineEndpointFunction,
+  DefineEndpointFunctionArgs,
+} from "./models/DefineEndpointFunction";
+import { ValidatorArray } from "./models/Validator";
+import { extractParts } from "./extractParts";
+import { handlerWithValidators } from "./handlerWithValidators";
 
 export type StringKeysOnly<T> = {
   [K in keyof T]: K extends string ? K : never;
@@ -170,10 +175,18 @@ export class Kint<
    * @param handler A handler function that will be called when this endpoint is hit.
    * @returns And endpoint definition which can be used by Kint to build a router.
    */
-  defineEndpoint: DefineEndpointFunction<Context, Config, DefaultConfig> = (
-    config,
-    ...rest
+  defineEndpoint: DefineEndpointFunction<Context, Config, DefaultConfig> = <
+    Validators extends ValidatorArray
+  >(
+    ...args: DefineEndpointFunctionArgs<
+      Context,
+      Config,
+      DefaultConfig,
+      Validators
+    >
   ): KintExport<KintEndpointMeta> => {
+    const { config, validators, handler } = extractParts(...args);
+
     // Merges the config from the user with the default config.
     const mergedConfig = mergeDefaultWithMissingItems(
       this.defaultConfig,
@@ -181,7 +194,7 @@ export class Kint<
     );
 
     const handlerWithMiddleware = this.handlerBuilder.buildHandler(
-      extractHandler(rest)
+      handlerWithValidators(handler, validators)
     );
 
     return {

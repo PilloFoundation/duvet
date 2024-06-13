@@ -1,40 +1,47 @@
-import { ZodObject, ZodRawShape, ZodTypeAny, output } from "zod";
+import { ZodError, ZodTypeAny, output } from "zod";
 import { Validator } from "./models/Validator";
 import { KintRequest } from "./models/KintRequest";
 
-export function zodValidator<
-  BodyZodSchema extends ZodTypeAny,
-  ParamsZodSchema extends ZodObject<ZodRawShape>
->(
-  body: BodyZodSchema,
-  params: ParamsZodSchema
-): Validator<output<BodyZodSchema>, output<ParamsZodSchema>> {
-  return (request: KintRequest) => {
-    const bodyResult = body.safeParse(request.underlying.body);
+export function zodBodyValidator<BodyZodSchema extends ZodTypeAny>(
+  body: BodyZodSchema
+): Validator<"body", output<BodyZodSchema>> {
+  return {
+    validate: (request: KintRequest) => {
+      const bodyResult = body.safeParse(request.underlying.body);
 
-    const paramsResult = params.safeParse({
-      ...request.underlying.params,
-      ...request.underlying.query,
-    });
+      if (bodyResult.success === false) {
+        const errorMessage = formatZodError(bodyResult.error);
 
-    if (bodyResult.success === false) {
+        console.log(errorMessage);
+        return {
+          isValid: false,
+          error: errorMessage,
+        };
+      }
+
       return {
-        isValid: false,
-        error: bodyResult.error.errors[0].message,
+        isValid: true,
+        field: "body",
+        parsedData: bodyResult.data,
       };
-    } else if (paramsResult.success === false) {
-      return {
-        isValid: false,
-        error: paramsResult.error.errors[0].message,
-      };
+    },
+  };
+}
+
+function formatZodError(error: ZodError): string {
+  let errorString: string = "";
+
+  for (const issue of error.issues) {
+    if (errorString.length > 0) {
+      errorString += "\n";
     }
 
-    return {
-      isValid: true,
-      parsedData: {
-        body: bodyResult.data,
-        params: paramsResult.data,
-      },
-    };
-  };
+    if (issue.path.length > 0) {
+      errorString += issue.path.join(".") + ": ";
+    }
+
+    errorString += issue.message;
+  }
+
+  return errorString;
 }

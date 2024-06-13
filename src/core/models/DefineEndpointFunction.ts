@@ -2,18 +2,30 @@ import { KintExport } from "./KintExport";
 import { RequireMissingOnDefault } from "../../utils/requireFromDefault";
 import { KintEndpointMeta } from "./KintEndpointMeta";
 import { Handler } from "./Handler";
-import { WithValid } from "./WithValid";
-import { Validator } from "./Validator";
+import { ValidatedData, ValidatorArray } from "./Validator";
+
+export type WithValid<Context, Validators extends ValidatorArray> = Context & {
+  valid: ValidatedData<Validators>;
+};
+
+export type DefineEndpointFunctionArgs<
+  Context,
+  Config,
+  DefaultConfig,
+  Validators extends ValidatorArray
+> = readonly [
+  config: RequireMissingOnDefault<Config, DefaultConfig>,
+  ...validators: Validators,
+  handler: Handler<WithValid<Context, Validators>, Config>
+];
 
 export type DefineEndpointFunction<Context, Config, DefaultConfig> = <
-  Body,
-  Params
+  Validators extends ValidatorArray
 >(
-  config: RequireMissingOnDefault<Config, DefaultConfig>,
-  ...rest:
-    | [
-        Validator<Body, Params>,
-        Handler<WithValid<Context, Body, Params>, Config>
-      ]
-    | [Handler<Context, Config>]
+  ...args: DefineEndpointFunctionArgs<
+    Context,
+    Config,
+    DefaultConfig,
+    Validators
+  >
 ) => KintExport<KintEndpointMeta>;
