@@ -1,7 +1,11 @@
 import { kint } from "../kint";
-import { log } from "../middleware/log";
-import { auth } from "../middleware/auth";
+import { catchMW } from "../middleware/catchMW";
+import { testMW } from "../middleware/testMW";
 
 export const rootKint = kint
-  .preprocessingMiddleware(log())
-  .preprocessingMiddleware(auth());
+  .addMiddleware(testMW("middlewareA"))
+  .addMiddleware(testMW("middlewareC"))
+  .addMiddleware(catchMW)
+  .extendConfig({
+    middlewareA: "A",
+  });

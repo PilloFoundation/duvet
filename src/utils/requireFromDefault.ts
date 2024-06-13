@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 // For each key of object:
 //   If the key on object is optional, then the key on the output is also optional
 //   If they key on object is required, but the key exists on default, then the key on the output is optional

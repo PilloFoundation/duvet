@@ -1,12 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import fs from "fs";
 import path from "path";
 import { Router } from "express";
-import { toZodObject } from "../../zod-ext/utils/toZodObject";
-import { zodKeys } from "../../zod-ext/utils/zodKeys";
 import { Method, Resource } from "../models/Resource";
-import { expressHandlerFromEndpointDefinition } from "./expressHandlerFromEndpoint";
-import { isKintEndpoint } from "./isKintEndpoint";
+import { isKintExport } from "./isKintEndpoint";
 import { tryFn } from "../../utils/tryFn";
+import { expressHandlerFromEndpointDefinition } from "./expressHandlerFromEndpoint";
+import { isKintEndpointMeta } from "./isEndpointMeta";
 
 // TODO: Refactor to not depend on express
 export class RouteTreeNode<Context> {
@@ -79,33 +79,21 @@ export class RouteTreeNode<Context> {
             );
           }
 
-          const endpoint = module?.default;
+          const kintExport = module?.default;
 
           // Check if the endpoint is a Kint endpoint
-          if (isKintEndpoint(endpoint) !== true) {
+          if (isKintExport(kintExport) !== true) {
             throw new Error(
               `Endpoint at route ${relativePathToCurrentFile} is not a Kint endpoint`
             );
           }
 
-          const endpointDefinedUrlParamsSchemaDef = endpoint.config.urlParams;
+          const endpoint = kintExport.data;
 
-          if (endpointDefinedUrlParamsSchemaDef != null) {
-            const endpointDefinedUrlsParams = zodKeys(
-              toZodObject(endpointDefinedUrlParamsSchemaDef)
+          if (isKintEndpointMeta(endpoint) !== true) {
+            throw new Error(
+              `Endpoint at route ${relativePathToCurrentFile} is not a Kint endpoint`
             );
-
-            const routeDefinedUrlParams = this.getAllUrlParams();
-
-            for (const urlParam of endpointDefinedUrlsParams) {
-              const paramExistsInRoute =
-                routeDefinedUrlParams.includes(urlParam);
-              if (paramExistsInRoute === false) {
-                throw new Error(
-                  `Endpoint at /${relativePathToCurrentFile} defines a URL parameter in it's schema (${urlParam}) that does not exist in the route path.`
-                );
-              }
-            }
           }
 
           this.resource[method] = endpoint;
@@ -183,6 +171,7 @@ export class RouteTreeNode<Context> {
   private getAllUrlParams() {
     const urlParams: string[] = [];
 
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     let currentRoute: RouteTreeNode<Context> | undefined = this;
 
     while (currentRoute != null) {

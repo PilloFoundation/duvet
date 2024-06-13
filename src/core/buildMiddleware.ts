@@ -1,17 +1,11 @@
-import { KintRequest } from "./models/KintRequest";
-import { KintResponse } from "./models/KintResponse";
-import { PreProcessingMiddleware } from "./models/middleware/PreProcessingMiddleware";
+import { Middleware } from "./models/Middleware";
 
-export function buildPreProcessingMiddleware<
-  Config extends object,
-  RequestExtension extends object = {}
->(
-  preProcess: (
-    request: KintRequest,
-    config: Config
-  ) => RequestExtension | KintResponse | void
-): PreProcessingMiddleware<Config, RequestExtension> {
+export function buildMiddleware<Name extends string, Context, Config>(
+  name: Name,
+  handler: Middleware<Name, Context, Config>["handler"]
+): Middleware<Name, Context, Config> {
   return {
-    preProcess,
+    name,
+    handler,
   };
 }

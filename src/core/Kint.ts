@@ -1,116 +1,82 @@
 import { KintRequest } from "./models/KintRequest";
 import { KintResponse } from "./models/KintResponse";
-import { PostProcessingMiddleware } from "./models/middleware/PostProcessingMiddleware";
-import { PostProcessingMiddlewareTuple } from "./models/middleware/PostProcessingMiddlewareTuple";
-import { PreProcessingMiddlewareTuple } from "./models/middleware/PreProcessingMiddlewareTuple";
-import { PreProcessingMiddleware } from "./models/middleware/PreProcessingMiddleware";
-import { PostProcessorCatchTypes } from "./models/middleware/utils/PostProcessorCatchTypes";
-import { PreProcessorsExtensionType } from "./models/middleware/utils/PreProcessorMutationType";
 import { mergeDefaultWithMissingItems } from "../utils/mergeConfigs";
 import { extendObject } from "../utils/extendConfig";
-import { AppendTuple } from "../utils/types/AppendTuple";
-import { MaybePromise } from "../utils/types/MaybePromise";
-import { ZodEndpointConfig } from "../zod-ext/models/ZodEndpointConfig";
-import { ZodRawShapePrimitives } from "../zod-ext/models/ZodRawShapePrimitives";
-import { ZodSchemaDefinition } from "../zod-ext/models/ZodSchemaDefinition";
-import { zodPreprocessor } from "../zod-ext/zodPreprocessor";
-import { Endpoint } from "./models/Endpoint";
+import { KintExport } from "./models/KintExport";
 import { RequireMissingOnDefault } from "../utils/requireFromDefault";
+import { Middleware } from "./models/Middleware";
+import { getFromFnOrValue } from "../utils/getFromFnOrValue";
+import { KintEndpointMeta } from "./models/KintEndpointMeta";
 
-export type HandlerInput<PreProcessors extends PreProcessingMiddlewareTuple> =
-  PreProcessorsExtensionType<PreProcessors> & KintRequest;
+export type Extend<Base, Ext, Field extends string> = Base & Record<Field, Ext>;
 
-export type HandlerOutput<
-  PostProcessors extends PostProcessingMiddlewareTuple
-> = MaybePromise<
-  PostProcessorCatchTypes<PostProcessors> | KintResponse | never
->;
+export type NotKeyOf<T, U> = T extends keyof U ? never : T;
 
+export type Handler<Context, Config> = (
+  request: KintRequest,
+  context: Context,
+  config: Config
+) => KintResponse;
+
+export type HandlerBuilder<Context, Config> = {
+  buildHandler: <FullContext extends Context, FullConfig extends Config>(
+    /**
+     * The handler that this builder will wrap with middleware.
+     */
+    innerHandler: Handler<Context, Config>
+  ) => Handler<FullContext, FullConfig>;
+};
+
+/**
+ * The main class that is used to define endpoints and build a router
+ * .
+ * TODO: Add more information and examples on how to use the class
+ */
 export class Kint<
-  Context,
-  Config extends object,
-  DefaultConfig extends Partial<Config>,
-  PreProcessors extends PreProcessingMiddlewareTuple,
-  PostProcessors extends PostProcessingMiddlewareTuple
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Context extends Record<string, any>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Config extends Record<string, any>,
+  DefaultConfig extends Partial<Config> = Config
 > {
-  private defaultConfig: DefaultConfig;
-  private preProcessors: PreProcessors;
-  private postProcessors: PostProcessors;
+  /**
+   * Creates a new Kint object. This is the starting point for defining endpoints.
+   *
+   * TODO: Add more information and examples on how to use the class
+   *
+   * @returns A new Kint instance with a global context object.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public static new<GlobalContext>() {
+    type Context = {
+      global: GlobalContext;
+    };
 
-  constructor(
+    type Config = Record<string, never>;
+
+    return new Kint<Context, Config>(
+      {},
+      {
+        buildHandler: <FullContext extends Context, FullConfig extends Config>(
+          innerHandler: Handler<FullContext, FullConfig>
+        ) => innerHandler,
+      }
+    );
+  }
+
+  private defaultConfig: DefaultConfig;
+
+  /**
+   * Builds a new handler with all the previous middleware applied to it.
+   */
+  private handlerBuilder: HandlerBuilder<Context, Config>;
+
+  private constructor(
     defaultConfig: DefaultConfig,
-    preProcessors: PreProcessors,
-    postProcessors: PostProcessors
+    handlerBuilder: HandlerBuilder<Context, Config>
   ) {
     this.defaultConfig = defaultConfig;
-    this.preProcessors = preProcessors;
-    this.postProcessors = postProcessors;
-  }
-
-  /**
-   * This function is used to define a new postprocessing middleware. PostProcessing middleware can be
-   * used to catch objects thrown or returned by the endpoint handler.
-   *
-   * @param middleware A PostProcessingMiddleware object that defines the middleware.
-   * @returns A new Kint instance with the new middleware added.
-   */
-  postprocessingMiddleware<MWConfig, NewCatch extends object>(
-    middleware: PostProcessingMiddleware<MWConfig, NewCatch>
-  ): Kint<
-    Context,
-    Config & MWConfig,
-    DefaultConfig & {},
-    PreProcessors,
-    AppendTuple<PostProcessors, PostProcessingMiddleware<MWConfig, NewCatch>>
-  > {
-    return new Kint<
-      Context,
-      Config & MWConfig,
-      DefaultConfig & {},
-      PreProcessors,
-      AppendTuple<PostProcessors, PostProcessingMiddleware<MWConfig, NewCatch>>
-    >(this.defaultConfig, this.preProcessors, [
-      ...this.postProcessors,
-      middleware,
-    ]);
-  }
-
-  /**
-   * This function is used to define a new preprocessing middleware. Middleware can be used to modify the input object
-   * before it reaches the endpoint handler or to return a response immediately to the user.
-   *
-   * @param middleware A PreProcessingMiddleware object that defines the middleware.
-   * @returns A new Kint instance with the new middleware added.
-   */
-  preprocessingMiddleware<
-    MWConfig extends object,
-    HandlerInputExtension extends object
-  >(
-    middleware: PreProcessingMiddleware<MWConfig, HandlerInputExtension>
-  ): Kint<
-    Context,
-    Config & MWConfig,
-    DefaultConfig & {},
-    AppendTuple<
-      PreProcessors,
-      PreProcessingMiddleware<MWConfig, HandlerInputExtension>
-    >,
-    PostProcessors
-  > {
-    return new Kint<
-      Context,
-      Config & MWConfig,
-      DefaultConfig & {},
-      AppendTuple<
-        PreProcessors,
-        PreProcessingMiddleware<MWConfig, HandlerInputExtension>
-      >,
-      PostProcessors
-    >(
-      this.defaultConfig,
-      [...this.preProcessors, middleware],
-      this.postProcessors
-    );
+    this.handlerBuilder = handlerBuilder;
   }
 
   /**
@@ -122,17 +88,73 @@ export class Kint<
   extendConfig<DefaultConfigExtension extends Partial<Config>>(
     extension: DefaultConfigExtension
   ) {
-    return new Kint<
-      Context,
-      Config,
-      DefaultConfig & DefaultConfigExtension,
-      PreProcessors,
-      PostProcessors
-    >(
+    return new Kint<Context, Config, DefaultConfig & DefaultConfigExtension>(
       extendObject(this.defaultConfig, extension),
-      this.preProcessors,
-      this.postProcessors
+      this.handlerBuilder
     );
+  }
+
+  /**
+   *
+   * @param middleware
+   * @returns
+   */
+  addMiddleware<Name extends string, ContextExt, ConfigExt>(
+    middleware: Middleware<NotKeyOf<Name, Config>, ContextExt, ConfigExt>
+  ) {
+    // Create a new handler builder which wraps the
+
+    /**
+     *
+     * @param innermostHandler The handler that this middleware will wrap.
+     * @returns A new handler which passes the inner handler into it.
+     */
+
+    const newHandlerBuilder: HandlerBuilder<
+      Extend<Context, ContextExt, Name>,
+      Extend<Config, ConfigExt, Name>
+    > = {
+      buildHandler: <
+        FullContext extends Extend<Context, ContextExt, Name>,
+        FullConfig extends Extend<Config, ConfigExt, Name>
+      >(
+        innermostHandler: Handler<
+          Extend<Context, ContextExt, Name>,
+          Extend<Config, ConfigExt, Name>
+        >
+      ) => {
+        // Builds a handler using the previous handler builder to wrap the innermost handler.
+        const wrappedInnerHandler = this.handlerBuilder.buildHandler<
+          FullContext,
+          FullConfig
+        >(innermostHandler);
+
+        // Returns a new handler that wraps the handler generated by the previous handler builder.
+        return (
+          request: KintRequest,
+          context: FullContext,
+          config: FullConfig
+        ) =>
+          middleware.handler(
+            request,
+            config[middleware.name],
+
+            // Next function simply extends the context object with the extension object and calls the inner handler.
+            (extension: ContextExt) => {
+              (context as Record<Name, ContextExt>)[middleware.name] =
+                extension;
+              return wrappedInnerHandler(request, context, config);
+            }
+          );
+      },
+    };
+
+    // Creates a new kint object with the new handler builder.
+    return new Kint<
+      Extend<Context, ContextExt, Name>,
+      Extend<Config, ConfigExt, Name>,
+      DefaultConfig
+    >(this.defaultConfig, newHandlerBuilder);
   }
 
   /**
@@ -144,23 +166,12 @@ export class Kint<
   setConfig<NewDefaultConfig extends Partial<Config>>(
     newConfig: ((config: DefaultConfig) => NewDefaultConfig) | NewDefaultConfig
   ) {
-    if (typeof newConfig === "function") {
-      return new Kint<
-        Context,
-        Config,
-        NewDefaultConfig,
-        PreProcessors,
-        PostProcessors
-      >(newConfig(this.defaultConfig), this.preProcessors, this.postProcessors);
-    } else {
-      return new Kint<
-        Context,
-        Config,
-        NewDefaultConfig,
-        PreProcessors,
-        PostProcessors
-      >(newConfig, this.preProcessors, this.postProcessors);
-    }
+    const resolvedNewConfig = getFromFnOrValue(newConfig, this.defaultConfig);
+
+    return new Kint<Context, Config, NewDefaultConfig>(
+      resolvedNewConfig,
+      this.handlerBuilder
+    );
   }
 
   /**
@@ -172,48 +183,24 @@ export class Kint<
    */
   defineEndpoint(
     config: RequireMissingOnDefault<Config, DefaultConfig>,
-    handler: (
-      handlerInput: HandlerInput<PreProcessors>,
-      context: Context,
-      config: Config
-    ) => HandlerOutput<PostProcessors>
-  ): Endpoint<Context, Config, PreProcessors, PostProcessors> {
-    return {
-      builtByKint: true,
-      preProcessors: this.preProcessors,
-      postProcessors: this.postProcessors,
-      config: mergeDefaultWithMissingItems(this.defaultConfig, config),
-      handler,
-    };
-  }
-
-  // ============================= ZOD EXTENSION ============================= //
-
-  /** Defines a zod endpoints which automatically validates your body, url parameters and query parameters. This simply wraps the `defineEndpoint` function */
-  defineZodEndpoint<
-    Body extends ZodSchemaDefinition,
-    UrlParams extends ZodRawShapePrimitives,
-    QueryParams extends ZodRawShapePrimitives
-  >(
-    config: RequireMissingOnDefault<
-      Config & ZodEndpointConfig<Body, UrlParams, QueryParams>,
-      DefaultConfig & {}
-    >,
-    handler: (
-      request: HandlerInput<
-        AppendTuple<
-          PreProcessors,
-          ReturnType<typeof zodPreprocessor<Body, UrlParams, QueryParams>>
-        >
-      >,
-      context: Context,
-      config: Config & ZodEndpointConfig<Body, UrlParams, QueryParams>
-    ) => HandlerOutput<PostProcessors>
-  ) {
-    const newKint = this.preprocessingMiddleware(
-      zodPreprocessor<Body, UrlParams, QueryParams>()
+    handler: Handler<Context, Config>
+  ): KintExport<KintEndpointMeta> {
+    // Merges the config from the user with the default config.
+    const mergedConfig = mergeDefaultWithMissingItems(
+      this.defaultConfig,
+      config
     );
 
-    return newKint.defineEndpoint(config, handler);
+    // Builds the handler with the handler builder
+    const handlerWithMiddleware = this.handlerBuilder.buildHandler(handler);
+
+    return {
+      builtByKint: true,
+      data: {
+        config: mergedConfig,
+        handler: handlerWithMiddleware,
+        data: "KintEndpointMeta",
+      },
+    };
   }
 }

@@ -1,7 +1,6 @@
-import { Endpoint } from "../models/Endpoint";
+import { KintExport } from "../models/KintExport";
 
-export function isKintEndpoint(
-  test: any
-): test is Endpoint<any, any, any, any> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isKintExport(test: any): test is KintExport<unknown> {
   return test?.builtByKint === true;
 }

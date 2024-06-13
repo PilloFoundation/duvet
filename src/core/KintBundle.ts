@@ -1,6 +1,11 @@
 import { Kint } from "./Kint";
 
-export type KintBuilder<Context, AppType> = {
-  kint: Kint<Context, {}, {}, [], []>;
-  build(directory: string, context: Context): AppType;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type KintBuilder<GlobalContext, AppType> = {
+  kint: Kint<
+    { global: GlobalContext },
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    {}
+  >;
+  build(directory: string, context: GlobalContext): AppType;
 };

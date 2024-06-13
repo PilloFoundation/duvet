@@ -13,6 +13,7 @@
   "license": "MIT",
   "scripts": {
     "build": "rimraf ./dist && tsc --outDir dist",
+    "lint": "eslint .",
     "test": "jest --coverage"
   },
   "devDependencies": {
