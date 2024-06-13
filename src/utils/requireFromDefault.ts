@@ -15,7 +15,7 @@
 
 type NonUndefined<T> = T extends undefined ? never : T;
 
-type RequiredKeysWithNoKeyOnDefault<T, D extends Partial<T>> = {
+type RequiredKeysWithNoKeyOnDefault<T, D> = {
   [K in keyof T]-?: {} extends Pick<T, K> // Field is optional on Object
     ? never // Field is optional so we discard with never
     : K extends keyof D // Key exists on Default (because we can assign K to a key on D)
@@ -25,6 +25,6 @@ type RequiredKeysWithNoKeyOnDefault<T, D extends Partial<T>> = {
     : K; // Field is required on Object and does not exist on Default
 }[keyof T];
 
-export type RequireMissingOnDefault<T, D extends Partial<T>> = {
+export type RequireMissingOnDefault<T, D> = {
   [K in RequiredKeysWithNoKeyOnDefault<T, D>]: NonUndefined<T[K]>;
 } & Partial<T>;

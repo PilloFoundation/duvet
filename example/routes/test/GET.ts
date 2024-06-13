@@ -4,20 +4,24 @@ import { z } from "zod";
 
 export default rootKint.defineEndpoint(
   {
-    middlewareC: "Test",
-    catch: { source: "Testing endpoint" },
+    logging: {
+      module: "TEST",
+    },
+    auth: {
+      method: "bearer",
+    },
   },
   zodValidator(
     z.object({
-      test: z.string(),
+      name: z.string(),
     }),
     z.object({})
   ),
-  (req, k) => {
+  (_req, { auth, valid }) => {
     console.log("running endpoint!");
-    console.log("context: ", k);
 
-    k.global.dbConnection;
+    console.log("Got token: " + auth.token);
+    console.log("Got name: " + valid.body.name);
 
     return {
       body: "Hello world!",

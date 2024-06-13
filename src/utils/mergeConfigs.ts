@@ -1,9 +1,6 @@
 import { RequireMissingOnDefault } from "./requireFromDefault";
 
-export function mergeDefaultWithMissingItems<
-  Config,
-  Default extends Partial<Config>
->(
+export function mergeDefaultWithMissingItems<Config, Default>(
   incomplete: Default,
   remaining: RequireMissingOnDefault<Config, Default>
 ): Config {

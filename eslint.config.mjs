@@ -12,5 +12,10 @@ export default tseslint.config(
         ignores: ["dist/*", "*.js"],
       },
     ],
+  },
+  {
+    rules: {
+      "@typescript-eslint/ban-types": "off",
+    },
   }
 );

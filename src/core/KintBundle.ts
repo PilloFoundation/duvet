@@ -5,6 +5,7 @@ export type KintBuilder<GlobalContext, AppType> = {
   kint: Kint<
     { global: GlobalContext },
     // eslint-disable-next-line @typescript-eslint/ban-types
+    {},
     {}
   >;
   build(directory: string, context: GlobalContext): AppType;
