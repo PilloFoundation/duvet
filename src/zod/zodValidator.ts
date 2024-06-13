@@ -1,6 +1,6 @@
 import { ZodError, ZodTypeAny, output } from "zod";
-import { Validator } from "./models/Validator";
-import { KintRequest } from "./models/KintRequest";
+import { Validator } from "../core/models/Validator";
+import { KintRequest } from "../core/models/KintRequest";
 
 export function zodBodyValidator<BodyZodSchema extends ZodTypeAny>(
   body: BodyZodSchema
