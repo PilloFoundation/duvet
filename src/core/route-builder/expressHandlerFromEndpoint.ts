@@ -6,14 +6,20 @@ import { KintResponse } from "../models/KintResponse";
 import { KintRequest } from "../models/KintRequest";
 import { KintEndpointMeta } from "../models/KintEndpointMeta";
 
+/**
+ * Takes an endpoint definition and context provider and returns an express handler which can be passed to any Express `use` directive (or equivalent).
+ * @param endpointMeta The endpoint definition to create a handler for.
+ * @param getContext A function which returns the context object to pass to the handler.
+ * @returns An express handler function which can be passed to any Express `use` directive (or equivalent).
+ */
 // TODO: Refactor to use express adapters
 export function expressHandlerFromEndpointDefinition<Context>(
   endpointMeta: KintEndpointMeta,
-  getContext: () => Context
+  getContext: () => Context,
 ) {
-  return async function expressHandler(
+  return function expressHandler(
     request: ExpressRequest,
-    response: ExpressResponse
+    response: ExpressResponse,
   ) {
     const kintRequest: KintRequest = {
       underlying: request,
@@ -24,12 +30,18 @@ export function expressHandlerFromEndpointDefinition<Context>(
       },
     };
 
-    const kintResponse = await endpointMeta.handler(
+    const kintResponse = endpointMeta.handler(
       kintRequest,
       { global: getContext() },
-      endpointMeta.config
+      endpointMeta.config,
     );
 
-    response.status(kintResponse.status).send(kintResponse.body);
+    if (kintResponse instanceof Promise) {
+      kintResponse.then((kintResponse) => {
+        response.status(kintResponse.status).send(kintResponse.body);
+      });
+    } else {
+      response.status(kintResponse.status).send(kintResponse.body);
+    }
   };
 }

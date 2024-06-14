@@ -33,14 +33,11 @@ export class Kint<
   Config extends Record<string, any>,
   DefaultConfig,
 > {
+  // TODO: Add more information and examples on how to use the class
   /**
    * Creates a new Kint object. This is the starting point for defining endpoints.
-   *
-   * TODO: Add more information and examples on how to use the class
-   *
    * @returns A new Kint instance with a global context object.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static new<GlobalContext>() {
     type Context = {
       global: GlobalContext;
@@ -75,7 +72,6 @@ export class Kint<
 
   /**
    * Extends the default config object. Takes a partial object to extend the default config object with.
-   *
    * @param extension A partial object to extend the default config object with.
    * @returns A new Kint instance with the new default config object.
    */
@@ -89,9 +85,9 @@ export class Kint<
   }
 
   /**
-   *
-   * @param middleware
-   * @returns
+   * Creates a new Kint with the middleware added.
+   * @param middleware The middleware to extend the kint instance with
+   * @returns A new Kint instance with the middleware added.
    */
   addMiddleware<Name extends string, ContextExt, ConfigExt>(
     middleware: Middleware<NotKeyOf<Name, Config>, ContextExt, ConfigExt>,
@@ -167,13 +163,6 @@ export class Kint<
     );
   }
 
-  /**
-   * This function is used to define a new endpoint.
-   *
-   * @param config A configuration object to configure any middleware.
-   * @param handler A handler function that will be called when this endpoint is hit.
-   * @returns And endpoint definition which can be used by Kint to build a router.
-   */
   defineEndpoint: DefineEndpointFunction<Context, Config, DefaultConfig> = <
     Validators extends ValidatorArray,
   >(

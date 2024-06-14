@@ -14,6 +14,7 @@ export default tseslint.config(
   {
     rules: {
       "@typescript-eslint/ban-types": "off",
+      "no-warning-comments": "warn",
     },
   },
   {
@@ -22,5 +23,5 @@ export default tseslint.config(
         ignores: ["dist/*", "*.js", "*.mjs"],
       },
     ],
-  }
+  },
 );

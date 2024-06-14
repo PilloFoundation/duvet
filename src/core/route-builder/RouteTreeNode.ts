@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import fs from "fs";
 import path from "path";
 import { Router } from "express";
@@ -16,18 +15,17 @@ export class RouteTreeNode<Context> {
     public name: string,
     public isUrlParam: boolean,
     private parent?: RouteTreeNode<Context>,
-    public resource: Resource = {}
+    public resource: Resource = {},
   ) {}
 
   /**
    * Populates a route tree node with the contents from a directory.
-   *
    * @param rootDirectory - The path to the routes directory.
    * @param relativePathToRoute - The relative path from the base directory to the current route.
    */
   private populateWithDirectoryContents(
     rootDirectory: string,
-    relativePathToRoute: string
+    relativePathToRoute: string,
   ) {
     const pathToCurrentRoute = path.join(rootDirectory, relativePathToRoute);
 
@@ -37,11 +35,11 @@ export class RouteTreeNode<Context> {
       // Get the path to the current file from the routes base directory
       const relativePathToCurrentFile = path.join(
         relativePathToRoute,
-        currentFileName
+        currentFileName,
       );
       const absolutePathToCurrentFile = path.join(
         rootDirectory,
-        relativePathToCurrentFile
+        relativePathToCurrentFile,
       );
 
       const stat = fs.statSync(absolutePathToCurrentFile);
@@ -53,7 +51,7 @@ export class RouteTreeNode<Context> {
         // Recursively populate the new route tree node
         newRouteTreeNode.populateWithDirectoryContents(
           rootDirectory,
-          relativePathToCurrentFile
+          relativePathToCurrentFile,
         );
 
         // Add the new route tree node to the sub routes
@@ -75,7 +73,7 @@ export class RouteTreeNode<Context> {
 
           if (module instanceof Error) {
             throw new Error(
-              `Error while loading module at ${moduleName}: ${module.message}`
+              `Error while loading module at ${moduleName}: ${module.message}`,
             );
           }
 
@@ -84,7 +82,7 @@ export class RouteTreeNode<Context> {
           // Check if the endpoint is a Kint endpoint
           if (isKintExport(kintExport) !== true) {
             throw new Error(
-              `Endpoint at route ${relativePathToCurrentFile} is not a Kint endpoint`
+              `Endpoint at route ${relativePathToCurrentFile} is not a Kint endpoint`,
             );
           }
 
@@ -92,7 +90,7 @@ export class RouteTreeNode<Context> {
 
           if (isKintEndpointMeta(endpoint) !== true) {
             throw new Error(
-              `Endpoint at route ${relativePathToCurrentFile} is not a Kint endpoint`
+              `Endpoint at route ${relativePathToCurrentFile} is not a Kint endpoint`,
             );
           }
 
@@ -132,7 +130,7 @@ export class RouteTreeNode<Context> {
     for (const subRoute of this.subRoutes) {
       const subRouter = subRoute.toExpressRouter(
         getContext,
-        currentPath + "/" + subRoute.name
+        currentPath + "/" + subRoute.name,
       );
 
       const routePath = "/" + (subRoute.isUrlParam ? ":" : "") + subRoute.name;
@@ -146,7 +144,7 @@ export class RouteTreeNode<Context> {
   private applyResource<C>(
     router: Router,
     resource: Resource,
-    getContext: () => C
+    getContext: () => C,
   ) {
     const { GET, POST, PATCH, DELETE, PUT } = resource;
 
@@ -159,12 +157,12 @@ export class RouteTreeNode<Context> {
     PATCH &&
       router.patch(
         "/",
-        expressHandlerFromEndpointDefinition(PATCH, getContext)
+        expressHandlerFromEndpointDefinition(PATCH, getContext),
       );
     DELETE &&
       router.delete(
         "/",
-        expressHandlerFromEndpointDefinition(DELETE, getContext)
+        expressHandlerFromEndpointDefinition(DELETE, getContext),
       );
   }
 
