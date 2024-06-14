@@ -15,7 +15,7 @@ import {
 } from "./models/DefineEndpointFunction";
 import { ValidatorArray } from "./models/Validator";
 import { extractParts } from "./extractParts";
-import { handlerWithValidators } from "./handlerWithValidators";
+import { wrapHandlerWithValidationLayer } from "./handlerWithValidators";
 
 export type StringKeysOnly<T> = {
   [K in keyof T]: K extends string ? K : never;
@@ -46,7 +46,7 @@ export class Kint<
       global: GlobalContext;
     };
 
-    type Config = Record<string, never>;
+    type Config = {};
 
     return new Kint<Context, Config, {}>(
       {},
@@ -193,7 +193,7 @@ export class Kint<
     );
 
     const handlerWithMiddleware = this.handlerBuilder.buildHandler(
-      handlerWithValidators(handler, validators),
+      wrapHandlerWithValidationLayer(handler, validators),
     );
 
     return {

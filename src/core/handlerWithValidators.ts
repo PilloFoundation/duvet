@@ -2,13 +2,19 @@ import { Handler } from "./models/Handler";
 import { WithValid } from "./models/DefineEndpointFunction";
 import { ValidatedData, ValidatorArray } from "./models/Validator";
 
-export function handlerWithValidators<
+/**
+ * Takes a handler and wraps it in a new handler which validates the request data.
+ * @param innerHandler The handler to wrap.
+ * @param validators An array of validators to use to validate the request data.
+ * @returns The wrapped handler.
+ */
+export function wrapHandlerWithValidationLayer<
   Context,
   Config,
-  Validators extends ValidatorArray
+  Validators extends ValidatorArray,
 >(
   innerHandler: Handler<WithValid<Context, Validators>, Config>,
-  validators: Validators
+  validators: Validators,
 ): Handler<Context, Config> {
   const handler: Handler<Context, Config> = (request, context, config) => {
     const validatedData = validators.reduce((acc, validator) => {
@@ -27,7 +33,7 @@ export function handlerWithValidators<
     return innerHandler(
       request,
       context as WithValid<Context, Validators>,
-      config
+      config,
     );
   };
 
