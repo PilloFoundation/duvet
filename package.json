@@ -12,6 +12,7 @@
   },
   "license": "MIT",
   "scripts": {
+    "prepare": "node .husky/install.mjs && husky install",
     "build": "rimraf ./dist && tsc --outDir dist",
     "lint": "eslint .",
     "test": "jest --coverage"
@@ -23,15 +24,17 @@
     "@types/jest": "^29.5.12",
     "@types/mime": "^4.0.0",
     "@types/node": "^20.12.2",
-    "eslint": "^8.57.0",
+    "eslint": "^9.4.0",
+    "eslint-plugin-jsdoc": "^48.2.9",
     "husky": "^9.0.11",
     "jest": "^29.7.0",
+    "lint-staged": ">=10",
     "nodemon": "^3.1.0",
+    "pinst": "^3.0.0",
     "prettier": "^3.2.5",
     "supertest": "^6.3.4",
     "ts-jest": "^29.1.2",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.4.3",
+    "typescript": "^5.4.5",
     "typescript-eslint": "^7.13.0"
   },
   "dependencies": {
