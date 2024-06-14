@@ -1,6 +1,3 @@
-import { KintResponse } from "../../../../../src";
-import { kint } from "../../kint";
+import { dudEndpoint } from "../../dud-endpoint";
 
-export default kint.defineEndpoint({}, () => {
-  return new KintResponse("Does nothing", 200);
-});
+export default dudEndpoint;

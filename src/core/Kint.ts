@@ -1,6 +1,6 @@
 import { KintRequest } from "./models/KintRequest";
-import { mergeDefaultWithMissingItems } from "../utils/mergeConfigs";
-import { extendObject } from "../utils/extendConfig";
+import { mergeDefaultWithMissingItems } from "../utils/mergeDefaultWithMissingItems";
+import { extendObject } from "../utils/extendObject";
 import { KintExport } from "./models/KintExport";
 import { MaybeFunction, Middleware } from "./models/Middleware";
 import { getFromFnOrValue } from "../utils/getFromFnOrValue";
@@ -31,7 +31,7 @@ export class Kint<
   Context extends Record<string, any>,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Config extends Record<string, any>,
-  DefaultConfig
+  DefaultConfig,
 > {
   /**
    * Creates a new Kint object. This is the starting point for defining endpoints.
@@ -52,9 +52,9 @@ export class Kint<
       {},
       {
         buildHandler: <FullContext extends Context, FullConfig extends Config>(
-          innerHandler: Handler<FullContext, FullConfig>
+          innerHandler: Handler<FullContext, FullConfig>,
         ) => innerHandler,
-      }
+      },
     );
   }
 
@@ -67,7 +67,7 @@ export class Kint<
 
   private constructor(
     defaultConfig: DefaultConfig,
-    handlerBuilder: HandlerBuilder<Context, Config>
+    handlerBuilder: HandlerBuilder<Context, Config>,
   ) {
     this.defaultConfig = defaultConfig;
     this.handlerBuilder = handlerBuilder;
@@ -80,11 +80,11 @@ export class Kint<
    * @returns A new Kint instance with the new default config object.
    */
   extendConfig<DefaultConfigExtension extends Partial<Config>>(
-    extension: DefaultConfigExtension
+    extension: DefaultConfigExtension,
   ) {
     return new Kint<Context, Config, DefaultConfig & DefaultConfigExtension>(
       extendObject(this.defaultConfig, extension),
-      this.handlerBuilder
+      this.handlerBuilder,
     );
   }
 
@@ -94,7 +94,7 @@ export class Kint<
    * @returns
    */
   addMiddleware<Name extends string, ContextExt, ConfigExt>(
-    middleware: Middleware<NotKeyOf<Name, Config>, ContextExt, ConfigExt>
+    middleware: Middleware<NotKeyOf<Name, Config>, ContextExt, ConfigExt>,
   ) {
     // Create a new handler builder which wraps the
 
@@ -110,12 +110,12 @@ export class Kint<
     > = {
       buildHandler: <
         FullContext extends Extend<Context, ContextExt, Name>,
-        FullConfig extends Extend<Config, ConfigExt, Name>
+        FullConfig extends Extend<Config, ConfigExt, Name>,
       >(
         innermostHandler: Handler<
           Extend<Context, ContextExt, Name>,
           Extend<Config, ConfigExt, Name>
-        >
+        >,
       ) => {
         // Builds a handler using the previous handler builder to wrap the innermost handler.
         const wrappedInnerHandler = this.handlerBuilder.buildHandler<
@@ -127,7 +127,7 @@ export class Kint<
         return (
           request: KintRequest,
           context: FullContext,
-          config: FullConfig
+          config: FullConfig,
         ) =>
           middleware.handler(
             request,
@@ -138,7 +138,7 @@ export class Kint<
                   extension;
               return wrappedInnerHandler(request, context, config);
             }) as MaybeFunction<ContextExt>,
-            config[middleware.name]
+            config[middleware.name],
           );
       },
     };
@@ -153,18 +153,17 @@ export class Kint<
 
   /**
    * Overrides the config object with a new one. This can be a partial object or a function that takes the current config object and returns a new one.
-   *
    * @param newConfig A new config object or a function that takes the current config object and returns a new one.
    * @returns A new Kint instance with the new config object.
    */
   setConfig<NewDefaultConfig extends Partial<Config>>(
-    newConfig: ((config: DefaultConfig) => NewDefaultConfig) | NewDefaultConfig
+    newConfig: ((config: DefaultConfig) => NewDefaultConfig) | NewDefaultConfig,
   ) {
     const resolvedNewConfig = getFromFnOrValue(newConfig, this.defaultConfig);
 
     return new Kint<Context, Config, NewDefaultConfig>(
       resolvedNewConfig,
-      this.handlerBuilder
+      this.handlerBuilder,
     );
   }
 
@@ -176,7 +175,7 @@ export class Kint<
    * @returns And endpoint definition which can be used by Kint to build a router.
    */
   defineEndpoint: DefineEndpointFunction<Context, Config, DefaultConfig> = <
-    Validators extends ValidatorArray
+    Validators extends ValidatorArray,
   >(
     ...args: DefineEndpointFunctionArgs<
       Context,
@@ -190,11 +189,11 @@ export class Kint<
     // Merges the config from the user with the default config.
     const mergedConfig = mergeDefaultWithMissingItems(
       this.defaultConfig,
-      config
+      config,
     );
 
     const handlerWithMiddleware = this.handlerBuilder.buildHandler(
-      handlerWithValidators(handler, validators)
+      handlerWithValidators(handler, validators),
     );
 
     return {

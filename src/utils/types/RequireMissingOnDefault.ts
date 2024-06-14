@@ -1,30 +1,92 @@
-/* eslint-disable @typescript-eslint/ban-types */
-// For each key of object:
-//   If the key on object is optional, then the key on the output is also optional
-//   If they key on object is required, but the key exists on default, then the key on the output is optional
-//   If the key on object is required, but the key does not exist on default, then the key on the output is required
+export type RequiredKeysWithNoKeyOnDefault<T, D> = Exclude<
+  keyof RemoveOptionals<T>,
+  keyof RemoveOptionals<D>
+>;
 
 /**
- * | Object   | Default        | Output   |
- * | -------- | -------------- | -------- |
- * | optional | exists         | optional |
- * | optional | does not exist | optional |
- * | required | exists         | optional |
- * | required | does not exist | required |
+ * Removes all optional fields from `T`, including those that can be set to `undefined`.
+ */
+type RemoveOptionals<T> = {
+  [K in keyof T as OptionalOrUndefined<T, K>]: T[K];
+};
+
+/**
+ * Returns the keys of `T` that are required and do not exist on `D`.
+ */
+type OptionalOrUndefined<T, K extends keyof T> =
+  {} extends Pick<T, K> ? never : undefined extends T[K] ? never : K;
+
+/**
+ * Creates a new type from the input type where all the fields that are required on the input type but do
+ * not exist on the default type are required.
+ *
+ * For each field on `T`, the field on the output type will be
+ * | T          | D                | Output     |
+ * | ---------- | ---------------- | ---------- |
+ * | `optional` | `exists`         | `optional` |
+ * | `optional` | `does not exist` | `optional` |
+ * | `required` | `exists`         | `optional` |
+ * | `required` | `does not exist` | `required` |
+ */
+export type RequireMissingOnDefault<T, D> = {
+  [K in RequiredKeysWithNoKeyOnDefault<T, D>]: T[K];
+} & Partial<T>;
+
+// ======================================== TESTING ========================================
+
+/**
+ * The following code only exists to test that the above type functions work as expected.
  */
 
-type NonUndefined<T> = T extends undefined ? never : T;
+type Output = {
+  requiredOnOutputAndOnDefault: string;
+  requiredOnOutputButOptionalOnDefault: string;
+  requiredOnOutputButCanBeUndefinedOnDefault: string;
+  requiredOnOutputButMissingOnDefault: string;
 
-type RequiredKeysWithNoKeyOnDefault<T, D> = {
-  [K in keyof T]-?: {} extends Pick<T, K> // Field is optional on Object
-    ? never // Field is optional so we discard with never
-    : K extends keyof D // Key exists on Default (because we can assign K to a key on D)
-    ? {} extends Pick<D, K> // Field is optional on Default
-      ? K // Field is required on Object but Optional on Default
-      : never // Field is required on Object and Default so we can discard with never
-    : K; // Field is required on Object and does not exist on Default
-}[keyof T];
+  optionalOnOutputAndOnDefault?: string;
+  optionalOnOutputButOptionalOnDefault?: string;
+  optionalOnOutputButCanBeUndefinedOnDefault?: string;
+  optionalOnOutputButMissingOnDefault?: string;
 
-export type RequireMissingOnDefault<T, D> = {
-  [K in RequiredKeysWithNoKeyOnDefault<T, D>]: NonUndefined<T[K]>;
-} & Partial<T>;
+  canBeUndefinedOnOutputAndOnDefault: string | undefined;
+  canBeUndefinedOnOutputButOptionalOnDefault: string | undefined;
+  canBeUndefinedOnOutputButCanBeUndefinedOnDefault: string | undefined;
+  canBeUndefinedOnOutputButMissingOnDefault: string | undefined;
+};
+
+type Defaults = {
+  requiredOnOutputAndOnDefault: string;
+  requiredOnOutputButOptionalOnDefault?: string;
+  requiredOnOutputButCanBeUndefinedOnDefault: string | undefined;
+
+  optionalOnOutputAndOnDefault: string;
+  optionalOnOutputButOptionalOnDefault?: string;
+  optionalOnOutputButCanBeUndefinedOnDefault: string | undefined;
+
+  canBeUndefinedOnOutputAndOnDefault: string;
+  canBeUndefinedOnOutputButOptionalOnDefault?: string;
+  canBeUndefinedOnOutputButCanBeUndefinedOnDefault: string | undefined;
+};
+
+type RequiredKeysTest = RequiredKeysWithNoKeyOnDefault<Output, Defaults>;
+type NonRequiredKeysTest = Exclude<keyof Output, RequiredKeysTest>;
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const requiredKeysTest: RequiredKeysTest[] = [
+  "requiredOnOutputButMissingOnDefault",
+  "requiredOnOutputButCanBeUndefinedOnDefault",
+  "requiredOnOutputButOptionalOnDefault",
+];
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const nonRequiredKeysTest: NonRequiredKeysTest[] = [
+  "optionalOnOutputAndOnDefault",
+  "optionalOnOutputButOptionalOnDefault",
+  "optionalOnOutputButCanBeUndefinedOnDefault",
+  "optionalOnOutputButMissingOnDefault",
+  "canBeUndefinedOnOutputAndOnDefault",
+  "canBeUndefinedOnOutputButOptionalOnDefault",
+  "canBeUndefinedOnOutputButCanBeUndefinedOnDefault",
+  "canBeUndefinedOnOutputButMissingOnDefault",
+];
