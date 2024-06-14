@@ -1,7 +1,7 @@
-name: Codecov
-on: [push, pull_request]
+name: Test
+on: [pull_request]
 jobs:
-  code-cov:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -12,7 +12,7 @@ jobs:
           node-version: '20'
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-      - name: Generate coverage report
+      - name: Run tests and generate report
         run: yarn test
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4.0.1
