@@ -1,7 +1,7 @@
-name: Codecov
+name: Lint
 on: [push, pull_request]
 jobs:
-  code-cov:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -13,9 +13,4 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Generate coverage report
-        run: yarn test
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4.0.1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          slug: PKWadsy/kint
+        run: yarn lint
