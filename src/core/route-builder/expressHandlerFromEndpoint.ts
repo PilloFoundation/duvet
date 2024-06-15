@@ -30,6 +30,7 @@ export function expressHandlerFromEndpointDefinition<Context>(
       },
     };
 
+    // TODO: Test that the config is being passed through here. Consider building the config passing straight into the handler.
     const kintResponse = endpointMeta.handler(
       kintRequest,
       { global: getContext() },

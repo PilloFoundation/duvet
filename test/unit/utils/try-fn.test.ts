@@ -13,4 +13,11 @@ describe("tryFn", () => {
     });
     expect(result).toBe(error);
   });
+
+  test("Returns an error if the function throws a non-error", () => {
+    const result = tryFn(() => {
+      throw "error";
+    });
+    expect(result).toBeInstanceOf(Error);
+  });
 });

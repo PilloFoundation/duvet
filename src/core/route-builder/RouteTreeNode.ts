@@ -165,21 +165,4 @@ export class RouteTreeNode<Context> {
         expressHandlerFromEndpointDefinition(DELETE, getContext),
       );
   }
-
-  private getAllUrlParams() {
-    const urlParams: string[] = [];
-
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    let currentRoute: RouteTreeNode<Context> | undefined = this;
-
-    while (currentRoute != null) {
-      if (currentRoute.isUrlParam) {
-        urlParams.push(currentRoute.name);
-      }
-
-      currentRoute = currentRoute.parent;
-    }
-
-    return urlParams;
-  }
 }
