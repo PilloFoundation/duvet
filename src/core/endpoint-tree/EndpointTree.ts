@@ -7,6 +7,7 @@ export type EndpointTreeEndpoint<GlobalContext, Config> = {
   method: Method;
 };
 
+// TODO: Add js docs
 export class EndpointTreeNode<Context, PluginConfig> {
   private _fullPath: string;
   private _name: string;
@@ -26,27 +27,24 @@ export class EndpointTreeNode<Context, PluginConfig> {
     this._parent = parent;
 
     this._name = name;
-    this._fullPath = parent ? `${parent.fullPath}/${name}` : name;
+    this._fullPath = name;
 
     this._endpoints = [];
     this._subRoutes = [];
 
     this._isParam = isParam;
-    this._params = parent ? [...parent.params] : [];
-    if (isParam) {
-      this._params.push(name);
-    }
+
+    if (parent != null) this.setParent(parent);
   }
 
-  private setParent(endpointTreeNode: EndpointTreeNode<Context, PluginConfig>) {
-    this._parent = endpointTreeNode;
-    this._fullPath = parent
-      ? `${this._parent.fullPath}/${this._name}`
-      : this._name;
-    this._params = parent ? [...this._parent.params] : [];
+  private setParent(parent: EndpointTreeNode<Context, PluginConfig>) {
+    this._parent = parent;
+    this._fullPath = `${this._parent.fullPath}/${this._name}`;
+    this._params = [...this._parent.params];
     if (this._isParam) {
       this._params.push(this._name);
     }
+    parent.addSubRoute(this);
   }
 
   public get endpoints() {
@@ -80,6 +78,7 @@ export class EndpointTreeNode<Context, PluginConfig> {
   public addEndpoint(
     endpoint: EndpointTreeEndpoint<Context, unknown & PluginConfig>,
   ) {
+    if (this._endpoints.includes(endpoint)) return;
     const conflict = this.checkConflict(endpoint);
     if (conflict.conflict) {
       throw new Error(
@@ -90,6 +89,7 @@ export class EndpointTreeNode<Context, PluginConfig> {
   }
 
   public addSubRoute(subRoute: EndpointTreeNode<Context, PluginConfig>) {
+    if (this.subRoutes.includes(subRoute)) return;
     this._subRoutes.push(subRoute);
   }
 

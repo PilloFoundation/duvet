@@ -34,11 +34,10 @@ export function applyDirectoryContentsToEndpointTreeNode<Context, PluginConfig>(
 
   for (const subDir of directories) {
     const absolutePathToSubDir = path.join(directoryPath, subDir);
-    const subRoute = createEndpointTreeNodeFromSubDirectory(
+    createEndpointTreeNodeFromSubDirectory(
       absolutePathToSubDir,
       endpointTreeNode,
     );
-    endpointTreeNode.addSubRoute(subRoute);
   }
 
   for (const file of files) {
