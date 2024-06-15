@@ -1,13 +1,14 @@
 {
-	"compilerOptions": {
-		"rootDir": "src",
-		"outDir": "dist",
-		"module": "commonjs",
-		"target": "ESNext",
-		"esModuleInterop": true,
-		"strict": true,
-		"allowSyntheticDefaultImports": true,
-		"declaration": true
-	},
-	"include": ["src"]
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "module": "commonjs",
+    "target": "ESNext",
+    "esModuleInterop": true,
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true
+  },
+  "include": ["src"],
+  "exclude": ["example/**"]
 }

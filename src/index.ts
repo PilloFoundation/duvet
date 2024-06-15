@@ -1,5 +1,9 @@
-export { kint } from './kint';
-export { k } from './schemaHelpers';
+export { Kint } from "./core/Kint";
+export { createExpressKint } from "./core/createKint";
 
-import { kint } from './kint';
-export default kint;
+export { Middleware } from "./core/models/Middleware";
+
+export { KintRequest } from "./core/models/KintRequest";
+export { KintResponse } from "./core/models/KintResponse";
+
+export { buildMiddleware } from "./core/buildMiddleware";

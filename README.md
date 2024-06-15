@@ -1,8 +1,19 @@
 # Kint
 
-Kint is an opinionated framework which allows you to create type-safe, self-documented, file-system based REST APIs.
+Kint is an opinionated and modular framework which allows you to create type-safe, self-documented, file-system based REST APIs.
 
-The project prioritises developer experience over all else.
+It has the following features
+
+- Strong type safety
+- File system based api routes
+- Zod body and parameter parsing
+- Sophisticated error handling
+- Highly configurable middleware
+- Generator plugins (coming soon)
+
+## Type Safety
+
+Kint prioritises a good developer experience above all else, and with this, comes first-class type safety from middleware configuration to zod body parsing. Everything is strongly typed.
 
 ## Dependencies
 
@@ -25,10 +36,9 @@ Firstly, you'll need to install Kint. You'll also want to install `zod` and `exp
 To get started, create a file called `kint.ts`. Import `kint` from `express-kint` and run this to get two objects called `makeExpressEndpoint` and `buildExpressRouter`. The `kint` function takes no arguments but one type argument for a context object.
 
 ```typescript
-
 // kint.ts
 
-import kint from 'express-kint';
+import kint from "express-kint";
 
 export interface Context {
   // DB connection,
@@ -36,20 +46,17 @@ export interface Context {
 }
 
 export const { buildExpressRouter, defineExpressEndpoint } = kint<Context>();
-
-
 ```
 
 Next, we will need to write a some code which takes our routes and builds them into an express router as shown below. The `buildExpressRouter` function is used to build an express routes. It takes in two parameters: a path to the routes folder, and a context object to be passed to all the handlers.
 
 ```typescript
-
 // main.ts
 
-import express from 'express';
-import path from 'path';
+import express from "express";
+import path from "path";
 
-import { buildExpressRouter, Context } from './kint';
+import { buildExpressRouter, Context } from "./kint";
 
 const server = express(); // Create an express app
 
@@ -57,17 +64,16 @@ server.use(express.json()); // Parse the body as json
 
 const context: Context = {
   // ...
-}
+};
 
-const routePath = path.join(__dirname, 'routes'); // Get routes directory
+const routePath = path.join(__dirname, "routes"); // Get routes directory
 const router = buildExpressRouter(routePath, context); // Build the router
 
-server.use('/', router);
+server.use("/", router);
 
 server.listen(3000, () => {
-  console.log('Server started on http://localhost:3000');
+  console.log("Server started on http://localhost:3000");
 });
-
 ```
 
 ### Basic Endpoints
@@ -89,12 +95,11 @@ See below for an example.
 ```typescript
 // in routes/GET.ts
 
-import { defineExpressEndpoint } from '../kint';
+import { defineExpressEndpoint } from "../kint";
 
 export default defineExpressEndpoint({}, (req, res, ctx) => {
   res.status(200).send("Hello world");
 });
-
 ```
 
 Well done! You've just defined an endpoint!
@@ -126,26 +131,27 @@ routes
 
 So far, we have only dealt with basic routes. But you may be wondering, what about url parameters? You often see routes such as `GET /posts/<some-id>`.
 
-Well Kint allows you to define URL parameters by surrounding any folder name with square brackets. This may be familiar to you if you've ever used svelte. For example, you can name a folder `[id]` and the `id` field will become available on the `request.params` object. Well, *not quite*. Because Kint does schema validation, you will first need to define the url parameter in the schema part of your endpoint definition. This is as simple as adding the following to the schema definition object, which is the first parameter of the endpoint definition function: `urlParams: { id: z.string() }`. Simple as that.
+Well Kint allows you to define URL parameters by surrounding any folder name with square brackets. This may be familiar to you if you've ever used svelte. For example, you can name a folder `[id]` and the `id` field will become available on the `request.params` object. Well, _not quite_. Because Kint does schema validation, you will first need to define the url parameter in the schema part of your endpoint definition. This is as simple as adding the following to the schema definition object, which is the first parameter of the endpoint definition function: `urlParams: { id: z.string() }`. Simple as that.
 
 So our code to define a GET request on the posts looks like the following:
 
 ```typescript
-
 // routes/posts/[id]/GET.ts
 
-import { defineExpressEndpoint } from '../kint';
+import { defineExpressEndpoint } from "../kint";
 
-export default defineExpressEndpoint({
-  urlParams: {
-    id: z.string(),
-  }
-}, (req, res, ctx) => {
+export default defineExpressEndpoint(
+  {
+    urlParams: {
+      id: z.string(),
+    },
+  },
+  (req, res, ctx) => {
+    const id = req.params.id;
 
-  const id = req.params.id;
-
-  res.status(200).send("Got post with id: " + id);
-});
+    res.status(200).send("Got post with id: " + id);
+  },
+);
 ```
 
 Of course, Kint allows you to add more than one url parameter. For example, to add the endpoint `PATCH /user/[userId]/documents/[documentId]/details`, you would need to add the following file:
@@ -210,6 +216,8 @@ export default defineExpressEndpoint({
 
 ```
 
-And that's all there is to it... *for now*.
+And that's all there is to it... _for now_.
 
 Have fun!
+
+<!-- TODO: Update README -->
