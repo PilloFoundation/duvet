@@ -3,4 +3,4 @@
 
 yarn lint-staged
 yarn test
-yarn tsc
+yarn tsc --noEmit

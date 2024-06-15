@@ -19,3 +19,5 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: PKWadsy/kint
+      - name: Run Typescript Checks
+        run: yarn tsc --noEmit
