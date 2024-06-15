@@ -15,7 +15,8 @@
     "prepare": "node .husky/install.mjs && husky install",
     "build": "rimraf ./dist && tsc --outDir dist",
     "lint": "eslint .",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "@eslint/js": "^9.4.0",
