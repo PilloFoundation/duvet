@@ -1,10 +1,13 @@
-import { Handler } from "./Handler";
+import { ConfigurableHandler } from "./ConfigurableHandler";
 
 export type HandlerBuilder<Context, Config> = {
-  buildHandler: <FullContext extends Context, FullConfig extends Config>(
+  buildConfigurableHandler: <
+    FullContext extends Context,
+    FullConfig extends Config,
+  >(
     /**
      * The handler that this builder will wrap with middleware.
      */
-    innerHandler: Handler<Context, Config>
-  ) => Handler<FullContext, FullConfig>;
+    innerHandler: ConfigurableHandler<Context, Config>,
+  ) => ConfigurableHandler<FullContext, FullConfig>;
 };

@@ -1,36 +1,7 @@
-import { KintRequest, KintResponse } from "../../src";
+import { KintRequest } from "../../src";
 import { Kint } from "../../src/core/Kint";
-import {
-  Middleware,
-  MiddlewareHandler,
-} from "../../src/core/models/Middleware";
-
-// eslint-disable-next-line jsdoc/require-jsdoc
-function buildTestMiddleware<Name extends string, Context, Config>(
-  name: Name,
-  before: (config: Config) => Context | null = () => null,
-  after: (res: KintResponse) => KintResponse = (res) => res,
-): Middleware<Name, Context | null, Config> {
-  const middlewareHandler: MiddlewareHandler<Context | null, Config> = (
-    request,
-    next,
-    config,
-  ): KintResponse => {
-    const context = before(config);
-    const result = next(context);
-    return after(result);
-  };
-
-  return {
-    name,
-    handler: middlewareHandler,
-  };
-}
-
-const dudResponse = {
-  body: null,
-  status: 200,
-};
+import { buildTestMiddleware } from "./buildTestMiddleware";
+import { dudResponse } from "./dudResponse";
 
 describe("Middleware Integration", () => {
   test("Middleware runs in the correct order", () => {
@@ -79,7 +50,7 @@ describe("Middleware Integration", () => {
         },
       );
 
-    endpoint.data.handler({} as KintRequest, {}, {});
+    endpoint.data.handler({} as KintRequest, { global: {} });
 
     expect(events).toEqual([
       "second before",
@@ -115,73 +86,11 @@ describe("Middleware Integration", () => {
       return dudResponse;
     });
 
-    endpoint.data.handler({} as KintRequest, {}, {});
-    endpointWithMiddleware.data.handler({} as KintRequest, {}, {});
+    endpoint.data.handler({} as KintRequest, { global: {} });
+    endpointWithMiddleware.data.handler({} as KintRequest, { global: {} });
 
     expect(runEndpoint.mock.calls).toHaveLength(1);
     expect(runMiddleware.mock.calls).toHaveLength(1);
     expect(runEndpointWithMiddleware.mock.calls).toHaveLength(1);
-  });
-
-  test("The config from the endpoint definition is passed into the middleware", async () => {
-    const runMiddlewareOne = jest.fn();
-    const runMiddlewareTwo = jest.fn();
-
-    const kint = Kint.new<{}>()
-      .addMiddleware(
-        buildTestMiddleware("mwOne", (config: string) => {
-          runMiddlewareOne(config);
-        }),
-      )
-      .addMiddleware(
-        buildTestMiddleware(
-          "mwTwo",
-          (config: { fieldOne: string; fieldTwo: number }) => {
-            runMiddlewareTwo(config);
-          },
-        ),
-      );
-
-    const endpointWithConfigOne = kint.defineEndpoint(
-      {
-        mwOne: "endpointOne",
-        mwTwo: {
-          fieldOne: "endpointOne",
-          fieldTwo: 1,
-        },
-      },
-      () => dudResponse,
-    );
-
-    const endpointWithConfigTwo = kint.defineEndpoint(
-      {
-        mwOne: "endpointTwo",
-        mwTwo: {
-          fieldOne: "endpointTwo",
-          fieldTwo: 2,
-        },
-      },
-      () => dudResponse,
-    );
-
-    endpointWithConfigOne.data.handler(
-      {} as KintRequest,
-      {},
-      endpointWithConfigOne.data.config,
-    );
-    endpointWithConfigTwo.data.handler(
-      {} as KintRequest,
-      {},
-      endpointWithConfigTwo.data.config,
-    );
-
-    expect(runMiddlewareOne.mock.calls).toEqual([
-      ["endpointOne"],
-      ["endpointTwo"],
-    ]);
-    expect(runMiddlewareTwo.mock.calls).toEqual([
-      [{ fieldOne: "endpointOne", fieldTwo: 1 }],
-      [{ fieldOne: "endpointTwo", fieldTwo: 2 }],
-    ]);
   });
 });

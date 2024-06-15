@@ -1,4 +1,4 @@
-import { Handler } from "./models/Handler";
+import { ConfigurableHandler } from "./models/ConfigurableHandler";
 import {
   DefineEndpointFunctionArgs,
   WithValid,
@@ -25,12 +25,12 @@ export function extractParts<
 ): {
   config: Config;
   validators: Validators;
-  handler: Handler<WithValid<Context, Validators>, Config>;
+  handler: ConfigurableHandler<WithValid<Context, Validators>, Config>;
 } {
   return {
     config: args[0] as Config,
     validators: args.slice(1, -1) as unknown as Validators,
-    handler: args[args.length - 1] as Handler<
+    handler: args[args.length - 1] as ConfigurableHandler<
       WithValid<Context, Validators>,
       Config
     >,

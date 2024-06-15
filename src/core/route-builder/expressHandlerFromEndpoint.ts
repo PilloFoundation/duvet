@@ -14,7 +14,7 @@ import { KintEndpointMeta } from "../models/KintEndpointMeta";
  */
 // TODO: Refactor to use express adapters
 export function expressHandlerFromEndpointDefinition<Context>(
-  endpointMeta: KintEndpointMeta,
+  endpointMeta: KintEndpointMeta<unknown, unknown>,
   getContext: () => Context,
 ) {
   return function expressHandler(
@@ -30,12 +30,9 @@ export function expressHandlerFromEndpointDefinition<Context>(
       },
     };
 
-    // TODO: Test that the config is being passed through here. Consider building the config passing straight into the handler.
-    const kintResponse = endpointMeta.handler(
-      kintRequest,
-      { global: getContext() },
-      endpointMeta.config,
-    );
+    const kintResponse = endpointMeta.handler(kintRequest, {
+      global: getContext(),
+    });
 
     if (kintResponse instanceof Promise) {
       kintResponse.then((kintResponse) => {

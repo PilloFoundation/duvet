@@ -5,7 +5,9 @@ import { KintEndpointMeta } from "../models/KintEndpointMeta";
  * @param test The value to test
  * @returns A boolean indicating if the value is a KintEndpointMeta object
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isKintEndpointMeta(test: any): test is KintEndpointMeta {
+export function isKintEndpointMeta(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  test: any,
+): test is KintEndpointMeta<unknown, unknown> {
   return test?.data === "KintEndpointMeta";
 }

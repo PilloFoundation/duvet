@@ -1,4 +1,4 @@
-import { Handler } from "./models/Handler";
+import { ConfigurableHandler } from "./models/ConfigurableHandler";
 import { WithValid } from "./models/DefineEndpointFunction";
 import { ValidatedData, ValidatorArray } from "./models/Validator";
 
@@ -13,10 +13,14 @@ export function wrapHandlerWithValidationLayer<
   Config,
   Validators extends ValidatorArray,
 >(
-  innerHandler: Handler<WithValid<Context, Validators>, Config>,
+  innerHandler: ConfigurableHandler<WithValid<Context, Validators>, Config>,
   validators: Validators,
-): Handler<Context, Config> {
-  const handler: Handler<Context, Config> = (request, context, config) => {
+): ConfigurableHandler<Context, Config> {
+  const handler: ConfigurableHandler<Context, Config> = (
+    request,
+    context,
+    config,
+  ) => {
     const validatedData = validators.reduce((acc, validator) => {
       const result = validator.validate(request);
 
