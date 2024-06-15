@@ -12,6 +12,8 @@ jobs:
           node-version: "20"
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+      - name: Run Typescript Checks
+        run: yarn tsc --noEmit
       - name: Run tests and generate report
         run: yarn test
       - name: Upload coverage to Codecov
@@ -19,5 +21,3 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: PKWadsy/kint
-      - name: Run Typescript Checks
-        run: yarn tsc --noEmit
