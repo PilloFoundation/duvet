@@ -1,9 +1,9 @@
-import { ConfigurableHandler } from "./models/ConfigurableHandler";
+import { ConfigurableHandler } from "../models/ConfigurableHandler";
 import {
   DefineEndpointFunctionArgs,
   WithValid,
-} from "./models/DefineEndpointFunction";
-import { ValidatorArray } from "./models/Validator";
+} from "../models/DefineEndpointFunction";
+import { ValidatorArray } from "../models/Validator";
 
 /**
  * Takes an args array from the define endpoint function and extracts the config, validators, and handler from it in a type safe way.

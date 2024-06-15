@@ -1,5 +1,5 @@
 import { KintRequest } from "../../src";
-import { KintEndpointBuilder } from "../../src/core/KintEndpointBuilder";
+import { KintEndpointBuilder } from "../../src/core/endpoint-builder/KintEndpointBuilder";
 import { buildTestMiddleware } from "./buildTestMiddleware";
 import { dudResponse } from "./dudResponse";
 

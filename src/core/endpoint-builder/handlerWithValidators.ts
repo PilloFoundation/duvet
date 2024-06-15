@@ -1,6 +1,6 @@
-import { ConfigurableHandler } from "./models/ConfigurableHandler";
-import { WithValid } from "./models/DefineEndpointFunction";
-import { ValidatedData, ValidatorArray } from "./models/Validator";
+import { ConfigurableHandler } from "../models/ConfigurableHandler";
+import { WithValid } from "../models/DefineEndpointFunction";
+import { ValidatedData, ValidatorArray } from "../models/Validator";
 
 /**
  * Takes a handler and wraps it in a new handler which validates the request data.

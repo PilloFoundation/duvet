@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { KintEndpointBuilder } from "./KintEndpointBuilder";
+import { KintEndpointBuilder } from "./endpoint-builder/KintEndpointBuilder";
 import { RouteTreeNode } from "./route-builder/RouteTreeNode";
 import { KintBuilder } from "./models/KintBundle";
 
