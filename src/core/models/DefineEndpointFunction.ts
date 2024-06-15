@@ -9,23 +9,26 @@ export type WithValid<Context, Validators extends ValidatorArray> = Context & {
 };
 
 export type DefineEndpointFunctionArgs<
-  Context,
+  GlobalContext,
   Config,
   DefaultConfig,
   Validators extends ValidatorArray,
 > = readonly [
   config: RequireMissingOnDefault<Config, DefaultConfig>,
   ...validators: Validators,
-  handler: ConfigurableHandler<WithValid<Context, Validators>, Config>,
+  handler: ConfigurableHandler<
+    WithValid<{ global: GlobalContext }, Validators>,
+    Config
+  >,
 ];
 
-export type DefineEndpointFunction<Context, Config, DefaultConfig> = <
+export type DefineEndpointFunction<GlobalContext, Config, DefaultConfig> = <
   Validators extends ValidatorArray,
 >(
   ...args: DefineEndpointFunctionArgs<
-    Context,
+    GlobalContext,
     Config,
     DefaultConfig,
     Validators
   >
-) => KintExport<KintEndpoint<Context, Config>>;
+) => KintExport<KintEndpoint<GlobalContext, Config>>;

@@ -11,13 +11,13 @@ import { ValidatorArray } from "../models/Validator";
  * @returns An object containing the config, validators, and handler.
  */
 export function extractParts<
-  Context,
+  GlobalContext,
   Config,
   DefaultConfig,
   Validators extends ValidatorArray,
 >(
   ...args: DefineEndpointFunctionArgs<
-    Context,
+    GlobalContext,
     Config,
     DefaultConfig,
     Validators
@@ -25,13 +25,16 @@ export function extractParts<
 ): {
   config: Config;
   validators: Validators;
-  handler: ConfigurableHandler<WithValid<Context, Validators>, Config>;
+  handler: ConfigurableHandler<
+    WithValid<{ global: GlobalContext }, Validators>,
+    Config
+  >;
 } {
   return {
     config: args[0] as Config,
     validators: args.slice(1, -1) as unknown as Validators,
     handler: args[args.length - 1] as ConfigurableHandler<
-      WithValid<Context, Validators>,
+      WithValid<{ global: GlobalContext }, Validators>,
       Config
     >,
   };

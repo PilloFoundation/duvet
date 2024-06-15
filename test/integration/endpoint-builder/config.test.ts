@@ -1,6 +1,6 @@
-import { KintEndpointBuilder, KintRequest } from "../../src";
-import { buildTestMiddleware } from "./buildTestMiddleware";
-import { dudResponse } from "./dudResponse";
+import { KintEndpointBuilder, KintRequest } from "../../../src";
+import { buildTestMiddleware } from "../../helpers/buildTestMiddleware";
+import { dudResponse } from "../dudResponse";
 
 function configTestMiddleware<Config>() {
   const runMiddleware = jest.fn();

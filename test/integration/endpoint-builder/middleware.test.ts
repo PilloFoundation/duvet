@@ -1,7 +1,7 @@
-import { KintRequest } from "../../src";
-import { KintEndpointBuilder } from "../../src/core/endpoint-builder/KintEndpointBuilder";
-import { buildTestMiddleware } from "./buildTestMiddleware";
-import { dudResponse } from "./dudResponse";
+import { KintRequest } from "../../../src";
+import { KintEndpointBuilder } from "../../../src/core/endpoint-builder/KintEndpointBuilder";
+import { buildTestMiddleware } from "../../helpers/buildTestMiddleware";
+import { dudResponse } from "../dudResponse";
 
 describe("Middleware Integration", () => {
   test("Middleware runs in the correct order", () => {

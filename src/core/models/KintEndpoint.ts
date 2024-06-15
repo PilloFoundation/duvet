@@ -1,7 +1,7 @@
 import { Handler } from "./Handler";
 
-export type KintEndpoint<Context, Config> = {
+export type KintEndpoint<GlobalContext, Config> = {
   exportType: "KintEndpoint";
-  handler: Handler<Context>;
+  handler: Handler<{ global: GlobalContext }>;
   config: Config;
 };

@@ -15,9 +15,7 @@ export function createExpressKint<GlobalContext>(): KintBuilder<
     kint: KintEndpointBuilder.new<GlobalContext>(),
     build(directory: string, context: GlobalContext): Router {
       const endpointTree = endpointTreeFromDirectory(directory);
-
       const expressRouter = toExpressRouter(endpointTree, () => context);
-
       return expressRouter;
     },
   };
