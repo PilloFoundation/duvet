@@ -22,7 +22,7 @@ describe("Kint config", () => {
       b: number;
     }>();
 
-    const kint = Kint.new<{}>().addMiddleware(middleware);
+    const kint = Kint.new<object>().addMiddleware(middleware);
 
     const kintWithDefaultConfig = kint.setConfig({
       testOne: {
@@ -48,7 +48,7 @@ describe("Kint config", () => {
     const runMiddlewareOne = jest.fn();
     const runMiddlewareTwo = jest.fn();
 
-    const kint = Kint.new<{}>()
+    const kint = Kint.new<object>()
       .addMiddleware(
         buildTestMiddleware("mwOne", (config: string) => {
           runMiddlewareOne(config);
@@ -108,7 +108,7 @@ describe("Kint config", () => {
       b: number;
     }>();
 
-    const kint = Kint.new<{}>().addMiddleware(middleware);
+    const kint = Kint.new<object>().addMiddleware(middleware);
     const kintWithExtendedConfigOne = kint.extendConfig({
       testOne: { a: "extendOne", b: 1 },
     });

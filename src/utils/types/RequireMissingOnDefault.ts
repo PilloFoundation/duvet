@@ -14,7 +14,11 @@ type RemoveOptionals<T> = {
  * Returns the keys of `T` that are required and do not exist on `D`.
  */
 type OptionalOrUndefined<T, K extends keyof T> =
-  {} extends Pick<T, K> ? never : undefined extends T[K] ? never : K;
+  Record<string | number | symbol, never> extends Pick<T, K>
+    ? never
+    : undefined extends T[K]
+      ? never
+      : K;
 
 /**
  * Creates a new type from the input type where all the fields that are required on the input type but do

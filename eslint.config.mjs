@@ -3,18 +3,20 @@
 import eslint from "@eslint/js";
 import jsdoc from "eslint-plugin-jsdoc";
 import tseslint from "typescript-eslint";
+import noTypeAssertions from "eslint-plugin-no-type-assertion";
 
 export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   jsdoc.configs["flat/recommended-typescript"],
   {
-    plugins: { jsdoc },
+    plugins: { jsdoc, "no-type-assertion": noTypeAssertions },
   },
   {
     rules: {
-      "@typescript-eslint/ban-types": "off",
+      "@typescript-eslint/ban-types": "warn",
       "no-warning-comments": "warn",
+      "no-type-assertion/no-type-assertion": "warn",
     },
   },
   {
@@ -23,5 +25,12 @@ export default tseslint.config(
         ignores: ["dist/*", "*.js", "*.mjs"],
       },
     ],
+  },
+  {
+    files: ["test/**/*.test.ts"],
+    rules: {
+      "no-type-assertion/no-type-assertion": "off",
+      "jsdoc/require-jsdoc": "off",
+    },
   },
 );

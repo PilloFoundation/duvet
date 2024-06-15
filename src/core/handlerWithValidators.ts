@@ -25,6 +25,7 @@ export function wrapHandlerWithValidationLayer<
       const result = validator.validate(request);
 
       if (result.isValid) {
+        // eslint-disable-next-line no-type-assertion/no-type-assertion -- We know that result.field is a key of acc
         acc[result.field as keyof typeof acc] = result.parsedData;
         return acc;
       } else {

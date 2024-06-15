@@ -14,9 +14,9 @@ describe("Middleware Integration", () => {
 
     const events: Events[] = [];
 
-    const endpoint = Kint.new<{}>()
+    const endpoint = Kint.new<object>()
       .addMiddleware(
-        buildTestMiddleware<"first", void, {}>(
+        buildTestMiddleware<"first", void, object>(
           "first",
           () => {
             events.push("first before");
@@ -28,7 +28,7 @@ describe("Middleware Integration", () => {
         ),
       )
       .addMiddleware(
-        buildTestMiddleware<"second", void, {}>(
+        buildTestMiddleware<"second", void, object>(
           "second",
           () => {
             events.push("second before");
@@ -66,7 +66,7 @@ describe("Middleware Integration", () => {
     const runEndpoint = jest.fn();
     const runEndpointWithMiddleware = jest.fn();
 
-    const kint = Kint.new<{}>();
+    const kint = Kint.new<object>();
 
     const withMiddleware = kint.addMiddleware({
       handler: (req, next) => {

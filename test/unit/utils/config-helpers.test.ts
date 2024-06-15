@@ -26,7 +26,7 @@ describe("Config Helpers", () => {
   test("Default merging uses all overrides when no defaults provided", () => {
     type Output = { a: string; b: string; c: string };
 
-    const result: Output = mergeDefaultWithMissingItems<Output, {}>(
+    const result: Output = mergeDefaultWithMissingItems<Output, object>(
       {},
       { a: "overrideA", b: "overrideB", c: "overrideC" },
     );

@@ -1634,6 +1634,11 @@ eslint-plugin-jsdoc@^48.2.9:
     semver "^7.6.2"
     spdx-expression-parse "^4.0.0"
 
+eslint-plugin-no-type-assertion@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-no-type-assertion/-/eslint-plugin-no-type-assertion-1.3.0.tgz#14b0188509a0c8193c556a0dd763a9e87d0363af"
+  integrity sha512-04wuuIP5ptNzp969tTt0gf/Jsw4G0T5md2/nbgv3dRL/HySSNU7H4vIKNjkuno9T+6h2daj1T9Aki6bDgmXDEw==
+
 eslint-scope@^8.0.1:
   version "8.0.1"
   resolved "https://registry.yarnpkg.com/eslint-scope/-/eslint-scope-8.0.1.tgz#a9601e4b81a0b9171657c343fb13111688963cfc"

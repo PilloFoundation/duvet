@@ -64,6 +64,7 @@ export class RouteTreeNode<Context> {
         const methodMatch = currentFileName.match(httpMethodRegExp);
 
         if (methodMatch) {
+          // eslint-disable-next-line no-type-assertion/no-type-assertion -- We know that methodMatch[1] is a Method because of the regex
           const method = methodMatch[1] as Method;
 
           const fullPath = path.parse(absolutePathToCurrentFile);
