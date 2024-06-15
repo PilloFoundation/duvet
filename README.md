@@ -1,5 +1,9 @@
 # Kint
 
+[![codecov](https://codecov.io/gh/PKWadsy/kint/graph/badge.svg?token=2MUV55APQ1)](https://codecov.io/gh/PKWadsy/kint)
+![test](https://github.com/PKWadsy/kint/actions/workflows/test.yml/badge.svg)
+![publish](https://github.com/PKWadsy/kint/actions/workflows/npm-publish.yml/badge.svg)
+
 Kint is an opinionated and modular framework which allows you to create type-safe, self-documented, file-system based REST APIs.
 
 It has the following features
