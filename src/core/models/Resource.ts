@@ -1,7 +1,8 @@
-import { KintEndpoint } from "./KintEndpoint";
-
-export type Method = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
-
-export type Resource = {
-  [method in Method]?: KintEndpoint<unknown, unknown>;
-};
+export type Method =
+  | "GET"
+  | "POST"
+  | "PUT"
+  | "DELETE"
+  | "PATCH"
+  | "OPTIONS"
+  | "HEAD";

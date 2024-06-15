@@ -5,7 +5,7 @@ export const dudEndpoint: KintExport<KintEndpoint<unknown, unknown>> = {
   builtByKint: true,
   data: {
     config: {},
-    data: "KintEndpoint",
+    exportType: "KintEndpoint",
     handler: () => {
       return { body: undefined, status: 200 };
     },

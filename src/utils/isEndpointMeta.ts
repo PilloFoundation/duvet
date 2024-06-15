@@ -1,4 +1,4 @@
-import { KintEndpoint } from "../models/KintEndpoint";
+import { KintEndpoint } from "../core/models/KintEndpoint";
 
 /**
  * Tests if a value is a KintEndpoint object
@@ -9,5 +9,5 @@ export function isKintEndpoint(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   test: any,
 ): test is KintEndpoint<unknown, unknown> {
-  return test?.data === "KintEndpoint";
+  return test?.exportType === "KintEndpoint";
 }

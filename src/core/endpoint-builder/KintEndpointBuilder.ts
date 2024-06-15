@@ -189,7 +189,7 @@ export class KintEndpointBuilder<
         config: mergedConfig,
         handler: (request, context) =>
           handlerWithMiddleware(request, context, mergedConfig),
-        data: "KintEndpoint",
+        exportType: "KintEndpoint",
       },
     };
   }

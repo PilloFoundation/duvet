@@ -1,4 +1,4 @@
-import { KintExport } from "../models/KintExport";
+import { KintExport } from "../core/models/KintExport";
 
 /**
  * Tests if a value is a KintExport.
