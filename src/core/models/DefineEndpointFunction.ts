@@ -28,4 +28,4 @@ export type DefineEndpointFunction<Context, Config, DefaultConfig> = <
     DefaultConfig,
     Validators
   >
-) => KintExport<KintEndpoint>;
+) => KintExport<KintEndpoint<Context, Config>>;
