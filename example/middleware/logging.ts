@@ -6,7 +6,7 @@ export const loggingMiddleware = buildMiddleware<
   { module: string }
 >("logging", (request, next, { module }) => {
   console.log(
-    `[${module}] Incoming ${request.underlying.method} request to ${request.underlying.baseUrl}${request.underlying.url}`
+    `[${module}] Incoming ${request.underlying.method} request to ${request.underlying.baseUrl}${request.underlying.url}`,
   );
 
   const response = next();

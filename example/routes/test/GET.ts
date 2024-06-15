@@ -15,7 +15,7 @@ export default rootKint.defineEndpoint(
   zodBodyValidator(
     z.object({
       name: z.string(),
-    })
+    }),
   ),
   async (_req, k) => {
     console.log("running endpoint!");
@@ -28,5 +28,5 @@ export default rootKint.defineEndpoint(
       body: `Hi ${k.valid.body.name}!`,
       status: 200,
     };
-  }
+  },
 );

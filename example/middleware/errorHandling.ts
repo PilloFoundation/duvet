@@ -19,5 +19,5 @@ export const errorHandlingMiddleware = buildMiddleware(
 
     console.log("[AFTER CATCH MIDDLEWARE]");
     return response;
-  }
+  },
 );

@@ -20,10 +20,10 @@ describe("Route Tree Builder", () => {
     expect(routeTree.subRoutes.length).toBe(3);
 
     const someRoute = routeTree.subRoutes.find(
-      (route) => route.name === "some-route"
+      (route) => route.name === "some-route",
     );
     const routeWithParam = routeTree.subRoutes.find(
-      (route) => route.name === "route-with-param"
+      (route) => route.name === "route-with-param",
     );
 
     expect(someRoute).toBeDefined();
@@ -38,7 +38,7 @@ describe("Route Tree Builder", () => {
     expect(someRoute.resource.PUT).toBeDefined();
 
     const paramRoute = routeWithParam.subRoutes.find(
-      (route) => route.name === "param"
+      (route) => route.name === "param",
     );
 
     expect(paramRoute).toBeDefined();
@@ -54,7 +54,7 @@ describe("Route Tree Builder", () => {
     expect(paramRoute.resource.POST).not.toBeDefined();
 
     const anotherParamRoute = paramRoute.subRoutes.find(
-      (route) => route.name === "anotherParam"
+      (route) => route.name === "anotherParam",
     );
 
     expect(anotherParamRoute).toBeDefined();
@@ -85,7 +85,7 @@ describe("Route Tree Builder", () => {
   test("Throws an error when a parameter is defined in a schema but not in a route path", async () => {
     const pathToRoutes = path.join(
       __dirname,
-      "test-routes/invalid-parameter-routes"
+      "test-routes/invalid-parameter-routes",
     );
 
     expect(() => RouteTreeNode.fromDirectory(pathToRoutes)).toThrow();
