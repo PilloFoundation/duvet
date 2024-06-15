@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Kint } from "./Kint";
+import { KintEndpointBuilder } from "./KintEndpointBuilder";
 import { RouteTreeNode } from "./route-builder/RouteTreeNode";
 import { KintBuilder } from "./models/KintBundle";
 
@@ -11,7 +11,7 @@ export function createExpressKint<GlobalContext>(): KintBuilder<
   Router
 > {
   return {
-    kint: Kint.new<GlobalContext>(),
+    kint: KintEndpointBuilder.new<GlobalContext>(),
     build(directory: string, context: GlobalContext): Router {
       const routeTree = RouteTreeNode.fromDirectory(directory);
 

@@ -1,7 +1,7 @@
 import { Handler } from "./Handler";
 
-export type KintEndpointMeta<Context, Config> = {
-  data: "KintEndpointMeta";
+export type KintEndpoint<Context, Config> = {
+  data: "KintEndpoint";
   handler: Handler<Context>;
   config: Config;
 };

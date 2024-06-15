@@ -4,7 +4,7 @@ import {
 } from "express";
 import { KintResponse } from "../models/KintResponse";
 import { KintRequest } from "../models/KintRequest";
-import { KintEndpointMeta } from "../models/KintEndpointMeta";
+import { KintEndpoint } from "../models/KintEndpoint";
 
 /**
  * Takes an endpoint definition and context provider and returns an express handler which can be passed to any Express `use` directive (or equivalent).
@@ -14,7 +14,7 @@ import { KintEndpointMeta } from "../models/KintEndpointMeta";
  */
 // TODO: Refactor to use express adapters
 export function expressHandlerFromEndpointDefinition<Context>(
-  endpointMeta: KintEndpointMeta<unknown, unknown>,
+  endpointMeta: KintEndpoint<unknown, unknown>,
   getContext: () => Context,
 ) {
   return function expressHandler(

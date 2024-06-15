@@ -1,6 +1,6 @@
 import { KintExport } from "./KintExport";
 import { RequireMissingOnDefault } from "../../utils/types/RequireMissingOnDefault";
-import { KintEndpointMeta } from "./KintEndpointMeta";
+import { KintEndpoint } from "./KintEndpoint";
 import { ConfigurableHandler } from "./ConfigurableHandler";
 import { ValidatedData, ValidatorArray } from "./Validator";
 
@@ -28,4 +28,4 @@ export type DefineEndpointFunction<Context, Config, DefaultConfig> = <
     DefaultConfig,
     Validators
   >
-) => KintExport<KintEndpointMeta>;
+) => KintExport<KintEndpoint>;

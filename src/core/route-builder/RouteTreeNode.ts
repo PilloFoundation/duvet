@@ -5,7 +5,7 @@ import { Method, Resource } from "../models/Resource";
 import { isKintExport } from "./isKintEndpoint";
 import { tryFn } from "../../utils/tryFn";
 import { expressHandlerFromEndpointDefinition } from "./expressHandlerFromEndpoint";
-import { isKintEndpointMeta } from "./isEndpointMeta";
+import { isKintEndpoint } from "./isEndpointMeta";
 
 // TODO: Refactor to not depend on express
 export class RouteTreeNode<Context> {
@@ -89,7 +89,7 @@ export class RouteTreeNode<Context> {
 
           const endpoint = kintExport.data;
 
-          if (isKintEndpointMeta(endpoint) !== true) {
+          if (isKintEndpoint(endpoint) !== true) {
             throw new Error(
               `Endpoint at route ${relativePathToCurrentFile} is not a Kint endpoint`,
             );

@@ -1,4 +1,4 @@
-import { Kint, KintRequest } from "../../src";
+import { KintEndpointBuilder, KintRequest } from "../../src";
 import { buildTestMiddleware } from "./buildTestMiddleware";
 import { dudResponse } from "./dudResponse";
 
@@ -22,7 +22,7 @@ describe("Kint config", () => {
       b: number;
     }>();
 
-    const kint = Kint.new<object>().addMiddleware(middleware);
+    const kint = KintEndpointBuilder.new<object>().addMiddleware(middleware);
 
     const kintWithDefaultConfig = kint.setConfig({
       testOne: {
@@ -48,7 +48,7 @@ describe("Kint config", () => {
     const runMiddlewareOne = jest.fn();
     const runMiddlewareTwo = jest.fn();
 
-    const kint = Kint.new<object>()
+    const eb = KintEndpointBuilder.new<object>()
       .addMiddleware(
         buildTestMiddleware("mwOne", (config: string) => {
           runMiddlewareOne(config);
@@ -63,7 +63,7 @@ describe("Kint config", () => {
         ),
       );
 
-    const endpointWithConfigOne = kint.defineEndpoint(
+    const ebWithConfigOne = eb.defineEndpoint(
       {
         mwOne: "endpointOne",
         mwTwo: {
@@ -74,7 +74,7 @@ describe("Kint config", () => {
       () => dudResponse,
     );
 
-    const endpointWithConfigTwo = kint.defineEndpoint(
+    const ebWithConfigTwo = eb.defineEndpoint(
       {
         mwOne: "endpointTwo",
         mwTwo: {
@@ -85,10 +85,10 @@ describe("Kint config", () => {
       () => dudResponse,
     );
 
-    endpointWithConfigOne.data.handler({} as KintRequest, {
+    ebWithConfigOne.data.handler({} as KintRequest, {
       global: {},
     });
-    endpointWithConfigTwo.data.handler({} as KintRequest, {
+    ebWithConfigTwo.data.handler({} as KintRequest, {
       global: {},
     });
 
@@ -108,7 +108,7 @@ describe("Kint config", () => {
       b: number;
     }>();
 
-    const kint = Kint.new<object>().addMiddleware(middleware);
+    const kint = KintEndpointBuilder.new<object>().addMiddleware(middleware);
     const kintWithExtendedConfigOne = kint.extendConfig({
       testOne: { a: "extendOne", b: 1 },
     });

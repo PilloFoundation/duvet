@@ -1,11 +1,11 @@
-import { KintEndpointMeta } from "../../../src/core/models/KintEndpointMeta";
+import { KintEndpoint } from "../../../src/core/models/KintEndpoint";
 import { KintExport } from "../../../src/core/models/KintExport";
 
-export const dudEndpoint: KintExport<KintEndpointMeta<unknown, unknown>> = {
+export const dudEndpoint: KintExport<KintEndpoint<unknown, unknown>> = {
   builtByKint: true,
   data: {
     config: {},
-    data: "KintEndpointMeta",
+    data: "KintEndpoint",
     handler: () => {
       return { body: undefined, status: 200 };
     },

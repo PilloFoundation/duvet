@@ -4,7 +4,7 @@ import { extendObject } from "../utils/extendObject";
 import { KintExport } from "./models/KintExport";
 import { MaybeFunction, Middleware } from "./models/Middleware";
 import { getFromFnOrValue } from "../utils/getFromFnOrValue";
-import { KintEndpointMeta } from "./models/KintEndpointMeta";
+import { KintEndpoint } from "./models/KintEndpoint";
 import { HandlerBuilder } from "./models/HandlerBuilder";
 import { ConfigurableHandler } from "./models/ConfigurableHandler";
 import { Extend } from "../utils/types/Extend";
@@ -22,7 +22,7 @@ export type StringKeysOnly<T> = {
 /**
  * The main class that is used to define endpoints and build a router
  */
-export class Kint<
+export class KintEndpointBuilder<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Context extends Record<string, any>,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -30,8 +30,8 @@ export class Kint<
   DefaultConfig,
 > {
   /**
-   * Creates a new Kint object. This is the starting point for defining endpoints.
-   * @returns A new Kint instance with a global context object.
+   * Creates a new KintEndpointBuilder object. This is the starting point for defining endpoints.
+   * @returns A new KintEndpointBuilder instance with a global context object.
    */
   public static new<GlobalContext>() {
     type Context = {
@@ -40,7 +40,7 @@ export class Kint<
 
     type Config = {};
 
-    return new Kint<Context, Config, {}>(
+    return new KintEndpointBuilder<Context, Config, {}>(
       {},
       {
         buildConfigurableHandler: <
@@ -71,21 +71,22 @@ export class Kint<
   /**
    * Extends the default config object. Takes a partial object to extend the default config object with.
    * @param extension A partial object to extend the default config object with.
-   * @returns A new Kint instance with the new default config object.
+   * @returns A new KintEndpointBuilder instance with the new default config object.
    */
   extendConfig<DefaultConfigExtension extends Partial<Config>>(
     extension: DefaultConfigExtension,
   ) {
-    return new Kint<Context, Config, DefaultConfig & DefaultConfigExtension>(
-      extendObject(this.defaultConfig, extension),
-      this.handlerBuilder,
-    );
+    return new KintEndpointBuilder<
+      Context,
+      Config,
+      DefaultConfig & DefaultConfigExtension
+    >(extendObject(this.defaultConfig, extension), this.handlerBuilder);
   }
 
   /**
-   * Creates a new Kint with the middleware added.
-   * @param middleware The middleware to extend the kint instance with
-   * @returns A new Kint instance with the middleware added.
+   * Creates a new KintEndpointBuilder with the middleware added.
+   * @param middleware The middleware to extend the KintEndpointBuilder instance with
+   * @returns A new KintEndpointBuilder instance with the middleware added.
    */
   addMiddleware<Name extends string, ContextExt, ConfigExt>(
     middleware: Middleware<NotKeyOf<Name, Config>, ContextExt, ConfigExt>,
@@ -138,8 +139,8 @@ export class Kint<
       },
     };
 
-    // Creates a new kint object with the new handler builder.
-    return new Kint<
+    // Creates a new KintEndpointBuilder object with the new handler builder.
+    return new KintEndpointBuilder<
       Extend<Context, ContextExt, Name>,
       Extend<Config, ConfigExt, Name>,
       DefaultConfig
@@ -149,14 +150,14 @@ export class Kint<
   /**
    * Overrides the config object with a new one. This can be a partial object or a function that takes the current config object and returns a new one.
    * @param newConfig A new config object or a function that takes the current config object and returns a new one.
-   * @returns A new Kint instance with the new config object.
+   * @returns A new KintEndpointBuilder instance with the new config object.
    */
   setConfig<NewDefaultConfig extends Partial<Config>>(
     newConfig: ((config: DefaultConfig) => NewDefaultConfig) | NewDefaultConfig,
   ) {
     const resolvedNewConfig = getFromFnOrValue(newConfig, this.defaultConfig);
 
-    return new Kint<Context, Config, NewDefaultConfig>(
+    return new KintEndpointBuilder<Context, Config, NewDefaultConfig>(
       resolvedNewConfig,
       this.handlerBuilder,
     );
@@ -169,7 +170,7 @@ export class Kint<
       DefaultConfig,
       Validators
     >
-  ): KintExport<KintEndpointMeta<Context, Config>> {
+  ): KintExport<KintEndpoint<Context, Config>> {
     const { config, validators, handler } = extractParts(...args);
 
     // Merges the config from the user with the default config.
@@ -188,7 +189,7 @@ export class Kint<
         config: mergedConfig,
         handler: (request, context) =>
           handlerWithMiddleware(request, context, mergedConfig),
-        data: "KintEndpointMeta",
+        data: "KintEndpoint",
       },
     };
   }

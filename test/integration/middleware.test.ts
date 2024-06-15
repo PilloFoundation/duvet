@@ -1,5 +1,5 @@
 import { KintRequest } from "../../src";
-import { Kint } from "../../src/core/Kint";
+import { KintEndpointBuilder } from "../../src/core/KintEndpointBuilder";
 import { buildTestMiddleware } from "./buildTestMiddleware";
 import { dudResponse } from "./dudResponse";
 
@@ -14,7 +14,7 @@ describe("Middleware Integration", () => {
 
     const events: Events[] = [];
 
-    const endpoint = Kint.new<object>()
+    const endpoint = KintEndpointBuilder.new<object>()
       .addMiddleware(
         buildTestMiddleware<"first", void, object>(
           "first",
@@ -66,7 +66,7 @@ describe("Middleware Integration", () => {
     const runEndpoint = jest.fn();
     const runEndpointWithMiddleware = jest.fn();
 
-    const kint = Kint.new<object>();
+    const kint = KintEndpointBuilder.new<object>();
 
     const withMiddleware = kint.addMiddleware({
       handler: (req, next) => {
