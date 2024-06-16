@@ -74,6 +74,19 @@ describe("Endpoint Tree Builder", () => {
 
     expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow();
   });
+  test("Throws an error on incorrect code", async () => {
+    const pathToRoutes = path.join(__dirname, "test-routes/incorrect-code");
+
+    expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow();
+  });
+  test("Throws an error on built by kint object but it is not a KintEndpoint", async () => {
+    const pathToRoutes = path.join(
+      __dirname,
+      "test-routes/incorrect-built-by-kint",
+    );
+
+    expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow();
+  });
 
   test("Throws an error on no export", async () => {
     const pathToRoutes = path.join(__dirname, "test-routes/no-export");

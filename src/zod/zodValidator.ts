@@ -3,6 +3,37 @@ import { Validator } from "../core/models/Validator";
 import { KintRequest } from "../core/models/KintRequest";
 
 /**
+ * Creates a validator for the params of a request using a Zod schema.
+ * @param params The Zod schema to use to validate the params.
+ * @returns A new kint validator
+ */
+export function zodParamsValidator<ParamsZodSchema extends ZodTypeAny>(
+  params: ParamsZodSchema,
+): Validator<"params", output<ParamsZodSchema>> {
+  return {
+    validate: (request: KintRequest) => {
+      const bodyResult = params.safeParse(request.underlying.params);
+
+      if (bodyResult.success === false) {
+        const errorMessage = formatZodError(bodyResult.error);
+
+        console.log(errorMessage);
+        return {
+          isValid: false,
+          error: errorMessage,
+        };
+      }
+
+      return {
+        isValid: true,
+        field: "params",
+        parsedData: bodyResult.data,
+      };
+    },
+  };
+}
+
+/**
  * Creates a validator for the body of a request using a Zod schema.
  * @param body The Zod schema to use to validate the body.
  * @returns A new kint validator
