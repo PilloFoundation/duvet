@@ -3,8 +3,8 @@ import { Validator } from "../core/models/Validator";
 import { KintRequest } from "../core/models/KintRequest";
 
 /**
- * Creates a validator for the body of a request using a Zod schema.
- * @param body The Zod schema to use to validate the body.
+ * Creates a validator for the params of a request using a Zod schema.
+ * @param params The Zod schema to use to validate the params.
  * @returns A new kint validator
  */
 export function zodParamsValidator<ParamsZodSchema extends ZodTypeAny>(
