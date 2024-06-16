@@ -19,7 +19,6 @@ export default rootKint.defineEndpoint(
   ),
   async (_req, k) => {
     console.log("running endpoint!");
-
     console.log("Got token: " + k.auth.token);
 
     k.valid.body.name;
