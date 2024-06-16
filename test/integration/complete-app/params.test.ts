@@ -17,7 +17,7 @@ describe("Params", () => {
     app.use(express.json());
     app.use("/", router);
 
-    const response = await request(app).get("/123456").expect(200);
+    const response = await request(app).get("/with-params/123456").expect(200);
 
     expect(response.text).toBe("123456");
   });
@@ -34,6 +34,6 @@ describe("Params", () => {
     app.use(express.json());
     app.use("/", router);
 
-    await request(app).get("/test_value").expect(500); // TODO: Have response give a nicer error message
+    await request(app).get("/with-params/test_value").expect(500); // TODO: Have response give a nicer error message
   });
 });
