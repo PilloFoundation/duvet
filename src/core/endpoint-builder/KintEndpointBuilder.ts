@@ -99,6 +99,7 @@ export class KintEndpointBuilder<
   addMiddleware<Name extends string, ContextExt, ConfigExt>(
     middleware: Middleware<NotKeyOf<Name, Config>, ContextExt, ConfigExt>,
   ) {
+    // TODO: Clean this function to be more readable
     // Create a new handler builder which wraps the
 
     const newHandlerBuilder: HandlerBuilder<
