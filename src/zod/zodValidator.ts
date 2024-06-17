@@ -2,20 +2,26 @@ import { ZodError, ZodTypeAny, output } from "zod";
 import { Validator } from "../core/models/Validator";
 import { KintRequest } from "../core/models/KintRequest";
 
+type RequestFields = "body" | "params" | "query" | "headers" | "cookies";
+
 /**
- * Creates a validator for the params of a request using a Zod schema.
- * @param params The Zod schema to use to validate the params.
- * @returns A new kint validator
+ * Validates a specific field in a request using a Zod schema.
+ * @template Field - The type of field to validate (e.g., "body", "params", "query").
+ * @template ZodSchema - The Zod schema to use for validation.
+ * @param field - The field to validate.
+ * @param schema - The Zod schema to use for validation. If not provided, the field will be considered valid.
+ * @returns The validation result.
  */
-export function zodParamsValidator<ParamsZodSchema extends ZodTypeAny>(
-  params: ParamsZodSchema,
-): Validator<"params", output<ParamsZodSchema>> {
+function zodRequestFieldValidator<
+  Field extends RequestFields,
+  ZodSchema extends ZodTypeAny,
+>(field: Field, schema: ZodSchema): Validator<Field, output<ZodSchema>> {
   return {
     validate: (request: KintRequest) => {
-      const bodyResult = params.safeParse(request.underlying.params);
+      const result = schema.safeParse(request.underlying[field]);
 
-      if (bodyResult.success === false) {
-        const errorMessage = formatZodError(bodyResult.error);
+      if (result.success === false) {
+        const errorMessage = formatZodError(field, result.error);
 
         console.log(errorMessage);
         return {
@@ -26,42 +32,77 @@ export function zodParamsValidator<ParamsZodSchema extends ZodTypeAny>(
 
       return {
         isValid: true,
-        field: "params",
-        parsedData: bodyResult.data,
+        field,
+        parsedData: result.data,
       };
     },
   };
 }
 
+type RequestValidator = {
+  body?: ZodTypeAny;
+  params?: ZodTypeAny;
+  query?: ZodTypeAny;
+  headers?: ZodTypeAny;
+  cookies?: ZodTypeAny;
+};
+
+// Define the ZodValidatorTuple type with conditional types
+type ZodValidatorTuple<ZodRequestValidator extends RequestValidator> = [
+  ZodRequestValidator["body"] extends ZodTypeAny
+    ? Validator<"body", output<ZodRequestValidator["body"]>>
+    : never,
+  ZodRequestValidator["params"] extends ZodTypeAny
+    ? Validator<"params", output<ZodRequestValidator["params"]>>
+    : never,
+  ZodRequestValidator["query"] extends ZodTypeAny
+    ? Validator<"query", output<ZodRequestValidator["query"]>>
+    : never,
+  ZodRequestValidator["headers"] extends ZodTypeAny
+    ? Validator<"headers", output<ZodRequestValidator["headers"]>>
+    : never,
+  ZodRequestValidator["cookies"] extends ZodTypeAny
+    ? Validator<"cookies", output<ZodRequestValidator["cookies"]>>
+    : never,
+];
+
+// Define the ZodValidator type
+type ZodValidator<ZodRequestValidator extends RequestValidator> =
+  ZodValidatorTuple<ZodRequestValidator>;
 /**
- * Creates a validator for the body of a request using a Zod schema.
- * @param body The Zod schema to use to validate the body.
- * @returns A new kint validator
+ * Creates an array of validators for the request data using Zod schemas.
+ * @param validator - The Zod schema to use to validate the request.
+ *
+ * Supported fields:
+ * @param validator.body - Body schema
+ * @param validator.params - Params schema
+ * @param validator.query - Query schema
+ * @param validator.headers - Headers schema
+ * @param validator.cookies - Cookies schema
+ * @returns A new kint validator array
  */
-export function zodBodyValidator<BodyZodSchema extends ZodTypeAny>(
-  body: BodyZodSchema,
-): Validator<"body", output<BodyZodSchema>> {
-  return {
-    validate: (request: KintRequest) => {
-      const bodyResult = body.safeParse(request.underlying.body);
+export function zodValidator<ZodRequestValidator extends RequestValidator>(
+  validator: ZodRequestValidator,
+): ZodValidator<ZodRequestValidator> {
+  const validators = [];
 
-      if (bodyResult.success === false) {
-        const errorMessage = formatZodError(bodyResult.error);
+  if (validator.body) {
+    validators.push(zodRequestFieldValidator("body", validator.body));
+  }
+  if (validator.params) {
+    validators.push(zodRequestFieldValidator("params", validator.params));
+  }
+  if (validator.query) {
+    validators.push(zodRequestFieldValidator("query", validator.query));
+  }
+  if (validator.headers) {
+    validators.push(zodRequestFieldValidator("headers", validator.headers));
+  }
+  if (validator.cookies) {
+    validators.push(zodRequestFieldValidator("cookies", validator.cookies));
+  }
 
-        console.log(errorMessage);
-        return {
-          isValid: false,
-          error: errorMessage,
-        };
-      }
-
-      return {
-        isValid: true,
-        field: "body",
-        parsedData: bodyResult.data,
-      };
-    },
-  };
+  return validators as ZodValidator<ZodRequestValidator>;
 }
 
 /**
@@ -69,8 +110,8 @@ export function zodBodyValidator<BodyZodSchema extends ZodTypeAny>(
  * @param error The zod error to format.
  * @returns A human readable string representation of the error.
  */
-function formatZodError(error: ZodError): string {
-  let errorString: string = "";
+function formatZodError(field_name: string, error: ZodError): string {
+  let errorString: string = `${field_name} validation failed: `;
 
   for (const issue of error.issues) {
     if (errorString.length > 0) {

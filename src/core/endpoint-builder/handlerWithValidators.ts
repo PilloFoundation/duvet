@@ -1,7 +1,6 @@
 import { ConfigurableHandler } from "../models/ConfigurableHandler";
 import { WithValid } from "../models/DefineEndpointFunction";
-import { ValidatedData, ValidatorArray } from "../models/Validator";
-
+import { ValidatedData, FlatValidatorArray } from "../models/Validator";
 /**
  * Takes a handler and wraps it in a new handler which validates the request data.
  * @param innerHandler The handler to wrap.
@@ -11,7 +10,7 @@ import { ValidatedData, ValidatorArray } from "../models/Validator";
 export function wrapHandlerWithValidationLayer<
   Context,
   Config,
-  Validators extends ValidatorArray,
+  Validators extends FlatValidatorArray,
 >(
   innerHandler: ConfigurableHandler<WithValid<Context, Validators>, Config>,
   validators: Validators,
