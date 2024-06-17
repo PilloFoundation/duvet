@@ -1,28 +1,27 @@
 import path from "path";
-import { RouteTreeNode } from "../../../src/core/route-builder/RouteTreeNode";
+import { endpointTreeFromDirectory } from "../../../src/core/endpoint-tree/fs-builder/buildEndpointTreeFromDirectory";
 
-describe("Route Tree Builder", () => {
-  test("Builds a route tree correctly from a correctly defined directory", async () => {
+describe("Endpoint Tree Builder", () => {
+  test("Builds a route tree from a correctly defined directory", async () => {
     const pathToRoutes = path.join(__dirname, "test-routes/standard");
 
-    const routeTree = await RouteTreeNode.fromDirectory(pathToRoutes);
+    const endpointTree = endpointTreeFromDirectory(pathToRoutes);
 
-    expect(routeTree.name).toBe("root");
+    expect(endpointTree.name).toBe("");
+    expect(endpointTree.endpoints).toHaveLength(5);
 
-    expect(routeTree.resource);
+    expect(endpointTree.endpoint("DELETE")).toBeDefined();
+    expect(endpointTree.endpoint("PATCH")).toBeDefined();
+    expect(endpointTree.endpoint("POST")).toBeDefined();
+    expect(endpointTree.endpoint("GET")).toBeDefined();
+    expect(endpointTree.endpoint("PUT")).toBeDefined();
 
-    expect(routeTree.resource.GET).toBeDefined();
-    expect(routeTree.resource.DELETE).toBeDefined();
-    expect(routeTree.resource.PATCH).toBeDefined();
-    expect(routeTree.resource.POST).toBeDefined();
-    expect(routeTree.resource.PUT).toBeDefined();
+    expect(endpointTree.subRoutes).toHaveLength(3);
 
-    expect(routeTree.subRoutes.length).toBe(3);
-
-    const someRoute = routeTree.subRoutes.find(
+    const someRoute = endpointTree.subRoutes.find(
       (route) => route.name === "some-route",
     );
-    const routeWithParam = routeTree.subRoutes.find(
+    const routeWithParam = endpointTree.subRoutes.find(
       (route) => route.name === "route-with-param",
     );
 
@@ -31,11 +30,11 @@ describe("Route Tree Builder", () => {
 
     if (someRoute == null || routeWithParam == null) return;
 
-    expect(someRoute.resource.GET).toBeDefined();
-    expect(someRoute.resource.DELETE).toBeDefined();
-    expect(someRoute.resource.PATCH).toBeDefined();
-    expect(someRoute.resource.POST).toBeDefined();
-    expect(someRoute.resource.PUT).toBeDefined();
+    expect(someRoute.endpoint("DELETE")).toBeDefined();
+    expect(someRoute.endpoint("PATCH")).toBeDefined();
+    expect(someRoute.endpoint("POST")).toBeDefined();
+    expect(someRoute.endpoint("GET")).toBeDefined();
+    expect(someRoute.endpoint("PUT")).toBeDefined();
 
     const paramRoute = routeWithParam.subRoutes.find(
       (route) => route.name === "param",
@@ -45,13 +44,13 @@ describe("Route Tree Builder", () => {
 
     if (paramRoute == null) return;
 
-    expect(paramRoute.isUrlParam).toBe(true);
+    expect(paramRoute.isParam).toBe(true);
 
-    expect(paramRoute.resource.GET).toBeDefined();
-    expect(paramRoute.resource.DELETE).toBeDefined();
-    expect(paramRoute.resource.PATCH).not.toBeDefined();
-    expect(paramRoute.resource.PUT).not.toBeDefined();
-    expect(paramRoute.resource.POST).not.toBeDefined();
+    expect(paramRoute.endpoint("DELETE")).toBeDefined();
+    expect(paramRoute.endpoint("PATCH")).toBeDefined();
+    expect(paramRoute.endpoint("POST")).toBeDefined();
+    expect(paramRoute.endpoint("GET")).toBeDefined();
+    expect(paramRoute.endpoint("PUT")).toBeDefined();
 
     const anotherParamRoute = paramRoute.subRoutes.find(
       (route) => route.name === "anotherParam",
@@ -61,25 +60,38 @@ describe("Route Tree Builder", () => {
 
     if (anotherParamRoute == null) return;
 
-    expect(anotherParamRoute.isUrlParam).toBe(true);
+    expect(anotherParamRoute.isParam).toBe(true);
 
-    expect(anotherParamRoute.resource.POST).toBeDefined();
-    expect(anotherParamRoute.resource.GET).not.toBeDefined();
-    expect(anotherParamRoute.resource.DELETE).not.toBeDefined();
-    expect(anotherParamRoute.resource.PATCH).not.toBeDefined();
-    expect(anotherParamRoute.resource.PUT).not.toBeDefined();
+    expect(anotherParamRoute.endpoint("DELETE")).toBeDefined();
+    expect(anotherParamRoute.endpoint("PATCH")).toBeDefined();
+    expect(anotherParamRoute.endpoint("POST")).toBeDefined();
+    expect(anotherParamRoute.endpoint("GET")).toBeDefined();
+    expect(anotherParamRoute.endpoint("PUT")).toBeDefined();
   });
 
   test("Throws an error on incorrect export", async () => {
     const pathToRoutes = path.join(__dirname, "test-routes/incorrect-export");
 
-    expect(() => RouteTreeNode.fromDirectory(pathToRoutes)).toThrow();
+    expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow();
+  });
+  test("Throws an error on incorrect code", async () => {
+    const pathToRoutes = path.join(__dirname, "test-routes/incorrect-code");
+
+    expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow();
+  });
+  test("Throws an error on built by kint object but it is not a KintEndpoint", async () => {
+    const pathToRoutes = path.join(
+      __dirname,
+      "test-routes/incorrect-built-by-kint",
+    );
+
+    expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow();
   });
 
   test("Throws an error on no export", async () => {
     const pathToRoutes = path.join(__dirname, "test-routes/no-export");
 
-    expect(() => RouteTreeNode.fromDirectory(pathToRoutes)).toThrow();
+    expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow();
   });
 
   test("Throws an error when a parameter is defined in a schema but not in a route path", async () => {
@@ -88,6 +100,6 @@ describe("Route Tree Builder", () => {
       "test-routes/invalid-parameter-routes",
     );
 
-    expect(() => RouteTreeNode.fromDirectory(pathToRoutes)).toThrow();
+    expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow();
   });
 });

@@ -1,5 +1,5 @@
 import { KintRequest } from "../../../src";
-import { wrapHandlerWithValidationLayer } from "../../../src/core/handlerWithValidators";
+import { wrapHandlerWithValidationLayer } from "../../../src/core/endpoint-builder/handlerWithValidators";
 import { Validator } from "../../../src/core/models/Validator";
 
 describe("Validation wrapper", () => {

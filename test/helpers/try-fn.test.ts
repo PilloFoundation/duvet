@@ -1,4 +1,4 @@
-import { tryFn } from "../../../src/utils/tryFn";
+import { tryFn } from "../../src/utils/tryFn";
 
 describe("tryFn", () => {
   test("Returns the result of the function", () => {

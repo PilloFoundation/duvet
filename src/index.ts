@@ -1,4 +1,4 @@
-export { Kint } from "./core/Kint";
+export { KintEndpointBuilder } from "./core/endpoint-builder/KintEndpointBuilder";
 export { createExpressKint } from "./core/createKint";
 
 export { Middleware } from "./core/models/Middleware";

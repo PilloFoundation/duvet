@@ -10,8 +10,16 @@ export function tryFn<T>(run: () => T): T | Error {
     if (e instanceof Error) {
       return e;
     } else {
-      // TODO: Consider returning e
-      return new Error("An unknown error occurred :/");
+      return new UnknownError(e);
     }
+  }
+}
+
+class UnknownError extends Error {
+  info: unknown;
+
+  constructor(info: unknown) {
+    super("An unknown error occurred");
+    this.info = info;
   }
 }

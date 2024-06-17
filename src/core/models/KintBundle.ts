@@ -1,6 +1,6 @@
-import { Kint } from "../Kint";
+import { KintEndpointBuilder } from "../endpoint-builder/KintEndpointBuilder";
 
 export type KintBuilder<GlobalContext, AppType> = {
-  kint: Kint<{ global: GlobalContext }, {}, {}>;
+  kint: KintEndpointBuilder<{ global: GlobalContext }, {}, {}, GlobalContext>;
   build(directory: string, context: GlobalContext): AppType;
 };

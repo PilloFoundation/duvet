@@ -1,5 +1,5 @@
-import { mergeDefaultWithMissingItems } from "../../../src/utils/mergeDefaultWithMissingItems";
-import { extendObject } from "../../../src/utils/extendObject";
+import { mergeDefaultWithMissingItems } from "../../src/utils/mergeDefaultWithMissingItems";
+import { extendObject } from "../../src/utils/extendObject";
 
 describe("Config Helpers", () => {
   test("Default merging uses all defaults when no values provided", () => {

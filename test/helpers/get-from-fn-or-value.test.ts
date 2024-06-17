@@ -1,4 +1,4 @@
-import { getFromFnOrValue } from "../../../src/utils/getFromFnOrValue";
+import { getFromFnOrValue } from "../../src/utils/getFromFnOrValue";
 
 describe("GetFromFnOrValue", () => {
   test("Gets a raw value", () => {
