@@ -20,14 +20,37 @@ export type ValidationSuccess<Field extends string, Data> = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ValidatorArray = readonly [...Validator<string, any>[]];
+export type ValidatorArrayFlat = readonly [...Validator<string, any>[]];
+
+export type ValidatorArray = readonly [
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ...(Validator<string, any> | ValidatorArrayFlat)[],
+];
+
+export function isValidatorArrayFlat(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  validator: Validator<string, any> | ValidatorArrayFlat,
+): validator is ValidatorArrayFlat {
+  return Array.isArray(validator);
+}
+
+type FlattenValidatorArray<T extends ValidatorArray> =
+  T extends readonly (infer U)[]
+    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      U extends Validator<string, any>
+      ? readonly U[]
+      : U extends ValidatorArray
+        ? readonly [...FlattenValidatorArray<U>]
+        : never
+    : never;
 
 export type ValidatedData<Validators extends ValidatorArray> = {
-  [Validator in Validators[number] as ExtractField<Validator>]: ExtractData<Validator>;
+  [Validator in FlattenValidatorArray<Validators>[number] as ExtractField<Validator>]: ExtractData<Validator>;
 };
 
 export type ExtractField<V> =
-  V extends Validator<infer Field, unknown> ? Field : never;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  V extends Validator<infer Field, any> ? Field : never;
 
 export type ExtractData<V> =
   V extends Validator<string, infer Data> ? Data : never;
