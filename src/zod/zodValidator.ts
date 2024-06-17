@@ -2,6 +2,14 @@ import { ZodError, ZodTypeAny, output } from "zod";
 import { Validator } from "../core/models/Validator";
 import { KintRequest } from "../core/models/KintRequest";
 
+type RequestFields =
+  | "body"
+  | "params"
+  | "query"
+  | "headers"
+  | "cookies"
+  | "signedCookies";
+
 /**
  * Validates a specific field in a request using a Zod schema.
  * @template Field - The type of field to validate (e.g., "body", "params", "query").
@@ -11,13 +19,7 @@ import { KintRequest } from "../core/models/KintRequest";
  * @returns The validation result.
  */
 function zodRequestFieldValidator<
-  Field extends
-    | "body"
-    | "params"
-    | "query"
-    | "headers"
-    | "cookies"
-    | "signedCookies",
+  Field extends RequestFields,
   ZodSchema extends ZodTypeAny,
 >(field: Field, schema?: ZodSchema): Validator<Field, output<ZodSchema>> {
   return {
