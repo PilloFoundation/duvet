@@ -16,7 +16,7 @@ describe("Middleware Integration", () => {
 
     const endpoint = KintEndpointBuilder.new<object>()
       .addMiddleware(
-        buildTestMiddleware<"first", void, object>(
+        buildTestMiddleware(
           "first",
           () => {
             events.push("first before");
@@ -28,7 +28,7 @@ describe("Middleware Integration", () => {
         ),
       )
       .addMiddleware(
-        buildTestMiddleware<"second", void, object>(
+        buildTestMiddleware(
           "second",
           () => {
             events.push("second before");
