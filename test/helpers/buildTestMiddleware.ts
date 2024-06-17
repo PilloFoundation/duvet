@@ -9,14 +9,14 @@ export function buildTestMiddleware<Name extends string, Context, Config>(
   name: Name,
   before: (config: Config) => Context | null = () => null,
   after: (res: KintResponse) => KintResponse = (res) => res,
-): Middleware<Name, Context | null, Config> {
-  const middlewareHandler: MiddlewareHandler<Context | null, Config> = (
+): Middleware<Name, Config, Context | null> {
+  const middlewareHandler: MiddlewareHandler<Config, Context | null> = (
     request,
     next,
     config,
   ): KintResponse => {
-    const context = before(config);
-    const result = next(context);
+    const contextExt = before(config);
+    const result = next(contextExt);
     return after(result);
   };
 

@@ -5,7 +5,7 @@ import { Context } from "./Context";
 import { build } from "./kint";
 
 describe("Promise", () => {
-  test("Endpoint successfully returns a repones from a promise", async () => {
+  test("Endpoint successfully returns a response from a promise", async () => {
     const routes = path.join(__dirname, "routes");
 
     const context: Context = { a: "N/A", b: 0 };

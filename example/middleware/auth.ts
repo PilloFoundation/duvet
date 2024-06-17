@@ -2,8 +2,8 @@ import { buildMiddleware } from "../../src";
 
 export const authMiddleware = buildMiddleware<
   "auth",
-  { token?: string },
-  { method: "bearer" | "none" }
+  { method: "bearer" | "none" },
+  { token?: string }
 >("auth", (request, next) => {
   console.log("[BEFORE AUTH MIDDLEWARE]");
 

@@ -97,7 +97,12 @@ export class KintEndpointBuilder<
    * @returns A new KintEndpointBuilder instance with the middleware added.
    */
   addMiddleware<Name extends string, ContextExt, ConfigExt>(
-    middleware: Middleware<NotKeyOf<Name, Config>, ContextExt, ConfigExt>,
+    middleware: Middleware<
+      NotKeyOf<Name, Config>,
+      ConfigExt,
+      ContextExt,
+      GlobalContext
+    >,
   ) {
     // TODO: Clean this function to be more readable
     // Create a new handler builder which wraps the
@@ -132,6 +137,7 @@ export class KintEndpointBuilder<
           middleware.handler(
             request,
             // Next function simply extends the context object with the extension object and calls the inner handler.
+            // eslint-disable-next-line no-type-assertion/no-type-assertion
             ((extension?: ContextExt) => {
               if (extension)
                 (context as Record<Name, ContextExt>)[middleware.name] =
@@ -139,6 +145,7 @@ export class KintEndpointBuilder<
               return wrappedInnerHandler(request, context, config);
             }) as MaybeFunction<ContextExt>,
             config[middleware.name],
+            context.global,
           );
       },
     };
