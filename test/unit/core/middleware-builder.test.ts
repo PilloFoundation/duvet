@@ -6,7 +6,7 @@ describe("Middleware Builder", () => {
   test("Builds a middleware object correctly", () => {
     const doThing = jest.fn(() => {});
 
-    const middleware = buildMiddleware<"test", "context", void>(
+    const middleware = buildMiddleware<"test", void, "context", void>(
       "test",
       (request, next) => {
         doThing();
