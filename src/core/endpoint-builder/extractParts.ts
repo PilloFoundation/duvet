@@ -3,7 +3,7 @@ import {
   DefineEndpointFunctionArgs,
   WithValid,
 } from "../models/DefineEndpointFunction";
-import { ValidatorArray } from "../models/Validator";
+import { FlattenValidatorArray, ValidatorArray } from "../models/Validator";
 
 /**
  * Takes an args array from the define endpoint function and extracts the config, validators, and handler from it in a type safe way.
@@ -26,7 +26,7 @@ export function extractParts<
   config: Config;
   validators: Validators;
   handler: ConfigurableHandler<
-    WithValid<{ global: GlobalContext }, Validators>,
+    WithValid<{ global: GlobalContext }, FlattenValidatorArray<Validators>>,
     Config
   >;
 } {
@@ -34,7 +34,7 @@ export function extractParts<
     config: args[0] as Config,
     validators: args.slice(1, -1) as unknown as Validators,
     handler: args[args.length - 1] as ConfigurableHandler<
-      WithValid<{ global: GlobalContext }, Validators>,
+      WithValid<{ global: GlobalContext }, FlattenValidatorArray<Validators>>,
       Config
     >,
   };

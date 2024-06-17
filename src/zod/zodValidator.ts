@@ -4,12 +4,11 @@ import { KintRequest } from "../core/models/KintRequest";
 
 /**
  * Validates a specific field in a request using a Zod schema.
- *
  * @template Field - The type of field to validate (e.g., "body", "params", "query").
  * @template ZodSchema - The Zod schema to use for validation.
- * @param  field - The field to validate.
+ * @param field - The field to validate.
  * @param schema - The Zod schema to use for validation. If not provided, the field will be considered valid.
- * @returns  The validation result.
+ * @returns The validation result.
  */
 function zodRequestFieldValidator<
   Field extends
@@ -52,25 +51,42 @@ function zodRequestFieldValidator<
   };
 }
 
-type ZodValidator<
-  BodyZodSchema extends ZodTypeAny,
-  ParamsZodSchema extends ZodTypeAny,
-  QueryZodSchema extends ZodTypeAny,
-  HeadersZodSchema extends ZodTypeAny,
-  CookiesZodSchema extends ZodTypeAny,
-  SignedCookiesZodSchema extends ZodTypeAny,
-> = [
-  Validator<"body", output<BodyZodSchema>>,
-  Validator<"params", output<ParamsZodSchema>>,
-  Validator<"query", output<QueryZodSchema>>,
-  Validator<"headers", output<HeadersZodSchema>>,
-  Validator<"cookies", output<CookiesZodSchema>>,
-  Validator<"signedCookies", output<SignedCookiesZodSchema>>,
+type RequestValidator = {
+  body?: ZodTypeAny;
+  params?: ZodTypeAny;
+  query?: ZodTypeAny;
+  headers?: ZodTypeAny;
+  cookies?: ZodTypeAny;
+  signedCookies?: ZodTypeAny;
+};
+
+// Define the ZodValidatorTuple type with conditional types
+type ZodValidatorTuple<ZodRequestValidator extends RequestValidator> = [
+  ZodRequestValidator["body"] extends ZodTypeAny
+    ? Validator<"body", output<ZodRequestValidator["body"]>>
+    : never,
+  ZodRequestValidator["params"] extends ZodTypeAny
+    ? Validator<"params", output<ZodRequestValidator["params"]>>
+    : never,
+  ZodRequestValidator["query"] extends ZodTypeAny
+    ? Validator<"query", output<ZodRequestValidator["query"]>>
+    : never,
+  ZodRequestValidator["headers"] extends ZodTypeAny
+    ? Validator<"headers", output<ZodRequestValidator["headers"]>>
+    : never,
+  ZodRequestValidator["cookies"] extends ZodTypeAny
+    ? Validator<"cookies", output<ZodRequestValidator["cookies"]>>
+    : never,
+  ZodRequestValidator["signedCookies"] extends ZodTypeAny
+    ? Validator<"signedCookies", output<ZodRequestValidator["signedCookies"]>>
+    : never,
 ];
 
+// Define the ZodValidator type
+type ZodValidator<ZodRequestValidator extends RequestValidator> =
+  ZodValidatorTuple<ZodRequestValidator>;
 /**
  * Creates an array of validators for the request data using Zod schemas.
- *
  * @param validator - The Zod schema to use to validate the request.
  *
  * Supported fields:
@@ -80,38 +96,35 @@ type ZodValidator<
  * @param validator.headers - Headers schema
  * @param validator.cookies - Cookies schema
  * @param validator.signedCookies - SignedCookies schema
- * @returns - A new kint validator array
+ * @returns A new kint validator array
  */
-export function zodValidator<
-  BodyZodSchema extends ZodTypeAny,
-  ParamsZodSchema extends ZodTypeAny,
-  QueryZodSchema extends ZodTypeAny,
-  HeadersZodSchema extends ZodTypeAny,
-  CookiesZodSchema extends ZodTypeAny,
-  SignedCookiesZodSchema extends ZodTypeAny,
->(validator: {
-  body?: BodyZodSchema;
-  params?: ParamsZodSchema;
-  query?: QueryZodSchema;
-  headers?: HeadersZodSchema;
-  cookies?: CookiesZodSchema;
-  signedCookies?: SignedCookiesZodSchema;
-}): ZodValidator<
-  BodyZodSchema,
-  ParamsZodSchema,
-  QueryZodSchema,
-  HeadersZodSchema,
-  CookiesZodSchema,
-  SignedCookiesZodSchema
-> {
-  return [
-    zodRequestFieldValidator("body", validator.body),
-    zodRequestFieldValidator("params", validator.params),
-    zodRequestFieldValidator("query", validator.query),
-    zodRequestFieldValidator("headers", validator.headers),
-    zodRequestFieldValidator("cookies", validator.cookies),
-    zodRequestFieldValidator("signedCookies", validator.signedCookies),
-  ];
+export function zodValidator<ZodRequestValidator extends RequestValidator>(
+  validator: ZodRequestValidator,
+): ZodValidator<ZodRequestValidator> {
+  const validators = [];
+
+  if (validator.body) {
+    validators.push(zodRequestFieldValidator("body", validator.body));
+  }
+  if (validator.params) {
+    validators.push(zodRequestFieldValidator("params", validator.params));
+  }
+  if (validator.query) {
+    validators.push(zodRequestFieldValidator("query", validator.query));
+  }
+  if (validator.headers) {
+    validators.push(zodRequestFieldValidator("headers", validator.headers));
+  }
+  if (validator.cookies) {
+    validators.push(zodRequestFieldValidator("cookies", validator.cookies));
+  }
+  if (validator.signedCookies) {
+    validators.push(
+      zodRequestFieldValidator("signedCookies", validator.signedCookies),
+    );
+  }
+
+  return validators as ZodValidator<ZodRequestValidator>;
 }
 
 /**

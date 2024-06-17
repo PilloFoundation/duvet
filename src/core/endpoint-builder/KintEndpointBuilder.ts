@@ -186,8 +186,10 @@ export class KintEndpointBuilder<
       config,
     );
 
+    const flattenedValidators = validators.flatMap((validator) => validator);
+
     const handlerWithMiddleware = this.handlerBuilder.buildConfigurableHandler(
-      wrapHandlerWithValidationLayer(handler, validators),
+      wrapHandlerWithValidationLayer(handler, flattenedValidators),
     );
 
     return {
