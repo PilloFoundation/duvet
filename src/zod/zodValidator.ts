@@ -2,13 +2,7 @@ import { ZodError, ZodTypeAny, output } from "zod";
 import { Validator } from "../core/models/Validator";
 import { KintRequest } from "../core/models/KintRequest";
 
-type RequestFields =
-  | "body"
-  | "params"
-  | "query"
-  | "headers"
-  | "cookies"
-  | "signedCookies";
+type RequestFields = "body" | "params" | "query" | "headers" | "cookies";
 
 /**
  * Validates a specific field in a request using a Zod schema.
@@ -21,21 +15,13 @@ type RequestFields =
 function zodRequestFieldValidator<
   Field extends RequestFields,
   ZodSchema extends ZodTypeAny,
->(field: Field, schema?: ZodSchema): Validator<Field, output<ZodSchema>> {
+>(field: Field, schema: ZodSchema): Validator<Field, output<ZodSchema>> {
   return {
     validate: (request: KintRequest) => {
-      if (schema === undefined) {
-        return {
-          isValid: true,
-          field,
-          parsedData: {},
-        };
-      }
-
       const result = schema.safeParse(request.underlying[field]);
 
       if (result.success === false) {
-        const errorMessage = formatZodError(result.error);
+        const errorMessage = formatZodError(field, result.error);
 
         console.log(errorMessage);
         return {
@@ -59,7 +45,6 @@ type RequestValidator = {
   query?: ZodTypeAny;
   headers?: ZodTypeAny;
   cookies?: ZodTypeAny;
-  signedCookies?: ZodTypeAny;
 };
 
 // Define the ZodValidatorTuple type with conditional types
@@ -79,9 +64,6 @@ type ZodValidatorTuple<ZodRequestValidator extends RequestValidator> = [
   ZodRequestValidator["cookies"] extends ZodTypeAny
     ? Validator<"cookies", output<ZodRequestValidator["cookies"]>>
     : never,
-  ZodRequestValidator["signedCookies"] extends ZodTypeAny
-    ? Validator<"signedCookies", output<ZodRequestValidator["signedCookies"]>>
-    : never,
 ];
 
 // Define the ZodValidator type
@@ -97,7 +79,6 @@ type ZodValidator<ZodRequestValidator extends RequestValidator> =
  * @param validator.query - Query schema
  * @param validator.headers - Headers schema
  * @param validator.cookies - Cookies schema
- * @param validator.signedCookies - SignedCookies schema
  * @returns A new kint validator array
  */
 export function zodValidator<ZodRequestValidator extends RequestValidator>(
@@ -120,11 +101,6 @@ export function zodValidator<ZodRequestValidator extends RequestValidator>(
   if (validator.cookies) {
     validators.push(zodRequestFieldValidator("cookies", validator.cookies));
   }
-  if (validator.signedCookies) {
-    validators.push(
-      zodRequestFieldValidator("signedCookies", validator.signedCookies),
-    );
-  }
 
   return validators as ZodValidator<ZodRequestValidator>;
 }
@@ -134,8 +110,8 @@ export function zodValidator<ZodRequestValidator extends RequestValidator>(
  * @param error The zod error to format.
  * @returns A human readable string representation of the error.
  */
-function formatZodError(error: ZodError): string {
-  let errorString: string = "";
+function formatZodError(field_name: string, error: ZodError): string {
+  let errorString: string = `${field_name} validation failed: `;
 
   for (const issue of error.issues) {
     if (errorString.length > 0) {
