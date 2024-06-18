@@ -2,10 +2,10 @@ import { buildMiddleware } from "express-kint/src/core/buildMiddleware";
 
 export const loggingMiddleware = buildMiddleware<
   "logging",
-  void,
   { module: string },
+  void,
   void
->("logging", (request, next) => {
+>("logging", (request, next, { module }) => {
   console.log(
     `[${module}] Incoming ${request.underlying.method} request to ${request.underlying.baseUrl}${request.underlying.url}`,
   );

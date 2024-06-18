@@ -44,6 +44,6 @@
   "dependencies": {
     "@types/supertest": "^6.0.2",
     "express": "^4.19.2",
-    "zod": "^3.22.4"
+    "zod": "3.22.4"
   }
 }

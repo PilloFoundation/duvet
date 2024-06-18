@@ -11,12 +11,14 @@ import { FlattenValidatorArray, ValidatorArray } from "../models/Validator";
  * @returns An object containing the config, validators, and handler.
  */
 export function extractParts<
+  Context extends { global: GlobalContext },
   GlobalContext,
   Config,
   DefaultConfig,
   Validators extends ValidatorArray,
 >(
   ...args: DefineEndpointFunctionArgs<
+    Context,
     GlobalContext,
     Config,
     DefaultConfig,

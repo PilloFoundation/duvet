@@ -23,7 +23,6 @@ export type StringKeysOnly<T> = {
  * The main class that is used to define endpoints and build a router
  */
 export class KintEndpointBuilder<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Context extends { global: GlobalContext },
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Config extends Record<string, any>,
@@ -179,6 +178,7 @@ export class KintEndpointBuilder<
 
   defineEndpoint<Validators extends ValidatorArray>(
     ...args: DefineEndpointFunctionArgs<
+      Context,
       GlobalContext,
       Config,
       DefaultConfig,
