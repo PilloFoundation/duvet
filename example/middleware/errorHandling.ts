@@ -1,5 +1,5 @@
-import { KintResponse } from "../../src";
-import { buildMiddleware } from "../../src/core/buildMiddleware";
+import { KintResponse } from "express-kint";
+import { buildMiddleware } from "express-kint/src/core/buildMiddleware";
 
 export const errorHandlingMiddleware = buildMiddleware(
   "errorHandling",

@@ -1,6 +1,6 @@
 import { rootKint } from "../rootKint";
 
-import { zodValidator } from "../../../src/zod/zodValidator";
+import { zodValidator } from "express-kint/src/zod/zodValidator";
 import { z } from "zod";
 
 export default rootKint.defineEndpoint(

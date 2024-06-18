@@ -1,4 +1,4 @@
-import { buildMiddleware } from "../../src";
+import { buildMiddleware } from "express-kint";
 
 export const authMiddleware = buildMiddleware<
   "auth",

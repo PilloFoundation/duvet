@@ -1,4 +1,4 @@
-import { createExpressKint } from "../src";
+import { createExpressKint } from "express-kint";
 
 type Context = {
   dbConnection: {
