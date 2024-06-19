@@ -630,6 +630,12 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@kint/eslint-plugin-kint@https://github.com/TSKint/eslint-plugin-kint#main":
+  version "0.0.1"
+  resolved "https://github.com/TSKint/eslint-plugin-kint#0c1c290096dfad6e88ae88c20d89d05b264370a8"
+  dependencies:
+    eslint "^9.5.0"
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
@@ -650,13 +656,6 @@
   dependencies:
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
-
-"@pkwadsy/eslint-plugin-kint@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@pkwadsy/eslint-plugin-kint/-/eslint-plugin-kint-0.0.1.tgz#85878f7cd960017f957efc626dbb0f8f85c11769"
-  integrity sha512-n1UtsGNRKH4uPAP2/DGK3otwi2UDypWfGHKAFvinCbGE8A+8n1Tk0P0jyRTrKWI7AtYFtt3arKoBKISlGNQwDw==
-  dependencies:
-    eslint "^9.5.0"
 
 "@sinclair/typebox@^0.27.8":
   version "0.27.8"

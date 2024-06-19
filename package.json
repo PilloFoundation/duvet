@@ -42,7 +42,7 @@
     "typescript-eslint": "^7.13.0"
   },
   "dependencies": {
-    "@pkwadsy/eslint-plugin-kint": "^0.0.1",
+    "@kint/eslint-plugin-kint": "https://github.com/TSKint/eslint-plugin-kint#main",
     "@types/supertest": "^6.0.2",
     "express": "^4.19.2",
     "zod": "^3.22.4"
