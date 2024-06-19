@@ -1,4 +1,0 @@
-{
-  "eslint.experimental.useFlatConfig": true,
-  "typescript.tsdk": "node_modules/typescript/lib"
-}
