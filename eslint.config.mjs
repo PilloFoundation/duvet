@@ -4,7 +4,7 @@ import eslint from "@eslint/js";
 import jsdoc from "eslint-plugin-jsdoc";
 import tseslint from "typescript-eslint";
 import noTypeAssertions from "eslint-plugin-no-type-assertion";
-import kintLint from "@kint/eslint-plugin-kint";
+import kintLint from "@pkwadsy/eslint-plugin-kint";
 
 export default tseslint.config(
   eslint.configs.recommended,
