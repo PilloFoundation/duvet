@@ -4,19 +4,31 @@ import eslint from "@eslint/js";
 import jsdoc from "eslint-plugin-jsdoc";
 import tseslint from "typescript-eslint";
 import noTypeAssertions from "eslint-plugin-no-type-assertion";
+import spellcheck from "eslint-plugin-spellcheck";
+import skipWords from "./skip-words.mjs";
 
 export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   jsdoc.configs["flat/recommended-typescript"],
   {
-    plugins: { jsdoc, "no-type-assertion": noTypeAssertions },
+    plugins: {
+      "jsdoc": jsdoc,
+      "no-type-assertion": noTypeAssertions,
+      "spellcheck": spellcheck,
+    },
   },
   {
     rules: {
       "@typescript-eslint/ban-types": "warn",
       "no-warning-comments": "warn",
       "no-type-assertion/no-type-assertion": "warn",
+      "spellcheck/spell-checker": [
+        1,
+        {
+          skipWords,
+        },
+      ],
     },
   },
   {

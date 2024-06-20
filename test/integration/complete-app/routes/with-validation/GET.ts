@@ -11,7 +11,7 @@ export default kint.defineEndpoint(
     headers: z.object({ value: z.literal("headers") }),
     cookies: z.object({ value: z.literal("cookies") }),
   }),
-  (req, k) => {
+  (request, k) => {
     expect(k.valid.body.value).toBe("body");
     expect(k.valid.query.value).toBe("query");
     expect(k.valid.headers.value).toBe("headers");
