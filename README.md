@@ -1,8 +1,8 @@
 # Duvet
 
-[![codecov](https://codecov.io/gh/PKWadsy/duvet/graph/badge.svg?token=2MUV55APQ1)](https://codecov.io/gh/PKWadsy/duvet)
-![test](https://github.com/PKWadsy/duvet/actions/workflows/test.yml/badge.svg)
-![publish](https://github.com/PKWadsy/duvet/actions/workflows/npm-publish.yml/badge.svg)
+[![codecov](https://codecov.io/gh/PilloFoundation/duvet/graph/badge.svg?token=2MUV55APQ1)](https://codecov.io/gh/PilloFoundation/duvet)
+![test](https://github.com/PilloFoundation/duvet/actions/workflows/test.yml/badge.svg)
+![publish](https://github.com/PilloFoundation/duvet/actions/workflows/npm-publish.yml/badge.svg)
 
 Duvet is an opinionated and modular framework which allows you to create type-safe, self-documented, file-system based REST APIs.
 
