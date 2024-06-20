@@ -72,7 +72,9 @@ describe("Endpoint Tree Builder", () => {
   test("Throws an error on incorrect export", async () => {
     const pathToRoutes = path.join(__dirname, "test-routes/incorrect-export");
 
-    expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow();
+    expect(() => {
+      endpointTreeFromDirectory(pathToRoutes);
+    }).toThrow();
   });
   test("Throws an error on incorrect code", async () => {
     const pathToRoutes = path.join(__dirname, "test-routes/incorrect-code");
