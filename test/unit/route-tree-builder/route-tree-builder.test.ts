@@ -69,6 +69,16 @@ describe("Endpoint Tree Builder", () => {
     expect(anotherParamRoute.endpoint("PUT")).toBeDefined();
   });
 
+  test("Throws an error on no duvet export", async () => {
+    const pathToRoutes = path.join(__dirname, "test-routes/no-duvet-export");
+
+    expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow();
+  });
+  test("Throws an error on no duvet endpoint", async () => {
+    const pathToRoutes = path.join(__dirname, "test-routes/no-duvet-endpoint");
+
+    expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow();
+  });
   test("Throws an error on incorrect export", async () => {
     const pathToRoutes = path.join(__dirname, "test-routes/incorrect-export");
 
