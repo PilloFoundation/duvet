@@ -1,7 +1,7 @@
 name: Lint
 on: [pull_request]
 jobs:
-  eslint:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -15,17 +15,5 @@ jobs:
         run: yarn install --immutable --immutable-cache
       - name: Lint
         run: yarn lint
-  check-formatting:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-          cache: "yarn"
-      - name: Install dependencies
-        run: yarn install --immutable --immutable-cache
       - name: Check Formatting
         run: yarn prettier . --check

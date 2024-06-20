@@ -16,7 +16,7 @@ export function buildTestMiddleware<
     config: Config,
     globalContext: GlobalContext,
   ) => Context | null = () => null,
-  after: (res: DuvetResponse) => DuvetResponse = (res) => res,
+  after: (response: DuvetResponse) => DuvetResponse = (response) => response,
 ): Middleware<Name, Config, Context | null, GlobalContext> {
   const middlewareHandler: MiddlewareHandler<
     Config,

@@ -48,25 +48,25 @@ describe("Duvet config", () => {
     const runMiddlewareOne = jest.fn();
     const runMiddlewareTwo = jest.fn();
 
-    const eb = DuvetEndpointBuilder.new<object>()
+    const endpointBuilder = DuvetEndpointBuilder.new<object>()
       .addMiddleware(
-        buildTestMiddleware("mwOne", (config: string) => {
+        buildTestMiddleware("middlewareOne", (config: string) => {
           runMiddlewareOne(config);
         }),
       )
       .addMiddleware(
         buildTestMiddleware(
-          "mwTwo",
+          "middlewareTwo",
           (config: { fieldOne: string; fieldTwo: number }) => {
             runMiddlewareTwo(config);
           },
         ),
       );
 
-    const ebWithConfigOne = eb.defineEndpoint(
+    const endpointBuilderWithConfigOne = endpointBuilder.defineEndpoint(
       {
-        mwOne: "endpointOne",
-        mwTwo: {
+        middlewareOne: "endpointOne",
+        middlewareTwo: {
           fieldOne: "endpointOne",
           fieldTwo: 1,
         },
@@ -74,10 +74,10 @@ describe("Duvet config", () => {
       () => dudResponse,
     );
 
-    const ebWithConfigTwo = eb.defineEndpoint(
+    const endpointBuilderWithConfigTwo = endpointBuilder.defineEndpoint(
       {
-        mwOne: "endpointTwo",
-        mwTwo: {
+        middlewareOne: "endpointTwo",
+        middlewareTwo: {
           fieldOne: "endpointTwo",
           fieldTwo: 2,
         },
@@ -85,10 +85,10 @@ describe("Duvet config", () => {
       () => dudResponse,
     );
 
-    ebWithConfigOne.data.handler({} as DuvetRequest, {
+    endpointBuilderWithConfigOne.data.handler({} as DuvetRequest, {
       global: {},
     });
-    ebWithConfigTwo.data.handler({} as DuvetRequest, {
+    endpointBuilderWithConfigTwo.data.handler({} as DuvetRequest, {
       global: {},
     });
 
