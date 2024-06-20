@@ -1,6 +1,6 @@
 import { Request } from "express";
 
-export type KintRequest = {
+export type DuvetRequest = {
   underlying: Request;
   response: {
     send(status: number, body: unknown): never;

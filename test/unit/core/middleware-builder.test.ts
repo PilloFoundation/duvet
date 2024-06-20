@@ -1,6 +1,6 @@
 import { buildMiddleware } from "../../../src/core/buildMiddleware";
-import { KintRequest } from "../../../src/core/models/KintRequest";
-import { KintResponse } from "../../../src/core/models/KintResponse";
+import { DuvetRequest } from "../../../src/core/models/DuvetRequest";
+import { DuvetResponse } from "../../../src/core/models/DuvetResponse";
 
 describe("Middleware Builder", () => {
   test("Builds a middleware object correctly", () => {
@@ -17,9 +17,9 @@ describe("Middleware Builder", () => {
     expect(middleware.name).toBe("test");
     expect(middleware.handler).toBeDefined();
 
-    middleware.handler({} as KintRequest, (context: unknown) => {
+    middleware.handler({} as DuvetRequest, (context: unknown) => {
       expect(context).toBe("context");
-      return {} as KintResponse;
+      return {} as DuvetResponse;
     });
 
     expect(doThing.mock.calls).toHaveLength(1);

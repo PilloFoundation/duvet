@@ -1,5 +1,5 @@
-import { KintRequest } from "../../../src";
-import { KintEndpointBuilder } from "../../../src/core/endpoint-builder/KintEndpointBuilder";
+import { DuvetRequest } from "../../../src";
+import { DuvetEndpointBuilder } from "../../../src/core/endpoint-builder/DuvetEndpointBuilder";
 import { buildTestMiddleware } from "../../helpers/buildTestMiddleware";
 import { dudResponse } from "../dudResponse";
 
@@ -14,7 +14,7 @@ describe("Middleware Integration", () => {
 
     const events: Events[] = [];
 
-    const endpoint = KintEndpointBuilder.new<object>()
+    const endpoint = DuvetEndpointBuilder.new<object>()
       .addMiddleware(
         buildTestMiddleware(
           "first",
@@ -50,7 +50,7 @@ describe("Middleware Integration", () => {
         },
       );
 
-    endpoint.data.handler({} as KintRequest, { global: {} });
+    endpoint.data.handler({} as DuvetRequest, { global: {} });
 
     expect(events).toEqual([
       "second before",
@@ -66,9 +66,9 @@ describe("Middleware Integration", () => {
     const runEndpoint = jest.fn();
     const runEndpointWithMiddleware = jest.fn();
 
-    const kint = KintEndpointBuilder.new<object>();
+    const duvet = DuvetEndpointBuilder.new<object>();
 
-    const withMiddleware = kint.addMiddleware({
+    const withMiddleware = duvet.addMiddleware({
       handler: (req, next) => {
         runMiddleware();
         return next();
@@ -76,7 +76,7 @@ describe("Middleware Integration", () => {
       name: "test",
     });
 
-    const endpoint = kint.defineEndpoint({}, () => {
+    const endpoint = duvet.defineEndpoint({}, () => {
       runEndpoint();
       return dudResponse;
     });
@@ -86,8 +86,8 @@ describe("Middleware Integration", () => {
       return dudResponse;
     });
 
-    endpoint.data.handler({} as KintRequest, { global: {} });
-    endpointWithMiddleware.data.handler({} as KintRequest, { global: {} });
+    endpoint.data.handler({} as DuvetRequest, { global: {} });
+    endpointWithMiddleware.data.handler({} as DuvetRequest, { global: {} });
 
     expect(runEndpoint.mock.calls).toHaveLength(1);
     expect(runMiddleware.mock.calls).toHaveLength(1);

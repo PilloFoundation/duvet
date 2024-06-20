@@ -1,7 +1,7 @@
-import { KintRequest } from "./KintRequest";
+import { DuvetRequest } from "./DuvetRequest";
 
 export type Validator<Field extends string, Data> = {
-  validate: (request: KintRequest) => ValidationResult<Field, Data>;
+  validate: (request: DuvetRequest) => ValidationResult<Field, Data>;
 };
 
 export type ValidationFailure = {

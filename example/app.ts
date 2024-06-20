@@ -1,7 +1,7 @@
 import path from "path";
 import express from "express";
 
-import { build } from "./kint";
+import { build } from "./duvet";
 
 const routes = path.join(__dirname, "routes");
 

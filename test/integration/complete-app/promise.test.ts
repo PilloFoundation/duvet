@@ -2,7 +2,7 @@ import path from "path";
 import request from "supertest";
 import express from "express";
 import { Context } from "./Context";
-import { build } from "./kint";
+import { build } from "./duvet";
 
 describe("Promise", () => {
   test("Endpoint successfully returns a response from a promise", async () => {

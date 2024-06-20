@@ -1,9 +1,9 @@
-import { rootKint } from "../rootKint";
+import { rootDuvet } from "../rootDuvet";
 
-import { zodValidator } from "express-kint/src/zod/zodValidator";
+import { zodValidator } from "express-duvet/src/zod/zodValidator";
 import { z } from "zod";
 
-export default rootKint.defineEndpoint(
+export default rootDuvet.defineEndpoint(
   {
     logging: {
       module: "TEST",

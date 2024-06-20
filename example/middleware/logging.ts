@@ -1,4 +1,4 @@
-import { buildMiddleware } from "express-kint/src/core/buildMiddleware";
+import { buildMiddleware } from "express-duvet/src/core/buildMiddleware";
 
 export const loggingMiddleware = buildMiddleware<
   "logging",

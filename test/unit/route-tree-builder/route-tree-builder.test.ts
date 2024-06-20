@@ -79,10 +79,10 @@ describe("Endpoint Tree Builder", () => {
 
     expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow();
   });
-  test("Throws an error on built by kint object but it is not a KintEndpoint", async () => {
+  test("Throws an error on built by duvet object but it is not a DuvetEndpoint", async () => {
     const pathToRoutes = path.join(
       __dirname,
-      "test-routes/incorrect-built-by-kint",
+      "test-routes/incorrect-built-by-duvet",
     );
 
     expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow();

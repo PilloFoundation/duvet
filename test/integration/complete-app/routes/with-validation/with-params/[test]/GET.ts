@@ -1,13 +1,13 @@
-import { kint } from "../../../../kint";
-import { KintResponse } from "../../../../../../../src/core/models/KintResponse";
+import { duvet } from "../../../../duvet";
+import { DuvetResponse } from "../../../../../../../src/core/models/DuvetResponse";
 import { zodValidator } from "../../../../../../../src/zod/zodValidator";
 import { z } from "zod";
 
-export default kint.defineEndpoint(
+export default duvet.defineEndpoint(
   {},
   zodValidator({ params: z.object({ test: z.coerce.number() }) }),
   (req, k) => {
     // Returns the value of the "test" query parameter.
-    return new KintResponse(k.valid.params.test.toString(), 200);
+    return new DuvetResponse(k.valid.params.test.toString(), 200);
   },
 );
