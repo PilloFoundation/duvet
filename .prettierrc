@@ -2,5 +2,6 @@
   "useTabs": false,
   "tabWidth": 2,
   "singleQuote": false,
-  "trailingComma": "all"
+  "trailingComma": "all",
+  "quoteProps": "consistent"
 }

@@ -101,8 +101,8 @@ See below for an example.
 
 import { defineExpressEndpoint } from "../kint";
 
-export default defineExpressEndpoint({}, (req, res, ctx) => {
-  res.status(200).send("Hello world");
+export default defineExpressEndpoint({}, (request, response, context) => {
+  response.status(200).send("Hello world");
 });
 ```
 
@@ -150,10 +150,10 @@ export default defineExpressEndpoint(
       id: z.string(),
     },
   },
-  (req, res, ctx) => {
-    const id = req.params.id;
+  (request, response, context) => {
+    const id = request.params.id;
 
-    res.status(200).send("Got post with id: " + id);
+    response.status(200).send("Got post with id: " + id);
   },
 );
 ```
@@ -168,7 +168,7 @@ export default defineExpressEndpoint({
     userId: z.string(),
     documentId: z.string()
   }
-}, (req, res, ctx) => { ... });
+}, (request, response, context) => { ... });
 
 ```
 
@@ -182,7 +182,7 @@ export default defineExpressEndpoint({
     id: z.string(), // This is ok as id is in the route path
     invalid: z.string() // THROWS AN ERROR
   }
-}, (req, res, ctx) => { ... });
+}, (request, response, context) => { ... });
 
 ```
 
@@ -208,12 +208,12 @@ export default defineExpressEndpoint({
   requestBody: {
     hashedPassword: z.string()
   }
-}, (req, res, ctx) => {
- const age = req.query.age; // Type safe
- const hashedPassword = req.body.hashedPassword; // Type safe
+}, (request, response, context) => {
+ const age = request.query.age; // Type safe
+ const hashedPassword = request.body.hashedPassword; // Type safe
 
- const otherParam = req.query.otherParam; // Compiler error
- const otherProp = req.body.otherProp; // Compiler error
+ const otherParam = request.query.otherParam; // Compiler error
+ const otherProp = request.body.otherProp; // Compiler error
 
  ... // do other stuff
 });

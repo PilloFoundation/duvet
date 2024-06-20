@@ -21,9 +21,9 @@ describe("Middleware Integration", () => {
           () => {
             events.push("first before");
           },
-          (res) => {
+          (response) => {
             events.push("first after");
-            return res;
+            return response;
           },
         ),
       )
@@ -33,9 +33,9 @@ describe("Middleware Integration", () => {
           () => {
             events.push("second before");
           },
-          (res) => {
+          (response) => {
             events.push("second after");
-            return res;
+            return response;
           },
         ),
       )
@@ -69,7 +69,7 @@ describe("Middleware Integration", () => {
     const kint = KintEndpointBuilder.new<object>();
 
     const withMiddleware = kint.addMiddleware({
-      handler: (req, next) => {
+      handler: (request, next) => {
         runMiddleware();
         return next();
       },

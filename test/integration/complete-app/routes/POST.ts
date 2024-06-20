@@ -8,7 +8,7 @@ export default kint.defineEndpoint(
   zodValidator({
     body: z.object({ value: z.string() }),
   }),
-  (req, k) => {
+  (request, k) => {
     // Returns the value of the "value" body parameter.
     return new KintResponse(k.valid.body.value, 200);
   },
