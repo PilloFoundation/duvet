@@ -1,7 +1,7 @@
 name: Lint
 on: [pull_request]
 jobs:
-  eslint:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
