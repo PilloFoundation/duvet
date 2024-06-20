@@ -3,7 +3,6 @@ import {
   Response as ExpressResponse,
   Router,
 } from "express";
-import { DuvetResponse } from "../models/DuvetResponse";
 import { DuvetRequest } from "../models/DuvetRequest";
 import { EndpointTreeNode } from "./EndpointTree";
 import { Handler } from "../models/Handler";
@@ -26,11 +25,6 @@ export function expressHandlerFromDuvetHandler<GlobalContext>(
   ) {
     const duvetRequest: DuvetRequest = {
       underlying: request,
-      response: {
-        send(status: number, body: unknown) {
-          throw new DuvetResponse(body, status);
-        },
-      },
     };
 
     const duvetResponse = handler(duvetRequest, {
