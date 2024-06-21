@@ -1,4 +1,4 @@
-import { KintRequest } from "../../../src";
+import { DuvetRequest } from "../../../src";
 import { wrapHandlerWithValidationLayer } from "../../../src/core/endpoint-builder/handlerWithValidators";
 import { Validator } from "../../../src/core/models/Validator";
 
@@ -59,7 +59,7 @@ describe("Validation wrapper", () => {
     }, validators);
 
     const result = await wrappedHandler(
-      { underlying: { body: "body data" } } as KintRequest,
+      { underlying: { body: "body data" } } as DuvetRequest,
       { contextData: "context data" },
       { configData: "config data" },
     );

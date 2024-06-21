@@ -1,9 +1,9 @@
 import { MaybeAsync } from "../../utils/types/MaybeAsync";
-import { KintRequest } from "./KintRequest";
-import { KintResponse } from "./KintResponse";
+import { DuvetRequest } from "./DuvetRequest";
+import { DuvetResponse } from "./DuvetResponse";
 
 export type ConfigurableHandler<Context, Config> = (
-  request: KintRequest,
+  request: DuvetRequest,
   context: Context,
   config: Config,
-) => MaybeAsync<KintResponse>;
+) => MaybeAsync<DuvetResponse>;

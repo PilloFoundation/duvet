@@ -1,9 +1,9 @@
-export { KintEndpointBuilder } from "./core/endpoint-builder/KintEndpointBuilder";
-export { createExpressKint } from "./core/createKint";
+export { DuvetEndpointBuilder } from "./core/endpoint-builder/DuvetEndpointBuilder";
+export { createExpressDuvet } from "./core/createDuvet";
 
 export { Middleware } from "./core/models/Middleware";
 
-export { KintRequest } from "./core/models/KintRequest";
-export { KintResponse } from "./core/models/KintResponse";
+export { DuvetRequest } from "./core/models/DuvetRequest";
+export { DuvetResponse } from "./core/models/DuvetResponse";
 
 export { buildMiddleware } from "./core/buildMiddleware";

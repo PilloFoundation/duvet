@@ -1,14 +1,14 @@
 {
-  "name": "express-kint",
+  "name": "express-duvet",
   "type": "commonjs",
   "version": "0.6.1",
   "description": "An extensible and opinionated tool for building nodejs backend apps faster",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "author": "PK Wadsworth",
+  "author": "Pillo",
   "repository": {
     "type": "git",
-    "url": "https://github.com/PKWadsy/kint"
+    "url": "https://github.com/PilloFoundation/duvet"
   },
   "license": "MIT",
   "scripts": {

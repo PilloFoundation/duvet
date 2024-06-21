@@ -1,9 +1,9 @@
-import { kint } from "../../kint";
-import { KintResponse } from "../../../../../src/core/models/KintResponse";
+import { duvet } from "../../duvet";
+import { DuvetResponse } from "../../../../../src/core/models/DuvetResponse";
 import { zodValidator } from "../../../../../src/zod/zodValidator";
 import { z } from "zod";
 
-export default kint.defineEndpoint(
+export default duvet.defineEndpoint(
   {},
   zodValidator({
     body: z.object({ value: z.literal("body") }),
@@ -18,6 +18,6 @@ export default kint.defineEndpoint(
     expect(k.valid.cookies.value).toBe("cookies");
 
     // Returns the value of the "test" query parameter.
-    return new KintResponse("Success", 200);
+    return new DuvetResponse("Success", 200);
   },
 );

@@ -69,20 +69,32 @@ describe("Endpoint Tree Builder", () => {
     expect(anotherParamRoute.endpoint("PUT")).toBeDefined();
   });
 
+  test("Throws an error on no duvet export", async () => {
+    const pathToRoutes = path.join(__dirname, "test-routes/no-duvet-export");
+
+    expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow();
+  });
+  test("Throws an error on no duvet endpoint", async () => {
+    const pathToRoutes = path.join(__dirname, "test-routes/no-duvet-endpoint");
+
+    expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow();
+  });
   test("Throws an error on incorrect export", async () => {
     const pathToRoutes = path.join(__dirname, "test-routes/incorrect-export");
 
-    expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow();
+    expect(() => {
+      endpointTreeFromDirectory(pathToRoutes);
+    }).toThrow();
   });
   test("Throws an error on incorrect code", async () => {
     const pathToRoutes = path.join(__dirname, "test-routes/incorrect-code");
 
     expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow();
   });
-  test("Throws an error on built by kint object but it is not a KintEndpoint", async () => {
+  test("Throws an error on built by duvet object but it is not a DuvetEndpoint", async () => {
     const pathToRoutes = path.join(
       __dirname,
-      "test-routes/incorrect-built-by-kint",
+      "test-routes/incorrect-built-by-duvet",
     );
 
     expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow();

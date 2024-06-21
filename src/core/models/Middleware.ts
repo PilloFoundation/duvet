@@ -1,22 +1,22 @@
-import { KintRequest } from "./KintRequest";
-import { KintResponse } from "./KintResponse";
+import { DuvetRequest } from "./DuvetRequest";
+import { DuvetResponse } from "./DuvetResponse";
 
 export type MaybeFunction<T> = void extends T
-  ? () => KintResponse
+  ? () => DuvetResponse
   : undefined extends T
-    ? (ext?: T | undefined) => KintResponse
-    : (ext: T) => KintResponse;
+    ? (ext?: T | undefined) => DuvetResponse
+    : (ext: T) => DuvetResponse;
 
 export type MiddlewareHandler<
   ConfigExtension,
   ContextExtension,
   GlobalContext = unknown,
 > = (
-  request: KintRequest,
+  request: DuvetRequest,
   next: MaybeFunction<ContextExtension>,
   config: ConfigExtension,
   globalContext: GlobalContext,
-) => KintResponse;
+) => DuvetResponse;
 
 export type Middleware<
   Name extends string,

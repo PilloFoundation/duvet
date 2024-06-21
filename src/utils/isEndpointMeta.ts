@@ -1,13 +1,13 @@
-import { KintEndpoint } from "../core/models/KintEndpoint";
+import { DuvetEndpoint } from "../core/models/DuvetEndpoint";
 
 /**
- * Tests if a value is a KintEndpoint object
+ * Tests if a value is a DuvetEndpoint object
  * @param test The value to test
- * @returns A boolean indicating if the value is a KintEndpoint object
+ * @returns A boolean indicating if the value is a DuvetEndpoint object
  */
-export function isKintEndpoint(
+export function isDuvetEndpoint(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   test: any,
-): test is KintEndpoint<unknown, unknown> {
-  return test?.exportType === "KintEndpoint";
+): test is DuvetEndpoint<unknown, unknown> {
+  return test?.exportType === "DuvetEndpoint";
 }

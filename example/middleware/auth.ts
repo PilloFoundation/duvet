@@ -1,4 +1,4 @@
-import { buildMiddleware } from "express-kint";
+import { buildMiddleware } from "express-duvet";
 
 export const authMiddleware = buildMiddleware<
   "auth",

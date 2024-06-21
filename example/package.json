@@ -1,5 +1,5 @@
 {
-  "name": "kint-example",
+  "name": "duvet-example",
   "version": "1.0.0",
   "type": "commonjs",
   "main": "dist/main.js",
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "express": "^4.19.2",
-    "express-kint": "file:..",
+    "express-duvet": "file:..",
     "mime": "^4.0.1",
     "zod": "3.22.4"
   },

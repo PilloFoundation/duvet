@@ -1,7 +1,7 @@
 import { Handler } from "./Handler";
 
-export type KintEndpoint<GlobalContext, Config> = {
-  exportType: "KintEndpoint";
+export type DuvetEndpoint<GlobalContext, Config> = {
+  exportType: "DuvetEndpoint";
   handler: Handler<{ global: GlobalContext }>;
   config: Config;
 };

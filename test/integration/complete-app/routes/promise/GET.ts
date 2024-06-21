@@ -1,10 +1,10 @@
-import { kint } from "../../kint";
-import { KintResponse } from "../../../../../src/core/models/KintResponse";
+import { duvet } from "../../duvet";
+import { DuvetResponse } from "../../../../../src/core/models/DuvetResponse";
 
-export default kint.defineEndpoint({}, async () => {
-  const promise = new Promise<KintResponse>((resolve) => {
+export default duvet.defineEndpoint({}, async () => {
+  const promise = new Promise<DuvetResponse>((resolve) => {
     setTimeout(() => {
-      resolve(new KintResponse("Success", 200));
+      resolve(new DuvetResponse("Success", 200));
     }, 10);
   });
   return promise;

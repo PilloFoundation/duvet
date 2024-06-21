@@ -1,4 +1,4 @@
-import { KintEndpointBuilder, KintRequest } from "../../../src";
+import { DuvetEndpointBuilder, DuvetRequest } from "../../../src";
 import { buildTestMiddleware } from "../../helpers/buildTestMiddleware";
 import { dudResponse } from "../dudResponse";
 
@@ -15,28 +15,28 @@ function configTestMiddleware<Config>() {
   };
 }
 
-describe("Kint config", () => {
+describe("Duvet config", () => {
   test("Default config will used when no config provided", () => {
     const { middleware, runMiddleware } = configTestMiddleware<{
       a: string;
       b: number;
     }>();
 
-    const kint = KintEndpointBuilder.new<object>().addMiddleware(middleware);
+    const duvet = DuvetEndpointBuilder.new<object>().addMiddleware(middleware);
 
-    const kintWithDefaultConfig = kint.setConfig({
+    const duvetWithDefaultConfig = duvet.setConfig({
       testOne: {
         a: "default",
         b: 10,
       },
     });
 
-    const endpoint = kintWithDefaultConfig.defineEndpoint(
+    const endpoint = duvetWithDefaultConfig.defineEndpoint(
       {},
       () => dudResponse,
     );
 
-    endpoint.data.handler({} as KintRequest, { global: {} });
+    endpoint.data.handler({} as DuvetRequest, { global: {} });
 
     expect(runMiddleware.mock.calls[0][0]).toMatchObject({
       a: "default",
@@ -48,7 +48,7 @@ describe("Kint config", () => {
     const runMiddlewareOne = jest.fn();
     const runMiddlewareTwo = jest.fn();
 
-    const endpointBuilder = KintEndpointBuilder.new<object>()
+    const endpointBuilder = DuvetEndpointBuilder.new<object>()
       .addMiddleware(
         buildTestMiddleware("middlewareOne", (config: string) => {
           runMiddlewareOne(config);
@@ -85,10 +85,10 @@ describe("Kint config", () => {
       () => dudResponse,
     );
 
-    endpointBuilderWithConfigOne.data.handler({} as KintRequest, {
+    endpointBuilderWithConfigOne.data.handler({} as DuvetRequest, {
       global: {},
     });
-    endpointBuilderWithConfigTwo.data.handler({} as KintRequest, {
+    endpointBuilderWithConfigTwo.data.handler({} as DuvetRequest, {
       global: {},
     });
 
@@ -102,36 +102,36 @@ describe("Kint config", () => {
     ]);
   });
 
-  test("Extending config creates a new Kint instance", () => {
+  test("Extending config creates a new Duvet instance", () => {
     const { middleware, runMiddleware } = configTestMiddleware<{
       a: string;
       b: number;
     }>();
 
-    const kint = KintEndpointBuilder.new<object>().addMiddleware(middleware);
-    const kintWithExtendedConfigOne = kint.extendConfig({
+    const duvet = DuvetEndpointBuilder.new<object>().addMiddleware(middleware);
+    const duvetWithExtendedConfigOne = duvet.extendConfig({
       testOne: { a: "extendOne", b: 1 },
     });
-    const kintWithExtendedConfigTwo = kint.extendConfig({
+    const duvetWithExtendedConfigTwo = duvet.extendConfig({
       testOne: { a: "extendTwo", b: 2 },
     });
 
-    const endpointWithNoExtension = kint.defineEndpoint(
+    const endpointWithNoExtension = duvet.defineEndpoint(
       {
         testOne: { a: "noExtend", b: 0 },
       },
       () => dudResponse,
     );
     const endpointWithExtendedConfigOne =
-      kintWithExtendedConfigOne.defineEndpoint({}, () => dudResponse);
+      duvetWithExtendedConfigOne.defineEndpoint({}, () => dudResponse);
     const endpointWithExtendedConfigTwo =
-      kintWithExtendedConfigTwo.defineEndpoint({}, () => dudResponse);
+      duvetWithExtendedConfigTwo.defineEndpoint({}, () => dudResponse);
 
-    endpointWithNoExtension.data.handler({} as KintRequest, { global: {} });
-    endpointWithExtendedConfigOne.data.handler({} as KintRequest, {
+    endpointWithNoExtension.data.handler({} as DuvetRequest, { global: {} });
+    endpointWithExtendedConfigOne.data.handler({} as DuvetRequest, {
       global: {},
     });
-    endpointWithExtendedConfigTwo.data.handler({} as KintRequest, {
+    endpointWithExtendedConfigTwo.data.handler({} as DuvetRequest, {
       global: {},
     });
 

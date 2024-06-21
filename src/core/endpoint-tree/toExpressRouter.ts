@@ -3,8 +3,7 @@ import {
   Response as ExpressResponse,
   Router,
 } from "express";
-import { KintResponse } from "../models/KintResponse";
-import { KintRequest } from "../models/KintRequest";
+import { DuvetRequest } from "../models/DuvetRequest";
 import { EndpointTreeNode } from "./EndpointTree";
 import { Handler } from "../models/Handler";
 import { Method } from "../models/Resource";
@@ -16,7 +15,7 @@ import { Method } from "../models/Resource";
  * @returns An express handler function which can be passed to any Express `use` directive (or equivalent).
  */
 // TODO: Refactor to use express adapters
-export function expressHandlerFromKintHandler<GlobalContext>(
+export function expressHandlerFromDuvetHandler<GlobalContext>(
   handler: Handler<{ global: GlobalContext }>,
   getContext: () => GlobalContext,
 ) {
@@ -24,25 +23,20 @@ export function expressHandlerFromKintHandler<GlobalContext>(
     request: ExpressRequest,
     response: ExpressResponse,
   ) {
-    const kintRequest: KintRequest = {
+    const duvetRequest: DuvetRequest = {
       underlying: request,
-      response: {
-        send(status: number, body: unknown) {
-          throw new KintResponse(body, status);
-        },
-      },
     };
 
-    const kintResponse = handler(kintRequest, {
+    const duvetResponse = handler(duvetRequest, {
       global: getContext(),
     });
 
-    if (kintResponse instanceof Promise) {
-      kintResponse.then((kintResponse) => {
-        response.status(kintResponse.status).send(kintResponse.body);
+    if (duvetResponse instanceof Promise) {
+      duvetResponse.then((duvetResponse) => {
+        response.status(duvetResponse.status).send(duvetResponse.body);
       });
     } else {
-      response.status(kintResponse.status).send(kintResponse.body);
+      response.status(duvetResponse.status).send(duvetResponse.body);
     }
   };
 }
@@ -64,7 +58,7 @@ export function toExpressRouter<Context, PluginConfig>(
   });
 
   for (const ep of endpointTree.endpoints) {
-    const handler = expressHandlerFromKintHandler(ep.handler, getContext);
+    const handler = expressHandlerFromDuvetHandler(ep.handler, getContext);
 
     const methodAsLower = ep.method.toLowerCase() as Lowercase<Method>;
 
