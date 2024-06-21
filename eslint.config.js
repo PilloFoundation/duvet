@@ -5,7 +5,7 @@ import jsdoc from "eslint-plugin-jsdoc";
 import tseslint from "typescript-eslint";
 import noTypeAssertions from "eslint-plugin-no-type-assertion";
 import spellcheck from "eslint-plugin-spellcheck";
-import skipWords from "./skip-words.mjs";
+import skipWords from "./skip-words.js";
 
 export default tseslint.config(
   eslint.configs.recommended,
