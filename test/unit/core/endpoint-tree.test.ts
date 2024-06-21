@@ -21,21 +21,21 @@ describe("Endpoint tree", () => {
     expect(endpointTree.isParam).toBe(false);
   });
 
-  test("Adding a subroute to an endpoint tree works properly", () => {
+  test("Adding a subRoute to an endpoint tree works properly", () => {
     const endpointTree = new EndpointTreeNode(null, "root", false);
 
-    const subRoute = new EndpointTreeNode(endpointTree, "subroute", false);
+    const subRoute = new EndpointTreeNode(endpointTree, "subRoute", false);
 
     expect(endpointTree.subRoutes).toHaveLength(1);
     expect(endpointTree.subRoutes).toMatchObject([subRoute]);
     expect(subRoute.parent).toBe(endpointTree);
-    expect(subRoute.fullPath).toBe("root/subroute");
+    expect(subRoute.fullPath).toBe("root/subRoute");
   });
 
-  test("Adding a subroute twice does not duplicate it", () => {
+  test("Adding a subRoute twice does not duplicate it", () => {
     const endpointTree = new EndpointTreeNode(null, "root", false);
 
-    const subRoute = new EndpointTreeNode(endpointTree, "subroute", false);
+    const subRoute = new EndpointTreeNode(endpointTree, "subRoute", false);
 
     endpointTree.addSubRoute(subRoute);
     endpointTree.addSubRoute(subRoute);
@@ -43,7 +43,7 @@ describe("Endpoint tree", () => {
     expect(endpointTree.subRoutes).toHaveLength(1);
     expect(endpointTree.subRoutes).toMatchObject([subRoute]);
     expect(subRoute.parent).toBe(endpointTree);
-    expect(subRoute.fullPath).toBe("root/subroute");
+    expect(subRoute.fullPath).toBe("root/subRoute");
   });
 
   test("Adding an endpoint to an endpoint tree works properly", () => {

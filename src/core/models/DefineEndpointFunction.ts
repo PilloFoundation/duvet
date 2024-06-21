@@ -15,6 +15,7 @@ export type WithValid<
 };
 
 export type DefineEndpointFunctionArgs<
+  Context extends { global: GlobalContext },
   GlobalContext,
   Config,
   DefaultConfig,
@@ -23,7 +24,7 @@ export type DefineEndpointFunctionArgs<
   config: RequireMissingOnDefault<Config, DefaultConfig>,
   ...validators: Validators,
   handler: ConfigurableHandler<
-    WithValid<{ global: GlobalContext }, FlattenValidatorArray<Validators>>,
+    WithValid<Context, FlattenValidatorArray<Validators>>,
     Config
   >,
 ];

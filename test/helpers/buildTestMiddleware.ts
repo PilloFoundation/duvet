@@ -16,7 +16,7 @@ export function buildTestMiddleware<
     config: Config,
     globalContext: GlobalContext,
   ) => Context | null = () => null,
-  after: (res: KintResponse) => KintResponse = (res) => res,
+  after: (response: KintResponse) => KintResponse = (response) => response,
 ): Middleware<Name, Config, Context | null, GlobalContext> {
   const middlewareHandler: MiddlewareHandler<
     Config,

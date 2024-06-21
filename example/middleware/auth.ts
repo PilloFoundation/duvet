@@ -1,4 +1,4 @@
-import { buildMiddleware } from "../../src";
+import { buildMiddleware } from "express-kint";
 
 export const authMiddleware = buildMiddleware<
   "auth",
@@ -7,11 +7,11 @@ export const authMiddleware = buildMiddleware<
 >("auth", (request, next) => {
   console.log("[BEFORE AUTH MIDDLEWARE]");
 
-  const req = request.underlying;
+  const request = request.underlying;
   let response;
 
-  if (req.headers.authorization) {
-    const token = req.headers.authorization.split(" ")[1];
+  if (request.headers.authorization) {
+    const token = request.headers.authorization.split(" ")[1];
     response = next({ token });
   }
   if (!response) {
