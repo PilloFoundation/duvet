@@ -1,14 +1,16 @@
 {
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dist",
-    "module": "commonjs",
-    "target": "ESNext",
+    "declaration": true,
+    "declarationDir": "dist/types",
+
+    "rootDirs": ["src"],
+
+    "moduleResolution": "node",
     "esModuleInterop": true,
     "strict": true,
-    "allowSyntheticDefaultImports": true,
-    "declaration": true
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": ["src"],
-  "exclude": ["example/**"]
+  "exclude": ["dev-playground/**"]
 }
