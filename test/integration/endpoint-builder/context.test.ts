@@ -1,18 +1,18 @@
-import { KintRequest } from "../../../src";
-import { KintEndpointBuilder } from "../../../src/core/endpoint-builder/KintEndpointBuilder";
+import { DuvetRequest } from "../../../src";
+import { DuvetEndpointBuilder } from "../../../src/core/endpoint-builder/DuvetEndpointBuilder";
 import { buildTestMiddleware } from "../../helpers/buildTestMiddleware";
 
 describe("Middleware context", () => {
   test("Middleware correctly extends context object", async () => {
     const runMiddleware = jest.fn();
 
-    const kint = KintEndpointBuilder.new<object>()
+    const duvet = DuvetEndpointBuilder.new<object>()
       .addMiddleware(
         buildTestMiddleware("testOne", () => ({ a: "setA", b: 10 })),
       )
       .addMiddleware(buildTestMiddleware("testTwo", () => "setB"));
 
-    const endpoint = kint.defineEndpoint({}, (request, context) => {
+    const endpoint = duvet.defineEndpoint({}, (request, context) => {
       runMiddleware();
 
       expect(context).toMatchObject({
@@ -26,7 +26,7 @@ describe("Middleware context", () => {
       };
     });
 
-    endpoint.data.handler({} as KintRequest, { global: {} });
+    endpoint.data.handler({} as DuvetRequest, { global: {} });
 
     expect(runMiddleware).toHaveBeenCalled();
   });
@@ -36,7 +36,7 @@ describe("Middleware context", () => {
     const runMiddlewareOne = jest.fn();
     const runMiddlewareTwo = jest.fn();
 
-    const kint = KintEndpointBuilder.new<{ a: string; b: number }>()
+    const duvet = DuvetEndpointBuilder.new<{ a: string; b: number }>()
       .addMiddleware(
         buildTestMiddleware("testOne", (config, globalContext) => {
           runMiddlewareOne();
@@ -52,7 +52,7 @@ describe("Middleware context", () => {
         }),
       );
 
-    const endpoint = kint.defineEndpoint({}, (request, context) => {
+    const endpoint = duvet.defineEndpoint({}, (request, context) => {
       runEndpoint();
 
       expect(context).toHaveProperty("global");
@@ -64,7 +64,7 @@ describe("Middleware context", () => {
       };
     });
 
-    endpoint.data.handler({} as KintRequest, {
+    endpoint.data.handler({} as DuvetRequest, {
       global: { a: "string", b: 10 },
     });
 

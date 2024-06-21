@@ -1,6 +1,6 @@
 import { ZodError, ZodTypeAny, output } from "zod";
 import { Validator } from "../core/models/Validator";
-import { KintRequest } from "../core/models/KintRequest";
+import { DuvetRequest } from "../core/models/DuvetRequest";
 
 type RequestFields = "body" | "params" | "query" | "headers" | "cookies";
 
@@ -17,7 +17,7 @@ function zodRequestFieldValidator<
   ZodSchema extends ZodTypeAny,
 >(field: Field, schema: ZodSchema): Validator<Field, output<ZodSchema>> {
   return {
-    validate: (request: KintRequest) => {
+    validate: (request: DuvetRequest) => {
       const result = schema.safeParse(request.underlying[field]);
 
       if (result.success === false) {
@@ -79,7 +79,7 @@ type ZodValidator<ZodRequestValidator extends RequestValidator> =
  * @param validator.query - Query schema
  * @param validator.headers - Headers schema
  * @param validator.cookies - Cookies schema
- * @returns A new kint validator array
+ * @returns A new duvet validator array
  */
 export function zodValidator<ZodRequestValidator extends RequestValidator>(
   validator: ZodRequestValidator,

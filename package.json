@@ -1,19 +1,28 @@
 {
-  "name": "express-kint",
-  "type": "commonjs",
+  "name": "express-duvet",
+  "type": "module",
   "version": "0.6.1",
   "description": "An extensible and opinionated tool for building nodejs backend apps faster",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "author": "PK Wadsworth",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "author": "Pillo",
   "repository": {
     "type": "git",
-    "url": "https://github.com/PKWadsy/kint"
+    "url": "https://github.com/PilloFoundation/duvet"
   },
   "license": "MIT",
   "scripts": {
-    "prepare": "node .husky/install.mjs && husky install",
-    "build": "rimraf ./dist && tsc --outDir dist",
+    "prepare": "node .husky/install.js && husky install",
+    "build": "rimraf ./dist && yarn build:esm && yarn build:cjs",
+    "build:esm": "tsc --project tsconfig.esm.json",
+    "build:cjs": "tsc --project tsconfig.cjs.json",
     "lint": "eslint .",
     "test": "jest --coverage",
     "format": "prettier --write ."
@@ -37,6 +46,7 @@
     "nodemon": "^3.1.0",
     "pinst": "^3.0.0",
     "prettier": "^3.2.5",
+    "rimraf": "^5.0.7",
     "supertest": "^6.3.4",
     "ts-jest": "^29.1.2",
     "typescript": "^5.4.5",

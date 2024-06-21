@@ -3,7 +3,7 @@ import request from "supertest";
 import express from "express";
 import cookieParser from "cookie-parser";
 import { Context } from "./Context";
-import { build } from "./kint";
+import { build } from "./duvet";
 
 describe("Field Validation", () => {
   test("Handler validates and returns number param passed to endpoint", async () => {

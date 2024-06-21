@@ -1,4 +1,4 @@
-export class KintResponse {
+export class DuvetResponse {
   body: unknown;
   status: number;
 

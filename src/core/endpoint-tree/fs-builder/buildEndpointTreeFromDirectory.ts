@@ -1,8 +1,8 @@
 import path from "path";
 import { Method } from "../../models/Resource";
-import { isKintExport } from "../../../utils/isKintEndpoint";
+import { isDuvetExport } from "../../../utils/isDuvetEndpoint";
 import { tryFn } from "../../../utils/tryFn";
-import { isKintEndpoint } from "../../../utils/isEndpointMeta";
+import { isDuvetEndpoint } from "../../../utils/isEndpointMeta";
 import { EndpointTreeNode } from "../EndpointTree";
 import { getDirectoryContents } from "../../../utils/getDirectoryContents";
 
@@ -76,17 +76,17 @@ function applyFileToEndpointTree<Context, PluginConfig>(
       );
     }
 
-    const kintExport = module?.default;
+    const duvetExport = module?.default;
 
-    // Check if the endpoint is a Kint endpoint
-    if (isKintExport(kintExport) !== true) {
-      throw new Error(`Endpoint at route ${filePath} is not a Kint endpoint`);
+    // Check if the endpoint is a Duvet endpoint
+    if (isDuvetExport(duvetExport) !== true) {
+      throw new Error(`Endpoint at route ${filePath} is not a Duvet endpoint`);
     }
 
-    const endpoint = kintExport.data;
+    const endpoint = duvetExport.data;
 
-    if (isKintEndpoint(endpoint) !== true) {
-      throw new Error(`Endpoint at route ${filePath} is not a Kint endpoint`);
+    if (isDuvetEndpoint(endpoint) !== true) {
+      throw new Error(`Endpoint at route ${filePath} is not a Duvet endpoint`);
     }
 
     endpointTreeNode.addEndpoint({

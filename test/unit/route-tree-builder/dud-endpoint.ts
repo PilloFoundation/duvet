@@ -1,11 +1,11 @@
-import { KintEndpoint } from "../../../src/core/models/KintEndpoint";
-import { KintExport } from "../../../src/core/models/KintExport";
+import { DuvetEndpoint } from "../../../src/core/models/DuvetEndpoint";
+import { DuvetExport } from "../../../src/core/models/DuvetExport";
 
-export const dudEndpoint: KintExport<KintEndpoint<unknown, unknown>> = {
-  builtByKint: true,
+export const dudEndpoint: DuvetExport<DuvetEndpoint<unknown, unknown>> = {
+  builtByDuvet: true,
   data: {
     config: {},
-    exportType: "KintEndpoint",
+    exportType: "DuvetEndpoint",
     handler: () => {
       return { body: undefined, status: 200 };
     },

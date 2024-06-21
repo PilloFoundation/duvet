@@ -1,9 +1,9 @@
-import { KintResponse } from "express-kint";
-import { buildMiddleware } from "express-kint/src/core/buildMiddleware";
+import { DuvetResponse } from "express-duvet";
+import { buildMiddleware } from "express-duvet/src/core/buildMiddleware";
 
 export const errorHandlingMiddleware = buildMiddleware(
   "errorHandling",
-  (_, next: () => KintResponse) => {
+  (_, next: () => DuvetResponse) => {
     console.log("[BEFORE CATCH MIDDLEWARE]");
 
     let response;
