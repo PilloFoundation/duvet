@@ -16,7 +16,7 @@ function configTestMiddleware<Config>() {
 }
 
 describe("Duvet config", () => {
-  test("Default config will used when no config provided", () => {
+  test("Default config will used when no config provided", async () => {
     const { middleware, runMiddleware } = configTestMiddleware<{
       a: string;
       b: number;
@@ -36,7 +36,7 @@ describe("Duvet config", () => {
       () => dudResponse,
     );
 
-    endpoint.data.handler({} as DuvetRequest, { global: {} });
+    await endpoint.data.handler({} as DuvetRequest, { global: {} });
 
     expect(runMiddleware.mock.calls[0][0]).toMatchObject({
       a: "default",
@@ -85,10 +85,10 @@ describe("Duvet config", () => {
       () => dudResponse,
     );
 
-    endpointBuilderWithConfigOne.data.handler({} as DuvetRequest, {
+    await endpointBuilderWithConfigOne.data.handler({} as DuvetRequest, {
       global: {},
     });
-    endpointBuilderWithConfigTwo.data.handler({} as DuvetRequest, {
+    await endpointBuilderWithConfigTwo.data.handler({} as DuvetRequest, {
       global: {},
     });
 
@@ -102,7 +102,7 @@ describe("Duvet config", () => {
     ]);
   });
 
-  test("Extending config creates a new Duvet instance", () => {
+  test("Extending config creates a new Duvet instance", async () => {
     const { middleware, runMiddleware } = configTestMiddleware<{
       a: string;
       b: number;
@@ -127,11 +127,13 @@ describe("Duvet config", () => {
     const endpointWithExtendedConfigTwo =
       duvetWithExtendedConfigTwo.defineEndpoint({}, () => dudResponse);
 
-    endpointWithNoExtension.data.handler({} as DuvetRequest, { global: {} });
-    endpointWithExtendedConfigOne.data.handler({} as DuvetRequest, {
+    await endpointWithNoExtension.data.handler({} as DuvetRequest, {
       global: {},
     });
-    endpointWithExtendedConfigTwo.data.handler({} as DuvetRequest, {
+    await endpointWithExtendedConfigOne.data.handler({} as DuvetRequest, {
+      global: {},
+    });
+    await endpointWithExtendedConfigTwo.data.handler({} as DuvetRequest, {
       global: {},
     });
 

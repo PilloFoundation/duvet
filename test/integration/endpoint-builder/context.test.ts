@@ -26,7 +26,7 @@ describe("Middleware context", () => {
       };
     });
 
-    endpoint.data.handler({} as DuvetRequest, { global: {} });
+    await endpoint.data.handler({} as DuvetRequest, { global: {} });
 
     expect(runMiddleware).toHaveBeenCalled();
   });
@@ -64,7 +64,7 @@ describe("Middleware context", () => {
       };
     });
 
-    endpoint.data.handler({} as DuvetRequest, {
+    await endpoint.data.handler({} as DuvetRequest, {
       global: { a: "string", b: 10 },
     });
 
