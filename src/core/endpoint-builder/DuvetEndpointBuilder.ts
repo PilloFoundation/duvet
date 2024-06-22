@@ -14,10 +14,6 @@ import { ValidatorArray } from "../models/Validator";
 import { extractParts } from "./extractParts";
 import { wrapHandlerWithValidationLayer } from "./handlerWithValidators";
 
-export type StringKeysOnly<T> = {
-  [K in keyof T]: K extends string ? K : never;
-};
-
 //TODO: Add more information and examples on how to use the class
 /**
  * The main class that is used to define endpoints and build a router
