@@ -28,6 +28,7 @@
     "format": "prettier --write ."
   },
   "devDependencies": {
+    "@duvetjs/eslint-plugin-duvet": "^0.1.0",
     "@eslint/js": "^9.4.0",
     "@types/cookie-parser": "^1.4.7",
     "@types/eslint__js": "^8.42.3",
@@ -48,12 +49,11 @@
     "prettier": "^3.2.5",
     "rimraf": "^5.0.7",
     "supertest": "^6.3.4",
-    "ts-jest": "^29.1.2",
+    "ts-jest": "^29.1.5",
     "typescript": "^5.4.5",
     "typescript-eslint": "^7.13.0"
   },
   "dependencies": {
-    "@duvetjs/eslint-plugin-duvet": "^0.0.2",
     "@types/supertest": "^6.0.2",
     "express": "^4.19.2",
     "zod": "3.22.4"

@@ -11,13 +11,13 @@ import duvet from "@duvetjs/eslint-plugin-duvet";
 export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
+  ...duvet.configs.recommended,
   jsdoc.configs["flat/recommended-typescript"],
   {
     plugins: {
       "jsdoc": jsdoc,
       "no-type-assertion": noTypeAssertions,
       "spellcheck": spellcheck,
-      "@duvetjs/eslint-plugin-duvet": duvet,
     },
   },
   {
