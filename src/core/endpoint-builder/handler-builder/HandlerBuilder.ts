@@ -6,7 +6,7 @@ import { ConfigurableHandler } from "../../models/ConfigurableHandler";
  * the context object. This means that the type of the context which is passed into the inner handler is the same as the type of the context
  * which is passed into the wrapped handler, but with some added fields.
  *
- * @template BaseContext The base context object which is passed into the outer handler and propagated through to the output handler context
+ * @template BaseContext The base context object which is passed into the outer handler and propagated through to the innermost handler context
  * @template AddedContext The context which is added to the inner handler context by the handler builder.
  * @template Config The configuration object which is passed into handler produced by the `buildWrappedHandler` function and propagated through to the inner handler.
  */
