@@ -1,8 +1,8 @@
 import path from "path";
 import { Method } from "../../common/Method";
-import { isDuvetExport } from "../../../utils/isDuvetEndpoint";
+import { isDuvetExport } from "../../../utils/isDuvetExport";
 import { tryRun } from "../../../utils/tryRun";
-import { isDuvetEndpoint } from "../../../utils/isEndpointMeta";
+import { isDuvetEndpoint } from "../../../utils/isDuvetEndpoint";
 import { EndpointTreeNode } from "../EndpointTree";
 import { Handler } from "../../common/Handler";
 

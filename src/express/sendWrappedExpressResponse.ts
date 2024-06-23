@@ -36,11 +36,7 @@ export function sendWrappedExpressResponse(
   // Setting headers
   Object.keys(headers).forEach((key) => {
     const headerValue = headers[key];
-    if (Array.isArray(headerValue)) {
-      headerValue.forEach((value) => expressResponse.setHeader(key, value));
-    } else {
-      expressResponse.setHeader(key, headerValue);
-    }
+    expressResponse.setHeader(key, headerValue);
   });
 
   // Setting cookies

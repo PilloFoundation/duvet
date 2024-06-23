@@ -10,4 +10,5 @@ export default [
   "readdir",
   "nullable",
   "non",
+  "txt",
 ];
