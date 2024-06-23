@@ -6,10 +6,12 @@ import tseslint from "typescript-eslint";
 import noTypeAssertions from "eslint-plugin-no-type-assertion";
 import spellcheck from "eslint-plugin-spellcheck";
 import skipWords from "./skip-words.js";
+import duvet from "@duvetjs/eslint-plugin-duvet";
 
 export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
+  ...duvet.configs.recommended,
   jsdoc.configs["flat/recommended-typescript"],
   {
     plugins: {
