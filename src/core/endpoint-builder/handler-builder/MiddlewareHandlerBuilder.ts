@@ -6,7 +6,16 @@ import { Middleware } from "../../models/Middleware";
 import { HandlerBuilder } from "./HandlerBuilder";
 
 /**
- * The middleware handler builder is a handler builder that wraps the inner handler with a middleware.
+ * The middleware handler takes an inner handler and uses to create a new handler in two steps:
+ *
+ * Firstly, it uses another handler builder to create a new, wrapped inner handler.
+ * Then it creates a new handler which runs the passed in middleware, using the previously created wrapped inner handler as the next function for that middleware.
+ * @template MiddlewareName The name of the middleware.
+ * @template GlobalContext The global context which is passed into the outer handler. This is then propagated through all the middleware to the inner handler. It is also passed into each middleware.
+ * @template InnerHandlerContext The full context object which wrapped handler expects. This is passed into the wrapped inner handler from the previous wrapper.
+ * @template ContextExtension The extension to the context which the middleware adds.
+ * @template InnerHandlerConfig The configuration object which the inner handler expects.
+ * @template ConfigExtension The extension to the configuration object which the middleware adds.
  */
 export class MiddlewareHandlerBuilder<
   MiddlewareName extends string,
@@ -22,6 +31,9 @@ export class MiddlewareHandlerBuilder<
       InnerHandlerConfig & Record<MiddlewareName, ConfigExtension>
     >
 {
+  /**
+   * This is the handler builder which is used to wrap the inner handler before the middleware is applied.
+   */
   private innerHandlerBuilder: HandlerBuilder<
     { global: GlobalContext },
     InnerHandlerContext,
@@ -29,7 +41,7 @@ export class MiddlewareHandlerBuilder<
   >;
 
   /**
-   * The middleware which is used to wrap the outer handler.
+   * The middleware which is takes the wrapped inner handler as a next function.
    */
   private middleware: Middleware<
     MiddlewareName,
@@ -38,6 +50,11 @@ export class MiddlewareHandlerBuilder<
     GlobalContext
   >;
 
+  /**
+   * Creates a new middleware handler builder.
+   * @param innerHandlerBuilder A handler builder which is used to wrap the innermost handler before the middleware is applied.
+   * @param middleware The middleware which is applied to the wrapped inner handler.
+   */
   constructor(
     innerHandlerBuilder: HandlerBuilder<
       { global: GlobalContext },
@@ -56,10 +73,10 @@ export class MiddlewareHandlerBuilder<
   }
 
   /**
-   * This function is used to extend the context with the middleware's context extension.
-   * @param context The context to extend.
+   * Extends some context object with the context extension produced by the middleware.
+   * @param context The context object to extend.
    * @param key The key to extend the context with.
-   * @param ext The extension to add to the context.
+   * @param ext The extension value added to existing context.
    * @returns The context with the extension added.
    */
   private extendContext<InputContext extends object>(
@@ -78,15 +95,26 @@ export class MiddlewareHandlerBuilder<
       InputContext;
   }
 
+  /**
+   * Creates a next function from an inner handler. The inner handler is first wrapped using the inner handler builder.
+   * The next function takes in some context object. The existing context object is then extended with this context object.
+   * Finally, we run the wrapped inner handler with this extended context object.
+   * @param request The request object which is passed into the inner handler.
+   * @param inputContext The context which is passed in from the outer handler.
+   * @param config The configuration object which is passed in from the outer handler and propagated through to the inner handler.
+   * @param innerHandler The inner handler which is wrapped by all the middleware
+   * @template InputContext The context object which is passed into the inner handler.
+   * @returns A function which takes in a context object and runs the inner handler with the extended context object.
+   */
   private createNextFunction<
     InputContext extends object,
     InputConfig extends object,
   >(
     request: DuvetRequest,
     inputContext: { global: GlobalContext } & InputContext,
-    config: InputConfig &
-      InnerHandlerConfig &
-      Record<MiddlewareName, ConfigExtension>,
+    config: InputConfig & // Config object expected by middlewares which wrap this one.
+      InnerHandlerConfig & // Config object expected by all inner handlers
+      Record<MiddlewareName, ConfigExtension>, // Middleware config
     innerHandler: ConfigurableHandler<
       InputContext &
         InnerHandlerContext &
@@ -111,7 +139,7 @@ export class MiddlewareHandlerBuilder<
   }
 
   /**
-   * This is a generic function which takes a handler and returns a new handler which wraps the input handler with the middleware.
+   * Takes in an inner handler and wraps it with all the middleware below this one (using the inner handler builder), and then wraps it with the middleware of this builder. It then returns the new handler.
    * @param innerHandler The handler that this builder will wrap with middleware.
    * @returns A new handler which passes the inner handler into it.
    */

@@ -9,9 +9,9 @@ import { DefineEndpointFunctionArgs } from "../models/DefineEndpointFunction";
 import { ValidatorArray } from "../models/Validator";
 import { extractParts } from "./extractParts";
 import { wrapHandlerWithValidationLayer } from "./handlerWithValidators";
-import { HandlerBuilder } from "./HandlerBuilder/HandlerBuilder";
-import { MiddlewareHandlerBuilder } from "./HandlerBuilder/MiddlewareHandlerBuilder";
-import { BaseHandlerBuilder } from "./HandlerBuilder/BaseHandlerBuilder";
+import { HandlerBuilder } from "./handler-builder/HandlerBuilder";
+import { MiddlewareHandlerBuilder } from "./handler-builder/MiddlewareHandlerBuilder";
+import { BaseHandlerBuilder } from "./handler-builder/BaseHandlerBuilder";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type EmptyObject = {};

@@ -4,7 +4,7 @@ import { HandlerBuilder } from "./HandlerBuilder";
 type EmptyObject = {};
 
 /**
- * The base handler builder is a handler builder that does not wrap the inner handler with any additional functionality.
+ * The base handler builder is a handler builder that does not wrap the inner handler with any additional functionality. It simply passes it through.
  */
 export class BaseHandlerBuilder<Config extends object>
   implements HandlerBuilder<EmptyObject, EmptyObject, Config>
