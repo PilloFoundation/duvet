@@ -1,4 +1,4 @@
-import { DuvetEndpoint } from "../core/models/DuvetEndpoint";
+import { DuvetEndpoint } from "../core/endpoint-builder/DuvetEndpoint";
 
 /**
  * Tests if a value is a DuvetEndpoint object
@@ -8,6 +8,6 @@ import { DuvetEndpoint } from "../core/models/DuvetEndpoint";
 export function isDuvetEndpoint(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   test: any,
-): test is DuvetEndpoint<unknown, unknown> {
+): test is DuvetEndpoint<unknown, unknown, unknown, unknown> {
   return test?.exportType === "DuvetEndpoint";
 }

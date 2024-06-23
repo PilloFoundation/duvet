@@ -1,10 +1,8 @@
-import {
-  EndpointTreeEndpoint,
-  EndpointTreeNode,
-} from "../../../src/core/endpoint-tree/EndpointTree";
+import { EndpointTreeNode } from "../../../src/core/endpoint-tree/EndpointTree";
+import { EndpointTreeEndpoint } from "../../../src/core/endpoint-tree/EndpointTreeEndpoint";
 
 export const dudResponse = {
-  body: null,
+  data: null,
   status: 200,
 };
 
@@ -49,7 +47,7 @@ describe("Endpoint tree", () => {
   test("Adding an endpoint to an endpoint tree works properly", () => {
     const endpointTree = new EndpointTreeNode(null, "root", false);
 
-    const endpoint: EndpointTreeEndpoint<unknown, unknown> = {
+    const endpoint: EndpointTreeEndpoint<unknown, unknown, unknown, unknown> = {
       handler: () => dudResponse,
       config: {},
       method: "GET",
@@ -68,7 +66,7 @@ describe("Endpoint tree", () => {
   test("Adding an endpoint twice does not duplicate it", () => {
     const endpointTree = new EndpointTreeNode(null, "root", false);
 
-    const endpoint: EndpointTreeEndpoint<unknown, unknown> = {
+    const endpoint: EndpointTreeEndpoint<unknown, unknown, unknown, unknown> = {
       handler: () => dudResponse,
       config: {},
       method: "GET",
@@ -84,13 +82,23 @@ describe("Endpoint tree", () => {
   test("Adding an endpoint with the same method twice throws an error", () => {
     const endpointTree = new EndpointTreeNode(null, "root", false);
 
-    const endpointOne: EndpointTreeEndpoint<unknown, unknown> = {
+    const endpointOne: EndpointTreeEndpoint<
+      unknown,
+      unknown,
+      unknown,
+      unknown
+    > = {
       handler: () => dudResponse,
       config: {},
       method: "GET",
     };
 
-    const endpointTwo: EndpointTreeEndpoint<unknown, unknown> = {
+    const endpointTwo: EndpointTreeEndpoint<
+      unknown,
+      unknown,
+      unknown,
+      unknown
+    > = {
       handler: () => dudResponse,
       config: {},
       method: "GET",

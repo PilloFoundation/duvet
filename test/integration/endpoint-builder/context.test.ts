@@ -1,4 +1,3 @@
-import { DuvetRequest } from "../../../src";
 import { DuvetEndpointBuilder } from "../../../src/core/endpoint-builder/DuvetEndpointBuilder";
 import { buildTestMiddleware } from "../../helpers/buildTestMiddleware";
 
@@ -6,7 +5,7 @@ describe("Middleware context", () => {
   test("Middleware correctly extends context object", async () => {
     const runMiddleware = jest.fn();
 
-    const duvet = DuvetEndpointBuilder.new<object>()
+    const duvet = DuvetEndpointBuilder.new<object, object, object>()
       .addMiddleware(
         buildTestMiddleware("testOne", () => ({ a: "setA", b: 10 })),
       )
@@ -21,12 +20,12 @@ describe("Middleware context", () => {
       });
 
       return {
-        body: null,
+        data: null,
         status: 200,
       };
     });
 
-    await endpoint.data.handler({} as DuvetRequest, { global: {} });
+    await endpoint.data.handler({}, { global: {} });
 
     expect(runMiddleware).toHaveBeenCalled();
   });
@@ -36,7 +35,11 @@ describe("Middleware context", () => {
     const runMiddlewareOne = jest.fn();
     const runMiddlewareTwo = jest.fn();
 
-    const duvet = DuvetEndpointBuilder.new<{ a: string; b: number }>()
+    const duvet = DuvetEndpointBuilder.new<
+      { a: string; b: number },
+      object,
+      object
+    >()
       .addMiddleware(
         buildTestMiddleware("testOne", (config, globalContext) => {
           runMiddlewareOne();
@@ -59,14 +62,17 @@ describe("Middleware context", () => {
       expect(context.global).toMatchObject({ a: "string", b: 10 });
 
       return {
-        body: null,
+        data: null,
         status: 200,
       };
     });
 
-    await endpoint.data.handler({} as DuvetRequest, {
-      global: { a: "string", b: 10 },
-    });
+    await endpoint.data.handler(
+      {},
+      {
+        global: { a: "string", b: 10 },
+      },
+    );
 
     expect(runMiddlewareOne).toHaveBeenCalled();
     expect(runMiddlewareTwo).toHaveBeenCalled();

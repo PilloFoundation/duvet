@@ -1,8 +1,7 @@
 import { MaybeAsync } from "../../../utils/types/MaybeAsync";
-import { ConfigurableHandler } from "../../models/ConfigurableHandler";
-import { DuvetRequest } from "../../models/DuvetRequest";
-import { DuvetResponse } from "../../models/DuvetResponse";
-import { Middleware } from "../../models/Middleware";
+import { BaseContext } from "../../common/BaseContext";
+import { ConfigurableHandler } from "../../common/ConfigurableHandler";
+import { Middleware } from "../../common/Middleware";
 import { HandlerBuilder } from "./HandlerBuilder";
 
 /**
@@ -18,15 +17,19 @@ import { HandlerBuilder } from "./HandlerBuilder";
  * @template ConfigExtension The extension to the configuration object which the middleware adds.
  */
 export class MiddlewareHandlerBuilder<
+  RequestType,
+  ResponseType,
   MiddlewareName extends string,
   GlobalContext, // Represents the base context which is passed into the outer handler
-  InnerHandlerContext extends { global: GlobalContext }, // Represents the full context which is passed to the inner handler from the previous wrapper.
+  InnerHandlerContext extends BaseContext<GlobalContext>, // Represents the full context which is passed to the inner handler from the previous wrapper.
   ContextExtension,
   InnerHandlerConfig extends object,
   ConfigExtension,
 > implements
     HandlerBuilder<
-      { global: GlobalContext },
+      RequestType,
+      ResponseType,
+      BaseContext<GlobalContext>,
       InnerHandlerContext & Record<MiddlewareName, ContextExtension>,
       InnerHandlerConfig & Record<MiddlewareName, ConfigExtension>
     >
@@ -35,7 +38,9 @@ export class MiddlewareHandlerBuilder<
    * This is the handler builder which is used to wrap the inner handler before the middleware is applied.
    */
   private innerHandlerBuilder: HandlerBuilder<
-    { global: GlobalContext },
+    RequestType,
+    ResponseType,
+    BaseContext<GlobalContext>,
     InnerHandlerContext,
     InnerHandlerConfig
   >;
@@ -44,6 +49,8 @@ export class MiddlewareHandlerBuilder<
    * The middleware which is takes the wrapped inner handler as a next function.
    */
   private middleware: Middleware<
+    RequestType,
+    ResponseType,
     MiddlewareName,
     ConfigExtension,
     ContextExtension,
@@ -57,11 +64,15 @@ export class MiddlewareHandlerBuilder<
    */
   constructor(
     innerHandlerBuilder: HandlerBuilder<
-      { global: GlobalContext },
+      RequestType,
+      ResponseType,
+      BaseContext<GlobalContext>,
       InnerHandlerContext,
       InnerHandlerConfig
     >,
     middleware: Middleware<
+      RequestType,
+      ResponseType,
       MiddlewareName,
       ConfigExtension,
       ContextExtension,
@@ -80,18 +91,17 @@ export class MiddlewareHandlerBuilder<
    * @returns The context with the extension added.
    */
   private extendContext<InputContext extends object>(
-    context: { global: GlobalContext } & InputContext,
+    context: BaseContext<GlobalContext> & InputContext,
     key: MiddlewareName,
     ext: ContextExtension,
-  ): { global: GlobalContext } & InputContext &
+  ): BaseContext<GlobalContext> &
+    InputContext &
     Record<MiddlewareName, ContextExtension> {
     // eslint-disable-next-line no-type-assertion/no-type-assertion
     (context as Record<MiddlewareName, ContextExtension>)[key] = ext;
     // eslint-disable-next-line no-type-assertion/no-type-assertion
-    return context as { global: GlobalContext } & Record<
-      MiddlewareName,
-      ContextExtension
-    > &
+    return context as BaseContext<GlobalContext> &
+      Record<MiddlewareName, ContextExtension> &
       InputContext;
   }
 
@@ -110,18 +120,20 @@ export class MiddlewareHandlerBuilder<
     InputContext extends object,
     InputConfig extends object,
   >(
-    request: DuvetRequest,
-    inputContext: { global: GlobalContext } & InputContext,
+    request: RequestType,
+    inputContext: BaseContext<GlobalContext> & InputContext,
     config: InputConfig & // Config object expected by middlewares which wrap this one.
       InnerHandlerConfig & // Config object expected by all inner handlers
       Record<MiddlewareName, ConfigExtension>, // Middleware config
     innerHandler: ConfigurableHandler<
+      RequestType,
+      ResponseType,
       InputContext &
         InnerHandlerContext &
         Record<MiddlewareName, ContextExtension>,
       InputConfig & InnerHandlerConfig & Record<MiddlewareName, ConfigExtension>
     >,
-  ): (valueToExtendContextWith: ContextExtension) => MaybeAsync<DuvetResponse> {
+  ): (valueToExtendContextWith: ContextExtension) => MaybeAsync<ResponseType> {
     const wrappedInnerHandler = this.innerHandlerBuilder.buildWrappedHandler<
       InputContext & Record<MiddlewareName, ContextExtension>,
       InputConfig & Record<MiddlewareName, ConfigExtension>
@@ -145,17 +157,24 @@ export class MiddlewareHandlerBuilder<
    */
   buildWrappedHandler<InputContext extends object, InputConfig extends object>(
     innerHandler: ConfigurableHandler<
-      { global: GlobalContext } & InnerHandlerContext &
+      RequestType,
+      ResponseType,
+      BaseContext<GlobalContext> &
+        InnerHandlerContext &
         InputContext &
         Record<MiddlewareName, ContextExtension>,
       InnerHandlerConfig & InputConfig & Record<MiddlewareName, ConfigExtension>
     >,
   ): ConfigurableHandler<
-    { global: GlobalContext } & InputContext,
+    RequestType,
+    ResponseType,
+    BaseContext<GlobalContext> & InputContext,
     InnerHandlerConfig & InputConfig & Record<MiddlewareName, ConfigExtension>
   > {
     const newHandler: ConfigurableHandler<
-      { global: GlobalContext } & InputContext,
+      RequestType,
+      ResponseType,
+      BaseContext<GlobalContext> & InputContext,
       InnerHandlerConfig & InputConfig & Record<MiddlewareName, ConfigExtension>
     > = async (request, inputContext, config) => {
       const next = this.createNextFunction<InputContext, InputConfig>(

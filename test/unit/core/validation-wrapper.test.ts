@@ -1,6 +1,4 @@
-import { DuvetRequest } from "../../../src";
 import { wrapHandlerWithValidationLayer } from "../../../src/core/endpoint-builder/handlerWithValidators";
-import { Validator } from "../../../src/core/models/Validator";
 
 describe("Validation wrapper", () => {
   test("Wraps a handler with a validation layer", async () => {
@@ -9,41 +7,41 @@ describe("Validation wrapper", () => {
     const validateOne = jest.fn(() => {});
     const validateTwo = jest.fn(() => {});
 
-    const testValidatorOne: Validator<"testOne", number> = {
-      validate: (request) => {
-        expect(request.underlying.body).toEqual("body data");
+    type Request = {
+      body: string;
+    };
+
+    const validators = {
+      testOne: (request: Request) => {
+        expect(request.body).toEqual("body data");
         validateOne();
         return {
           isValid: true,
-          field: "testOne",
           parsedData: 10,
-        };
+        } as const;
       },
-    };
-    const testValidatorTwo: Validator<"testTwo", { validatedData: string }> = {
-      validate: (request) => {
-        expect(request.underlying.body).toEqual("body data");
+      testTwo: (request: Request) => {
+        expect(request.body).toEqual("body data");
         validateTwo();
         return {
           isValid: true,
-          field: "testTwo",
           parsedData: {
             validatedData: "validated",
           },
-        };
+        } as const;
       },
     };
-
-    const validators = [testValidatorOne, testValidatorTwo];
 
     type Validators = typeof validators;
 
     const wrappedHandler = wrapHandlerWithValidationLayer<
+      Request,
+      string,
       { contextData: string },
       { configData: string },
       Validators
     >((request, context) => {
-      expect(request.underlying.body).toEqual("body data");
+      expect(request.body).toEqual("body data");
       expect(context.valid.testOne).toEqual(10);
       expect(context.valid.testTwo).toEqual({
         validatedData: "validated",
@@ -52,14 +50,11 @@ describe("Validation wrapper", () => {
 
       doStuff();
 
-      return {
-        body: "ok",
-        status: 200,
-      };
+      return "ok";
     }, validators);
 
     const result = await wrappedHandler(
-      { underlying: { body: "body data" } } as DuvetRequest,
+      { body: "body data" },
       { contextData: "context data" },
       { configData: "config data" },
     );
@@ -67,6 +62,6 @@ describe("Validation wrapper", () => {
     expect(doStuff.mock.calls).toHaveLength(1);
     expect(validateOne.mock.calls).toHaveLength(1);
     expect(validateTwo.mock.calls).toHaveLength(1);
-    expect(result).toMatchObject({ status: 200, body: "ok" });
+    expect(result).toBe("ok");
   });
 });

@@ -1,4 +1,3 @@
-import { DuvetRequest } from "../../../src";
 import { DuvetEndpointBuilder } from "../../../src/core/endpoint-builder/DuvetEndpointBuilder";
 import { buildTestMiddleware } from "../../helpers/buildTestMiddleware";
 import { dudResponse } from "../dudResponse";
@@ -14,7 +13,7 @@ describe("Middleware Integration", () => {
 
     const events: Events[] = [];
 
-    const endpoint = DuvetEndpointBuilder.new<object>()
+    const endpoint = DuvetEndpointBuilder.new<object, object, object>()
       .addMiddleware(
         buildTestMiddleware(
           "first",
@@ -50,7 +49,7 @@ describe("Middleware Integration", () => {
         },
       );
 
-    await endpoint.data.handler({} as DuvetRequest, { global: {} });
+    await endpoint.data.handler({}, { global: {} });
 
     expect(events).toEqual([
       "second before",
@@ -66,7 +65,7 @@ describe("Middleware Integration", () => {
     const runEndpoint = jest.fn();
     const runEndpointWithMiddleware = jest.fn();
 
-    const duvet = DuvetEndpointBuilder.new<object>();
+    const duvet = DuvetEndpointBuilder.new<object, object, object>();
 
     const withMiddleware = duvet.addMiddleware({
       handler: async (request, next) => {
@@ -86,10 +85,13 @@ describe("Middleware Integration", () => {
       return dudResponse;
     });
 
-    await endpoint.data.handler({} as DuvetRequest, { global: {} });
-    await endpointWithMiddleware.data.handler({} as DuvetRequest, {
-      global: {},
-    });
+    await endpoint.data.handler({}, { global: {} });
+    await endpointWithMiddleware.data.handler(
+      {},
+      {
+        global: {},
+      },
+    );
 
     expect(runEndpoint.mock.calls).toHaveLength(1);
     expect(runMiddleware.mock.calls).toHaveLength(1);

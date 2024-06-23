@@ -1,4 +1,4 @@
-import { DuvetExport } from "../core/models/DuvetExport";
+import { DuvetExport } from "../core/common/DuvetExport";
 
 /**
  * Tests if a value is a DuvetExport.

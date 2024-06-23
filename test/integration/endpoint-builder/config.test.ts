@@ -1,4 +1,4 @@
-import { DuvetEndpointBuilder, DuvetRequest } from "../../../src";
+import { DuvetEndpointBuilder } from "../../../src";
 import { buildTestMiddleware } from "../../helpers/buildTestMiddleware";
 import { dudResponse } from "../dudResponse";
 
@@ -16,13 +16,17 @@ function configTestMiddleware<Config>() {
 }
 
 describe("Duvet config", () => {
-  test("Default config will used when no config provided", async () => {
+  test("Default config will be used when no config provided", async () => {
     const { middleware, runMiddleware } = configTestMiddleware<{
       a: string;
       b: number;
     }>();
 
-    const duvet = DuvetEndpointBuilder.new<object>().addMiddleware(middleware);
+    const duvet = DuvetEndpointBuilder.new<
+      object,
+      object,
+      object
+    >().addMiddleware(middleware);
 
     const duvetWithDefaultConfig = duvet.setConfig({
       testOne: {
@@ -36,7 +40,7 @@ describe("Duvet config", () => {
       () => dudResponse,
     );
 
-    await endpoint.data.handler({} as DuvetRequest, { global: {} });
+    await endpoint.data.handler({}, { global: {} });
 
     expect(runMiddleware.mock.calls[0][0]).toMatchObject({
       a: "default",
@@ -48,7 +52,7 @@ describe("Duvet config", () => {
     const runMiddlewareOne = jest.fn();
     const runMiddlewareTwo = jest.fn();
 
-    const endpointBuilder = DuvetEndpointBuilder.new<object>()
+    const endpointBuilder = DuvetEndpointBuilder.new<object, object, object>()
       .addMiddleware(
         buildTestMiddleware("middlewareOne", (config: string) => {
           runMiddlewareOne(config);
@@ -85,12 +89,18 @@ describe("Duvet config", () => {
       () => dudResponse,
     );
 
-    await endpointBuilderWithConfigOne.data.handler({} as DuvetRequest, {
-      global: {},
-    });
-    await endpointBuilderWithConfigTwo.data.handler({} as DuvetRequest, {
-      global: {},
-    });
+    await endpointBuilderWithConfigOne.data.handler(
+      {},
+      {
+        global: {},
+      },
+    );
+    await endpointBuilderWithConfigTwo.data.handler(
+      {},
+      {
+        global: {},
+      },
+    );
 
     expect(runMiddlewareOne.mock.calls).toEqual([
       ["endpointOne"],
@@ -108,7 +118,11 @@ describe("Duvet config", () => {
       b: number;
     }>();
 
-    const duvet = DuvetEndpointBuilder.new<object>().addMiddleware(middleware);
+    const duvet = DuvetEndpointBuilder.new<
+      object,
+      object,
+      object
+    >().addMiddleware(middleware);
     const duvetWithExtendedConfigOne = duvet.extendConfig({
       testOne: { a: "extendOne", b: 1 },
     });
@@ -127,15 +141,24 @@ describe("Duvet config", () => {
     const endpointWithExtendedConfigTwo =
       duvetWithExtendedConfigTwo.defineEndpoint({}, () => dudResponse);
 
-    await endpointWithNoExtension.data.handler({} as DuvetRequest, {
-      global: {},
-    });
-    await endpointWithExtendedConfigOne.data.handler({} as DuvetRequest, {
-      global: {},
-    });
-    await endpointWithExtendedConfigTwo.data.handler({} as DuvetRequest, {
-      global: {},
-    });
+    await endpointWithNoExtension.data.handler(
+      {},
+      {
+        global: {},
+      },
+    );
+    await endpointWithExtendedConfigOne.data.handler(
+      {},
+      {
+        global: {},
+      },
+    );
+    await endpointWithExtendedConfigTwo.data.handler(
+      {},
+      {
+        global: {},
+      },
+    );
 
     expect(runMiddleware.mock.calls).toHaveLength(3);
     expect(runMiddleware.mock.calls).toMatchObject([

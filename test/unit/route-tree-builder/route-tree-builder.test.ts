@@ -1,5 +1,5 @@
 import path from "path";
-import { endpointTreeFromDirectory } from "../../../src/core/endpoint-tree/fs-builder/buildEndpointTreeFromDirectory";
+import { endpointTreeFromDirectory } from "../../../src/core/endpoint-tree/fs-builder/endpointTreeFromDirectory";
 
 describe("Endpoint Tree Builder", () => {
   test("Builds a route tree from a correctly defined directory", async () => {
