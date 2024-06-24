@@ -1,6 +1,6 @@
 import { DuvetEndpointBuilder } from "src/core/endpoint-builder/DuvetEndpointBuilder";
 import { buildTestMiddleware } from "test-helpers/buildTestMiddleware";
-import { dudResponse } from "../../../express/integration/dudResponse";
+import { dudResponse } from "./dudResponse";
 
 function configTestMiddleware<Config>() {
   const runMiddleware = jest.fn();

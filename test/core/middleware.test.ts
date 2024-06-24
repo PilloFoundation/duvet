@@ -1,6 +1,6 @@
 import { DuvetEndpointBuilder } from "src/core/endpoint-builder/DuvetEndpointBuilder";
 import { buildTestMiddleware } from "test-helpers/buildTestMiddleware";
-import { dudResponse } from "../../../express/integration/dudResponse";
+import { dudResponse } from "../express/e2e/dudResponse";
 
 describe("Middleware Integration", () => {
   test("Middleware runs in the correct order", async () => {

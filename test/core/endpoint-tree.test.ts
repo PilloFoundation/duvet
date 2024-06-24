@@ -1,10 +1,6 @@
 import { EndpointTreeNode } from "src/core/endpoint-tree/EndpointTree";
 import { EndpointTreeEndpoint } from "src/core/endpoint-tree/EndpointTreeEndpoint";
-
-export const dudResponse = {
-  data: null,
-  status: 200,
-};
+import { dudResponse } from "./dudResponse";
 
 describe("EndpointTreeNode", () => {
   test("Basic EndpointTreeNode constructor works properly", () => {
