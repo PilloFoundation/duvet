@@ -1,4 +1,4 @@
-import { DuvetExport } from "src/core/models/DuvetExport";
+import { DuvetExport } from "src/core/common/DuvetExport";
 
 const exp: DuvetExport<unknown> = {
   builtByDuvet: true,

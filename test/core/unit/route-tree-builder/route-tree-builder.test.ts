@@ -1,7 +1,7 @@
 import path from "path";
 import { endpointTreeFromDirectory } from "src/core/endpoint-tree/fs-builder/endpointTreeFromDirectory";
 
-describe("Endpoint Tree Builder", () => {
+describe("endpointTreeFromDirectory", () => {
   test("Builds a route tree from a correctly defined directory", async () => {
     const pathToRoutes = path.join(__dirname, "test-routes/standard");
 

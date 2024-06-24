@@ -6,8 +6,8 @@ export const dudResponse = {
   status: 200,
 };
 
-describe("Endpoint tree", () => {
-  test("Basic endpoint tree constructor works properly", () => {
+describe("EndpointTreeNode", () => {
+  test("Basic EndpointTreeNode constructor works properly", () => {
     const endpointTree = new EndpointTreeNode(null, "root", false);
 
     expect(endpointTree.endpoints).toEqual([]);
@@ -19,7 +19,7 @@ describe("Endpoint tree", () => {
     expect(endpointTree.isParam).toBe(false);
   });
 
-  test("Adding a subRoute to an endpoint tree works properly", () => {
+  test("Adding a constructing a new EndpointTreeNode with a parent works properly", () => {
     const endpointTree = new EndpointTreeNode(null, "root", false);
 
     const subRoute = new EndpointTreeNode(endpointTree, "subRoute", false);
@@ -44,7 +44,7 @@ describe("Endpoint tree", () => {
     expect(subRoute.fullPath).toBe("root/subRoute");
   });
 
-  test("Adding an endpoint to an endpoint tree works properly", () => {
+  test("Adding a subRoute to an EndpointTreeNode works properly", () => {
     const endpointTree = new EndpointTreeNode(null, "root", false);
 
     const endpoint: EndpointTreeEndpoint<unknown, unknown, unknown, unknown> = {
