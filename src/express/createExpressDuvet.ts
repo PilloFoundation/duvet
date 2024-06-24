@@ -1,10 +1,9 @@
 import { Router, Request as ExpressRequest } from "express";
+import { ExpressResponseWrapper } from "./models/ExpressResponseWrapper";
 import { DuvetEndpointBuilder } from "../core/endpoint-builder/DuvetEndpointBuilder";
-import { DuvetBuilder } from "../core/common/DuvetBuilder";
 import { endpointTreeFromDirectory } from "../core/endpoint-tree/fs-builder/endpointTreeFromDirectory";
 import { endpointTreeToExpressRouter } from "./endpointTreeToExpressRouter";
 import { EndpointTreeNode } from "../core/endpoint-tree/EndpointTree";
-import { ExpressResponseWrapper } from "./models/ExpressResponseWrapper";
 
 type ExpressEndpointTreeNode<GlobalContext> = EndpointTreeNode<
   ExpressRequest,
@@ -16,18 +15,22 @@ type ExpressEndpointTreeNode<GlobalContext> = EndpointTreeNode<
 /**
  * @returns An object containing a Duvet instance and a function to build an Express router from a directory.
  */
-export function createExpressDuvet<GlobalContext>(): DuvetBuilder<
-  ExpressRequest,
-  ExpressResponseWrapper,
-  GlobalContext,
-  Router
-> {
+export function createExpressDuvet<GlobalContext>() {
   return {
+    /**
+     * A DuvetEndpointBuilder instance for building endpoints.
+     */
     duvet: DuvetEndpointBuilder.new<
       GlobalContext,
       ExpressRequest,
       ExpressResponseWrapper
     >(),
+    /**
+     * Builds an express router from a directory, with a given global context object.
+     * @param directory An absolute or relative path to the directory containing the routes. If a relative path is provider, it will be relative to the current file, not the current working directory.
+     * @param context A global context object which is passed into each handler and middleware.
+     * @returns An express router which can be mounted on an express app.
+     */
     build(directory: string, context: GlobalContext): Router {
       const endpointTree = endpointTreeFromDirectory(directory);
       const expressRouter = endpointTreeToExpressRouter(
