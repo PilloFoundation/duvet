@@ -1,4 +1,9 @@
 import path from "path";
+import {
+  ModuleLoadingError,
+  NotDuvetEndpointError,
+  NotDuvetExportError,
+} from "src/core/endpoint-tree/fs-builder/applyFileToEndpointTree";
 import { endpointTreeFromDirectory } from "src/core/endpoint-tree/fs-builder/endpointTreeFromDirectory";
 
 describe("endpointTreeFromDirectory", () => {
@@ -72,15 +77,19 @@ describe("endpointTreeFromDirectory", () => {
   test("Throws an error on no duvet export", async () => {
     const pathToRoutes = path.join(__dirname, "test-routes/no-duvet-export");
 
-    expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow();
+    expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow(
+      NotDuvetExportError,
+    );
   });
   test("Throws an error on no duvet endpoint", async () => {
     const pathToRoutes = path.join(__dirname, "test-routes/no-duvet-endpoint");
 
-    expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow();
+    expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow(
+      NotDuvetEndpointError,
+    );
   });
-  test("Throws an error on incorrect export", async () => {
-    const pathToRoutes = path.join(__dirname, "test-routes/incorrect-export");
+  test("Throws an error when there is no default export", async () => {
+    const pathToRoutes = path.join(__dirname, "test-routes/no-default-export");
 
     expect(() => {
       endpointTreeFromDirectory(pathToRoutes);
@@ -89,7 +98,9 @@ describe("endpointTreeFromDirectory", () => {
   test("Throws an error on incorrect code", async () => {
     const pathToRoutes = path.join(__dirname, "test-routes/incorrect-code");
 
-    expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow();
+    expect(() => endpointTreeFromDirectory(pathToRoutes)).toThrow(
+      ModuleLoadingError,
+    );
   });
   test("Throws an error on built by duvet object but it is not a DuvetEndpoint", async () => {
     const pathToRoutes = path.join(

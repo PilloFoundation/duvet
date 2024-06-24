@@ -1,7 +1,7 @@
 import path from "path";
 import { Method } from "../../common/Method";
 import { isDuvetExport } from "../../../utils/isDuvetExport";
-import { tryRun } from "../../../utils/tryRun";
+import { safeRun } from "../../../utils/safeRun";
 import { isDuvetEndpoint } from "../../../utils/isDuvetEndpoint";
 import { EndpointTreeNode } from "../EndpointTree";
 import { Handler } from "../../common/Handler";
@@ -37,13 +37,24 @@ export function applyFileToEndpointTree<
     // eslint-disable-next-line no-type-assertion/no-type-assertion -- We know that methodMatch[1] is a Method because of the regex
     const method = methodMatch[1] as Method;
 
-    const moduleName = path.join(filePathObject.dir, filePathObject.base);
+    const modulePath = path.join(filePathObject.dir, filePathObject.base);
 
-    const module = tryRun(() => require(moduleName));
+    const attempt = safeRun(() => require(modulePath));
 
-    if (module instanceof Error) {
-      throw new Error(
-        `Error while loading module at ${moduleName}: ${module.message}`,
+    if (!attempt.success) {
+      throw new ModuleLoadingError(
+        `Error while loading module at ${modulePath}:\n
+        ${attempt.error}`,
+        modulePath,
+      );
+    }
+
+    const module = attempt.result;
+
+    if (module?.default == null) {
+      throw new NoDefaultExportError(
+        `Module at route ${filePath} does not have a default export`,
+        filePath,
       );
     }
 
@@ -51,13 +62,19 @@ export function applyFileToEndpointTree<
 
     // Check if the endpoint is a Duvet endpoint
     if (isDuvetExport(duvetExport) !== true) {
-      throw new Error(`Endpoint at route ${filePath} is not a Duvet endpoint`);
+      throw new NotDuvetExportError(
+        `Endpoint at route ${filePath} is not a Duvet endpoint`,
+        filePath,
+      );
     }
 
     const endpoint = duvetExport.data;
 
     if (isDuvetEndpoint(endpoint) !== true) {
-      throw new Error(`Endpoint at route ${filePath} is not a Duvet endpoint`);
+      throw new NotDuvetEndpointError(
+        `Endpoint at route ${filePath} is not a Duvet endpoint`,
+        filePath,
+      );
     }
 
     endpointTreeNode.addEndpoint({
@@ -69,5 +86,45 @@ export function applyFileToEndpointTree<
       >,
       method: method,
     });
+  }
+}
+
+export class NotDuvetExportError extends Error {
+  constructor(
+    message: string,
+    public filePath: string,
+  ) {
+    super(message);
+    this.name = "NotDuvetExportError";
+  }
+}
+
+export class NotDuvetEndpointError extends Error {
+  constructor(
+    message: string,
+    public filePath: string,
+  ) {
+    super(message);
+    this.name = "NotDuvetEndpointError";
+  }
+}
+
+export class ModuleLoadingError extends Error {
+  constructor(
+    message: string,
+    public filePath: string,
+  ) {
+    super(message);
+    this.name = "ModuleLoadingError";
+  }
+}
+
+export class NoDefaultExportError extends Error {
+  constructor(
+    message: string,
+    public filePath: string,
+  ) {
+    super(message);
+    this.name = "NoDefaultExportError";
   }
 }

@@ -10,13 +10,18 @@ const tsconfig = JSON.parse(
 
 export default {
   testEnvironment: "node",
+  testMatch: ["**/test/**/*.test.ts"],
   modulePaths: [tsconfig.compilerOptions.baseUrl],
   moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {
     prefix: "<rootDir>/",
   }),
+
+  collectCoverageFrom: ["src/**/*.ts"],
   coveragePathIgnorePatterns: [
+    "src/index.ts",
     "/node_modules/",
     "/dist/",
+    "/types/",
     "/test/.*(\\.js|.ts)",
   ],
   transform: {

@@ -2,6 +2,7 @@ import { ConfigurableHandler } from "../common/ConfigurableHandler";
 import { ValidatedDataMap } from "../validation/ValidatedDataMap";
 import { GenericValidatorMap } from "../validation/GenericValidatorMap";
 import { WithValidatedData } from "../validation/WithValid";
+
 /**
  * Takes a handler and wraps it in a new handler which validates the request data.
  * @param innerHandler The handler to wrap.
@@ -39,7 +40,7 @@ export function wrapHandlerWithValidationLayer<
       if (result.isValid) {
         validatedData[validatorKey] = result.parsedData;
       } else {
-        throw new Error(result.error);
+        throw new DuvetValidationError(result.error);
       }
     }
 
@@ -54,4 +55,11 @@ export function wrapHandlerWithValidationLayer<
   };
 
   return handler;
+}
+
+export class DuvetValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "DuvetValidationError";
+  }
 }
