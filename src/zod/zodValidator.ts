@@ -25,7 +25,6 @@ function zodRequestFieldValidator<
     if (result.success === false) {
       const errorMessage = formatZodError(field, result.error);
 
-      console.log(errorMessage);
       return {
         isValid: false,
         error: errorMessage,
