@@ -1,4 +1,5 @@
 import { DuvetExport } from "../core/common/DuvetExport";
+import { isObjectWithField } from "./isObjectWithField";
 
 /**
  * Tests if a value is a DuvetExport.
@@ -6,8 +7,6 @@ import { DuvetExport } from "../core/common/DuvetExport";
  * @returns A boolean indicating if the value is a DuvetExport.
  */
 export function isDuvetExport(test: unknown): test is DuvetExport<unknown> {
-  if (typeof test !== "object") return false;
-  if (test == null) return false;
-  if (!("builtByDuvet" in test)) return false;
+  if (!isObjectWithField(test, "builtByDuvet")) return false;
   return test.builtByDuvet === true;
 }

@@ -169,8 +169,9 @@ export class EndpointTreeNode<
     const conflict = this.checkConflict(endpoint);
 
     if (conflict.conflict) {
-      throw new Error(
+      throw new DuvetEndpointConflictError(
         `There was a conflict trying to add the endpoint ${conflict.newEndpoint.method} to the route ${this._fullPath}. The method is already defined in the route ${this._fullPath}`,
+        conflict,
       );
     }
     this._endpoints.push(endpoint);
@@ -236,5 +237,16 @@ export class EndpointTreeNode<
         conflict: false,
       };
     }
+  }
+}
+
+export class DuvetEndpointConflictError extends Error {
+  constructor(
+    message: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public conflict: ConflictResult<any, any, any, any>,
+  ) {
+    super(message);
+    this.name = "DuvetEndpointConflictError";
   }
 }

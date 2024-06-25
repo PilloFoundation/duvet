@@ -1,4 +1,5 @@
 import { DuvetEndpoint } from "../core/endpoint-builder/DuvetEndpoint";
+import { isObjectWithField } from "./isObjectWithField";
 
 /**
  * Tests if a value is a DuvetEndpoint object
@@ -8,9 +9,6 @@ import { DuvetEndpoint } from "../core/endpoint-builder/DuvetEndpoint";
 export function isDuvetEndpoint(
   test: unknown,
 ): test is DuvetEndpoint<unknown, unknown, unknown, unknown> {
-  if (typeof test !== "object") return false;
-  if (test == null) return false;
-  if (!("exportType" in test)) return false;
-
+  if (!isObjectWithField(test, "exportType")) return false;
   return test.exportType === "DuvetEndpoint";
 }

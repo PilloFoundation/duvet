@@ -9,7 +9,6 @@ import { createEndpointTreeNodeFromSubDirectory } from "./createEndpointTreeNode
  * @param directoryPath The path to the routes directory.
  * @param endpointTreeNode The parent endpoint tree node.
  */
-
 export function applyDirectoryContentsToEndpointTreeNode<
   RequestType,
   ResponseType,
