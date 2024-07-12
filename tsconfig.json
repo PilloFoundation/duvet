@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "declarationDir": "lib/types",
+    "declarationDir": "dist/types",
 
     "rootDirs": ["src"],
     "baseUrl": "src",
