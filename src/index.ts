@@ -1,5 +1,6 @@
-export { kint } from './kint';
-export { k } from './schemaHelpers';
+export { DuvetEndpointBuilder } from "./core/endpoint-builder/DuvetEndpointBuilder";
+export { createExpressDuvet } from "./express/createExpressDuvet";
 
-import { kint } from './kint';
-export default kint;
+export { Middleware } from "./core/common/Middleware";
+
+export { buildMiddleware } from "./core/buildMiddleware";
