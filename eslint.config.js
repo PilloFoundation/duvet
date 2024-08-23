@@ -34,7 +34,7 @@ export default tseslint.config(
   {
     extends: [
       {
-        ignores: ["dist/*", "*.js", "*.mjs"],
+        ignores: ["lib/*", "*.js", "*.mjs"],
       },
     ],
   },

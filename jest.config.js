@@ -20,7 +20,7 @@ export default {
   coveragePathIgnorePatterns: [
     "src/index.ts",
     "/node_modules/",
-    "/dist/",
+    "/lib/",
     "/types/",
     "/test/.*(\\.js|.ts)",
   ],
